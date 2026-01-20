@@ -112,7 +112,7 @@ export default function Home() {
         </div>
       </div>
 
-      {/* PHẦN CẬP NHẬT MỚI: Discover & Categories (Có thể nhấn được) */}
+      {/* Discover & Categories - Giữ Nguyên 100% */}
       <div className="max-w-7xl mx-auto px-4 py-16 border-t border-gray-100">
         <div className="flex flex-col items-center mb-16">
           <button className="border-2 border-black px-8 py-3 font-bold text-[10px] md:text-xs uppercase tracking-[0.2em] hover:bg-black hover:text-white transition-all">
@@ -120,7 +120,6 @@ export default function Home() {
           </button>
         </div>
 
-        {/* Discover more from */}
         <div className="mb-14">
           <h3 className="text-lg md:text-xl font-bold mb-6 tracking-tight">Discover more from</h3>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-y-3 text-[11px] md:text-xs text-gray-500">
@@ -130,7 +129,6 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Women's categories */}
         <div className="mb-14">
           <h3 className="text-lg md:text-xl font-bold mb-6 tracking-tight">Women&apos;s categories</h3>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-y-3 text-[11px] md:text-xs text-gray-500">
@@ -140,7 +138,6 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Men's categories */}
         <div className="mb-14">
           <h3 className="text-lg md:text-xl font-bold mb-6 tracking-tight">Men&apos;s categories</h3>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-y-3 text-[11px] md:text-xs text-gray-500">
@@ -151,8 +148,36 @@ export default function Home() {
         </div>
       </div>
       
-      <footer className="py-10 border-t border-gray-100 text-center text-[10px] text-gray-400 uppercase tracking-widest">
-        © 2026 ASOS CLONE - Trang web của bạn
+      {/* PHẦN CẬP NHẬT MỚI: LOGO THANH TOÁN & MẠNG XÃ HỘI */}
+      <footer className="bg-[#f0f0f0] py-8 border-t border-gray-200">
+        <div className="max-w-7xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-8">
+          
+          {/* Social Icons */}
+          <div className="flex gap-6 items-center">
+            <a href="#" className="grayscale hover:grayscale-0 transition-all opacity-70 hover:opacity-100">
+              <img src="https://cdn-icons-png.flaticon.com/512/733/733547.png" className="w-5 h-5" alt="Facebook" />
+            </a>
+            <a href="#" className="grayscale hover:grayscale-0 transition-all opacity-70 hover:opacity-100">
+              <img src="https://cdn-icons-png.flaticon.com/512/2111/2111463.png" className="w-5 h-5" alt="Instagram" />
+            </a>
+            <a href="#" className="grayscale hover:grayscale-0 transition-all opacity-70 hover:opacity-100">
+              <img src="https://cdn-icons-png.flaticon.com/512/3670/3670151.png" className="w-5 h-5" alt="TikTok" />
+            </a>
+          </div>
+
+          {/* Payment Methods */}
+          <div className="flex flex-wrap justify-center gap-6 md:border-l md:border-gray-300 md:pl-8">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg" className="h-3 opacity-50 hover:opacity-100 transition-opacity" alt="Visa" />
+            <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" className="h-5 opacity-50 hover:opacity-100 transition-opacity" alt="Mastercard" />
+            <img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg" className="h-4 opacity-50 hover:opacity-100 transition-opacity" alt="PayPal" />
+            <img src="https://upload.wikimedia.org/wikipedia/commons/b/b7/American_Express_logo_%282018%29.svg" className="h-4 opacity-50 hover:opacity-100 transition-opacity" alt="Amex" />
+          </div>
+
+        </div>
+
+        <div className="max-w-7xl mx-auto px-4 mt-8 pt-6 border-t border-gray-200 text-center text-[10px] text-gray-400 uppercase tracking-widest">
+          © 2026 ASOS CLONE - Trang web của bạn
+        </div>
       </footer>
     </main>
   );
