@@ -33,7 +33,6 @@ export default function Home() {
     <main className="min-h-screen bg-white">
       <Header />
       
-      {/* Banner Quảng Cáo Giữ Nguyên Bố Cục 100% */}
       <div className="w-full relative h-[450px] md:h-[650px] bg-black overflow-hidden">
         <img 
           src="https://images.asos-media.com/products/asos-design-oversized-t-shirt-in-white-with-back-print/204344445-1-white" 
@@ -49,7 +48,6 @@ export default function Home() {
         </div>
       </div>
 
-      {/* 4 ô màu sắc tiện ích - Giữ Nguyên 100% */}
       <div className="grid grid-cols-2 md:grid-cols-4 w-full text-center">
         <div className="bg-[#d0ff00] p-6 md:p-8 flex items-center justify-center h-[160px] md:h-[200px]">
           <p className="font-bold text-xs md:text-base uppercase leading-tight">New here? <br/> Get your first-timer discount</p>
@@ -65,10 +63,10 @@ export default function Home() {
         </div>
       </div>
 
-      {/* PHẦN CẬP NHẬT: Nút và 4 tấm hình thương hiệu chuẩn ASOS */}
+      {/* ĐÃ SỬA LỖI: Thay dấu nháy đơn thành &apos; */}
       <div className="max-w-7xl mx-auto px-4 mt-12 flex flex-col items-center">
         <button className="border-2 border-black px-8 py-3 font-bold text-[10px] md:text-xs uppercase tracking-[0.2em] hover:bg-black hover:text-white transition-all mb-10">
-          Shop Women's Brands
+          Shop Women&apos;s Brands
         </button>
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 w-full">
@@ -103,7 +101,6 @@ export default function Home() {
         <h3 className="text-xl md:text-3xl font-bold uppercase tracking-widest italic">The biggest brands</h3>
       </div>
 
-      {/* Danh sách sản phẩm Giữ Nguyên 100% */}
       <div className="max-w-7xl mx-auto px-4 py-10">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8">
           {products.map((product: any) => (
