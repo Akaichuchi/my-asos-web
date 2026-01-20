@@ -32,15 +32,33 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-white">
       <Header />
-      <div className="max-w-7xl mx-auto px-2 py-4">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-          {products.map((product) => (
+      
+      {/* Banner Quảng Cáo Giống ASOS 100% */}
+      <div className="w-full relative h-[450px] md:h-[650px] bg-black overflow-hidden">
+        <img 
+          src="https://images.asos-media.com/products/asos-design-oversized-t-shirt-in-white-with-back-print/204344445-1-white" 
+          className="w-full h-full object-cover opacity-85"
+          alt="ASOS Campaign 2026"
+        />
+        <div className="absolute inset-0 flex flex-col items-center justify-center text-white p-4 text-center">
+          <h2 className="text-6xl md:text-9xl font-black italic tracking-tighter uppercase">This is ASOS</h2>
+          <div className="flex flex-col md:flex-row gap-3 mt-6">
+            <button className="bg-white text-black px-10 py-3 font-bold text-xs hover:bg-gray-200 transition-colors uppercase tracking-widest">Shop Womens</button>
+            <button className="bg-white text-black px-10 py-3 font-bold text-xs hover:bg-gray-200 transition-colors uppercase tracking-widest">Shop Mens</button>
+          </div>
+        </div>
+      </div>
+
+      <div className="max-w-7xl mx-auto px-4 py-10">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8">
+          {products.map((product: any) => (
             <ProductCard key={product.id} product={product} />
           ))}
         </div>
       </div>
-      <footer className="mt-10 py-6 border-t border-gray-100 text-center text-xs text-gray-400">
-        © 2026 ASOS CLONE - TRANG WEB CỦA BẠN
+      
+      <footer className="py-10 border-t border-gray-100 text-center text-[10px] text-gray-400 uppercase tracking-widest">
+        © 2026 ASOS CLONE - Trang web của bạn
       </footer>
     </main>
   );
