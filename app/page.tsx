@@ -129,18 +129,18 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="mb-14">
-          <h3 className="text-lg md:text-xl font-bold mb-6 tracking-tight">Women&apos;s categories</h3>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-y-3 text-[11px] md:text-xs text-gray-500">
+        <div className="mb-14 text-gray-500 text-[11px] md:text-xs">
+          <h3 className="text-black text-lg md:text-xl font-bold mb-6 tracking-tight">Women&apos;s categories</h3>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-y-3">
             {["Women's Activewear", "Blouses", "Women's Boots", "Dresses", "Women's Gifts", "Women's Jeans", "Women's Jewelry", "Women's Loungewear", "Women's Pants", "Women's Petite Clothing", "Women's Plus Size Clothing", "Women's Shirts", "Women's Shoes", "Women's Shorts", "Skirts", "Women's Suits", "Women's Swimwear", "Women's Tall Clothing", "Women's Tops", "Women's Tracksuits"].map((cat) => (
               <a key={cat} href="#" className="hover:underline hover:text-black transition-colors">{cat}</a>
             ))}
           </div>
         </div>
 
-        <div className="mb-14">
-          <h3 className="text-lg md:text-xl font-bold mb-6 tracking-tight">Men&apos;s categories</h3>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-y-3 text-[11px] md:text-xs text-gray-500">
+        <div className="mb-14 text-gray-500 text-[11px] md:text-xs">
+          <h3 className="text-black text-lg md:text-xl font-bold mb-6 tracking-tight">Men&apos;s categories</h3>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-y-3">
             {["Men's Accessories", "Men's Bags", "Men's Coats & Jackets", "Gifts for Men", "Men's Jeans", "Men's Jewelry", "Men's Loungewear", "Men's Partywear", "Men's Plus Size Clothing", "Men's Polo Shirts", "Men's Shirts", "Men's Shoes", "Men's Shorts", "Men's Sportswear", "Men's Suits", "Men's Swimwear", "Men's Tall Clothing", "Men's Tracksuits", "Men's Two Piece Sets", "Men's Workwear"].map((cat) => (
               <a key={cat} href="#" className="hover:underline hover:text-black transition-colors">{cat}</a>
             ))}
@@ -148,35 +148,46 @@ export default function Home() {
         </div>
       </div>
       
-      {/* PHẦN CẬP NHẬT MỚI: LOGO THANH TOÁN & MẠNG XÃ HỘI */}
-      <footer className="bg-[#f0f0f0] py-8 border-t border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-8">
+      {/* PHẦN CẬP NHẬT: LOGO THANH TOÁN & MẠNG XÃ HỘI CĂN GIỮA CHUẨN MẪU */}
+      <footer className="bg-[#f0f0f0] py-10 border-t border-gray-200">
+        <div className="max-w-7xl mx-auto px-4 flex flex-col items-center gap-8">
           
-          {/* Social Icons */}
-          <div className="flex gap-6 items-center">
-            <a href="#" className="grayscale hover:grayscale-0 transition-all opacity-70 hover:opacity-100">
-              <img src="https://cdn-icons-png.flaticon.com/512/733/733547.png" className="w-5 h-5" alt="Facebook" />
-            </a>
-            <a href="#" className="grayscale hover:grayscale-0 transition-all opacity-70 hover:opacity-100">
-              <img src="https://cdn-icons-png.flaticon.com/512/2111/2111463.png" className="w-5 h-5" alt="Instagram" />
-            </a>
-            <a href="#" className="grayscale hover:grayscale-0 transition-all opacity-70 hover:opacity-100">
-              <img src="https://cdn-icons-png.flaticon.com/512/3670/3670151.png" className="w-5 h-5" alt="TikTok" />
-            </a>
+          <div className="flex flex-col md:flex-row items-center justify-center gap-6 w-full">
+            {/* Social Icons - Căn giữa chuẩn hình mẫu be0261 */}
+            <div className="flex gap-8 items-center md:pr-8 md:border-r border-gray-300">
+              <a href="#" className="hover:opacity-80 transition-opacity">
+                <img src="https://cdn-icons-png.flaticon.com/512/124/124010.png" className="w-6 h-6" alt="Facebook" />
+              </a>
+              <a href="#" className="hover:opacity-80 transition-opacity">
+                <img src="https://cdn-icons-png.flaticon.com/512/2111/2111463.png" className="w-6 h-6" alt="Instagram" />
+              </a>
+              <a href="#" className="hover:opacity-80 transition-opacity">
+                <img src="https://cdn-icons-png.flaticon.com/512/3670/3670162.png" className="w-6 h-6" alt="Snapchat" />
+              </a>
+            </div>
+
+            {/* Payment Methods - Đầy đủ theo mẫu be11de (Không có Google Play) */}
+            <div className="flex flex-wrap justify-center items-center gap-5">
+              <img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg" className="h-4 border border-gray-200 px-1 py-0.5 rounded-sm bg-white" alt="Visa" />
+              <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" className="h-6" alt="Mastercard" />
+              <img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg" className="h-4 border border-gray-200 px-1 py-0.5 rounded-sm bg-white" alt="PayPal" />
+              <img src="https://upload.wikimedia.org/wikipedia/commons/3/30/American_Express_logo.svg" className="h-5" alt="Amex" />
+              <img src="https://upload.wikimedia.org/wikipedia/commons/c/c4/Klarna_Logo.svg" className="h-3.5 px-1 bg-[#ffb3c7] rounded-sm" alt="Klarna" />
+              <img src="https://upload.wikimedia.org/wikipedia/commons/f/fa/Apple_Pay_logo.svg" className="h-4 border border-black px-1 rounded-sm bg-white" alt="Apple Pay" />
+              <img src="https://upload.wikimedia.org/wikipedia/commons/0/05/Afterpay_logo_2021.svg" className="h-4 px-1 bg-[#b2fce4] rounded-sm" alt="Afterpay" />
+              <img src="https://upload.wikimedia.org/wikipedia/commons/a/a4/Discover_Card_logo.svg" className="h-4 border border-gray-200 px-1 rounded-sm bg-white" alt="Discover" />
+              <img src="https://upload.wikimedia.org/wikipedia/commons/a/a6/Diners_Club_Logo3.svg" className="h-5 border border-gray-200 px-1 rounded-sm bg-white" alt="Diners Club" />
+            </div>
           </div>
 
-          {/* Payment Methods */}
-          <div className="flex flex-wrap justify-center gap-6 md:border-l md:border-gray-300 md:pl-8">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg" className="h-3 opacity-50 hover:opacity-100 transition-opacity" alt="Visa" />
-            <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" className="h-5 opacity-50 hover:opacity-100 transition-opacity" alt="Mastercard" />
-            <img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg" className="h-4 opacity-50 hover:opacity-100 transition-opacity" alt="PayPal" />
-            <img src="https://upload.wikimedia.org/wikipedia/commons/b/b7/American_Express_logo_%282018%29.svg" className="h-4 opacity-50 hover:opacity-100 transition-opacity" alt="Amex" />
+          <div className="w-full pt-8 border-t border-gray-200 flex flex-col md:flex-row justify-between items-center text-[10px] text-gray-500 uppercase tracking-widest gap-4">
+            <span>© 2026 ASOS CLONE - Trang web của bạn</span>
+            <div className="flex gap-6">
+              <a href="#" className="hover:text-black">Privacy & Cookies</a>
+              <a href="#" className="hover:text-black">Ts&Cs</a>
+              <a href="#" className="hover:text-black">Accessibility</a>
+            </div>
           </div>
-
-        </div>
-
-        <div className="max-w-7xl mx-auto px-4 mt-8 pt-6 border-t border-gray-200 text-center text-[10px] text-gray-400 uppercase tracking-widest">
-          © 2026 ASOS CLONE - Trang web của bạn
         </div>
       </footer>
     </main>
