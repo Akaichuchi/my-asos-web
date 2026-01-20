@@ -33,6 +33,7 @@ export default function Home() {
     <main className="min-h-screen bg-white">
       <Header />
       
+      {/* Banner Quảng Cáo Giữ Nguyên Bố Cục 100% */}
       <div className="w-full relative h-[450px] md:h-[650px] bg-black overflow-hidden">
         <img 
           src="https://images.asos-media.com/products/asos-design-oversized-t-shirt-in-white-with-back-print/204344445-1-white" 
@@ -48,6 +49,7 @@ export default function Home() {
         </div>
       </div>
 
+      {/* 4 ô màu sắc tiện ích - Giữ Nguyên 100% */}
       <div className="grid grid-cols-2 md:grid-cols-4 w-full text-center">
         <div className="bg-[#d0ff00] p-6 md:p-8 flex items-center justify-center h-[160px] md:h-[200px]">
           <p className="font-bold text-xs md:text-base uppercase leading-tight">New here? <br/> Get your first-timer discount</p>
@@ -63,7 +65,7 @@ export default function Home() {
         </div>
       </div>
 
-      {/* ĐÃ SỬA LỖI: Thay dấu nháy đơn thành &apos; */}
+      {/* Brand Grid Section - Giữ Nguyên 100% */}
       <div className="max-w-7xl mx-auto px-4 mt-12 flex flex-col items-center">
         <button className="border-2 border-black px-8 py-3 font-bold text-[10px] md:text-xs uppercase tracking-[0.2em] hover:bg-black hover:text-white transition-all mb-10">
           Shop Women&apos;s Brands
@@ -101,11 +103,51 @@ export default function Home() {
         <h3 className="text-xl md:text-3xl font-bold uppercase tracking-widest italic">The biggest brands</h3>
       </div>
 
+      {/* Danh sách sản phẩm Giữ Nguyên 100% */}
       <div className="max-w-7xl mx-auto px-4 py-10">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8">
           {products.map((product: any) => (
             <ProductCard key={product.id} product={product} />
           ))}
+        </div>
+      </div>
+
+      {/* PHẦN CẬP NHẬT MỚI: Discover & Categories (Có thể nhấn được) */}
+      <div className="max-w-7xl mx-auto px-4 py-16 border-t border-gray-100">
+        <div className="flex flex-col items-center mb-16">
+          <button className="border-2 border-black px-8 py-3 font-bold text-[10px] md:text-xs uppercase tracking-[0.2em] hover:bg-black hover:text-white transition-all">
+            Shop Men&apos;s Brands
+          </button>
+        </div>
+
+        {/* Discover more from */}
+        <div className="mb-14">
+          <h3 className="text-lg md:text-xl font-bold mb-6 tracking-tight">Discover more from</h3>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-y-3 text-[11px] md:text-xs text-gray-500">
+            {["adidas", "AllSaints", "Calvin Klein", "Converse", "Crocs", "Dr Martens", "Levi&apos;s", "New Balance", "Puma", "The North Face", "Timberland", "Tommy Hilfiger"].map((brand) => (
+              <a key={brand} href="#" className="hover:underline hover:text-black transition-colors">{brand}</a>
+            ))}
+          </div>
+        </div>
+
+        {/* Women's categories */}
+        <div className="mb-14">
+          <h3 className="text-lg md:text-xl font-bold mb-6 tracking-tight">Women&apos;s categories</h3>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-y-3 text-[11px] md:text-xs text-gray-500">
+            {["Women's Activewear", "Blouses", "Women's Boots", "Dresses", "Women's Gifts", "Women's Jeans", "Women's Jewelry", "Women's Loungewear", "Women's Pants", "Women's Petite Clothing", "Women's Plus Size Clothing", "Women's Shirts", "Women's Shoes", "Women's Shorts", "Skirts", "Women's Suits", "Women's Swimwear", "Women's Tall Clothing", "Women's Tops", "Women's Tracksuits"].map((cat) => (
+              <a key={cat} href="#" className="hover:underline hover:text-black transition-colors">{cat}</a>
+            ))}
+          </div>
+        </div>
+
+        {/* Men's categories */}
+        <div className="mb-14">
+          <h3 className="text-lg md:text-xl font-bold mb-6 tracking-tight">Men&apos;s categories</h3>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-y-3 text-[11px] md:text-xs text-gray-500">
+            {["Men's Accessories", "Men's Bags", "Men's Coats & Jackets", "Gifts for Men", "Men's Jeans", "Men's Jewelry", "Men's Loungewear", "Men's Partywear", "Men's Plus Size Clothing", "Men's Polo Shirts", "Men's Shirts", "Men's Shoes", "Men's Shorts", "Men's Sportswear", "Men's Suits", "Men's Swimwear", "Men's Tall Clothing", "Men's Tracksuits", "Men's Two Piece Sets", "Men's Workwear"].map((cat) => (
+              <a key={cat} href="#" className="hover:underline hover:text-black transition-colors">{cat}</a>
+            ))}
+          </div>
         </div>
       </div>
       
