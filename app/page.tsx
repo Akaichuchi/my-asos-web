@@ -31,7 +31,7 @@ export default function Home() {
 
   return (
     <main className="min-h-screen bg-white">
-      {/* Banner Quảng Cáo - Đã cập nhật nút chuyển hướng */}
+      {/* Banner Quảng Cáo */}
       <div className="w-full relative h-[450px] md:h-[650px] bg-black overflow-hidden">
         <picture>
           <source 
@@ -50,14 +50,12 @@ export default function Home() {
             This is ASOS
           </h2>
           <div className="flex flex-col md:flex-row gap-3 mt-6">
-            {/* Nút Shop Womens đã được chuyển thành Link */}
             <Link 
               href="/women" 
               className="bg-white text-black px-10 py-3 font-bold text-xs hover:bg-black hover:text-white transition-all uppercase tracking-widest flex items-center justify-center min-w-[180px]"
             >
               Shop Womens
             </Link>
-            {/* Nút Shop Mens đã được chuyển thành Link */}
             <Link 
               href="/men" 
               className="bg-white text-black px-10 py-3 font-bold text-xs hover:bg-black hover:text-white transition-all uppercase tracking-widest flex items-center justify-center min-w-[180px]"
@@ -68,7 +66,7 @@ export default function Home() {
         </div>
       </div>
 
-      {/* 4 ô tiện ích - Giữ nguyên 100% */}
+      {/* 4 ô tiện ích */}
       <div className="grid grid-cols-2 md:grid-cols-4 w-full text-center">
         <div className="bg-[#d0ff00] p-6 md:p-8 flex items-center justify-center h-[160px] md:h-[200px]">
           <p className="font-bold text-xs md:text-base uppercase leading-tight">New here? <br/> Get your first-timer discount</p>
@@ -84,9 +82,27 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Brand Grid Section - Giữ nguyên 100% */}
-      <div className="max-w-7xl mx-auto px-4 mt-12 flex flex-col items-center">
-        {/* Nút Shop Brands cũng được cập nhật thành Link */}
+      {/* PHẦN MỚI THÊM: The biggest labels (Giống hình 100%) */}
+      <div className="max-w-7xl mx-auto px-4 py-12">
+        <h2 className="text-center text-3xl md:text-5xl font-bold mb-10 tracking-tight">The biggest labels</h2>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+          <div className="flex flex-col items-center">
+            <img src="/images/promo_bau_hp_ww_01v2.webp" alt="Adidas" className="w-full h-auto object-cover" />
+          </div>
+          <div className="flex flex-col items-center">
+            <img src="/images/promo_bau_hp_ww_02---v3.webp" alt="Mango" className="w-full h-auto object-cover" />
+          </div>
+          <div className="flex flex-col items-center">
+            <img src="/images/promo_bau_hp_ww_03.webp" alt="Asos Design" className="w-full h-auto object-cover" />
+          </div>
+          <div className="flex flex-col items-center">
+            <img src="/images/promo_bau_hp_ww_04.webp" alt="Topshop" className="w-full h-auto object-cover" />
+          </div>
+        </div>
+      </div>
+
+      {/* Brand Grid Section (Giữ nguyên) */}
+      <div className="max-w-7xl mx-auto px-4 mt-6 flex flex-col items-center">
         <Link 
           href="/brands" 
           className="border-2 border-black px-8 py-3 font-bold text-[10px] md:text-xs uppercase tracking-[0.2em] hover:bg-black hover:text-white transition-all mb-10 inline-block"
@@ -104,7 +120,7 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Danh sách sản phẩm - Giữ nguyên 100% */}
+      {/* Danh sách sản phẩm (Giữ nguyên) */}
       <div className="max-w-7xl mx-auto px-4 py-10">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8">
           {products.map((product: any) => (
