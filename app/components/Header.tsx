@@ -10,7 +10,6 @@ export default function Header() {
   const [isBagOpen, setIsBagOpen] = useState(false);
   const [activeCategory, setActiveCategory] = useState("");
 
-  // Quản lý trạng thái đăng nhập
   const [isLoggedIn, setIsLoggedIn] = useState(false); 
   const [user, setUser] = useState({ name: "" });
 
@@ -54,20 +53,20 @@ export default function Header() {
   const menuData = {
     categories: ["Sale Winter essentials", "View all Sale", "Sale Coats & Jackets", "Sale Sweaters & Cardigans", "Sale Shoes & Sneakers", "Sale Dresses", "Sale Tops", "Sale Jeans", "Sale Activewear"],
     prices: [
-      { label: "$25 and Under", img: "https://images.asos-media.com/products/asos-design-oversized-t-shirt-in-white/204344445-1-white?$n_320w$", path: "/women/sale/under-25" },
-      { label: "$50 and Under", img: "https://images.asos-media.com/products/asos-design-slim-jeans-in-blue/204123456-1-blue?$n_320w$", path: "/women/sale/under-50" },
-      { label: "$75 and Under", img: "https://images.asos-media.com/products/asos-design-sneakers-in-white/203987654-1-white?$n_320w$", path: "/women/sale/under-75" },
-      { label: "$100 and Under", img: "https://images.asos-media.com/products/asos-design-heavyweight-t-shirt-in-black/204556677-1-black?$n_320w$", path: "/women/sale/under-100" }
+      { label: "$25 and Under", img: "https://images.asos-media.com/products/asos-design-oversized-t-shirt-in-white/204344445-1-white?$n_320w$", path: "/women/sale" },
+      { label: "$50 and Under", img: "https://images.asos-media.com/products/asos-design-slim-jeans-in-blue/204123456-1-blue?$n_320w$", path: "/women/sale" },
+      { label: "$75 and Under", img: "https://images.asos-media.com/products/asos-design-sneakers-in-white/203987654-1-white?$n_320w$", path: "/women/sale" },
+      { label: "$100 and Under", img: "https://images.asos-media.com/products/asos-design-heavyweight-t-shirt-in-black/204556677-1-black?$n_320w$", path: "/women/sale" }
     ],
     brands: ["A-Z of Brands", "adidas", "ASOS Design", "Free People", "Mango", "Miss Selfridge", "New Balance", "Nike", "Topshop"],
     mobileNav: [
       { name: "Home", img: "https://images.asos-media.com/navigation/ww_gbl_home_117075775_1x1", path: "/" },
-      { name: "Sale", img: "https://images.asos-media.com/navigation/ww_sale_gbl_1734344_1x1", path: "/women/sale" },
-      { name: "New in", img: "https://images.asos-media.com/navigation/ww_gbl_new_in_1615715_1x1", path: "/women/new-in" },
-      { name: "Clothing", img: "https://images.asos-media.com/navigation/ww_gbl_clothing_8799_1x1", path: "/women/clothing" },
-      { name: "Dresses", img: "https://images.asos-media.com/navigation/ww_gbl_dresses_8799_1x1", path: "/women/dresses" },
-      { name: "Shoes", img: "https://images.asos-media.com/navigation/ww_gbl_shoes_4172_1x1", path: "/women/shoes" },
-      { name: "Accessories", img: "https://images.asos-media.com/navigation/ww_gbl_accessories_4174_1x1", path: "/women/accessories" }
+      { name: "Sale", img: "https://images.asos-media.com/navigation/ww_sale_gbl_1734344_1x1", path: "/women" },
+      { name: "New in", img: "https://images.asos-media.com/navigation/ww_gbl_new_in_1615715_1x1", path: "/women" },
+      { name: "Clothing", img: "https://images.asos-media.com/navigation/ww_gbl_clothing_8799_1x1", path: "/women" },
+      { name: "Dresses", img: "https://images.asos-media.com/navigation/ww_gbl_dresses_8799_1x1", path: "/women" },
+      { name: "Shoes", img: "https://images.asos-media.com/navigation/ww_gbl_shoes_4172_1x1", path: "/women" },
+      { name: "Accessories", img: "https://images.asos-media.com/navigation/ww_gbl_accessories_4174_1x1", path: "/women" }
     ]
   };
 
@@ -92,8 +91,8 @@ export default function Header() {
     <header className="sticky top-0 z-50 w-full bg-white border-b border-gray-200 font-sans text-black">
       {/* 1. TOP BAR */}
       <div className="bg-[#eeeeee] text-gray-500 text-[10px] py-1.5 px-4 flex justify-end gap-5 uppercase font-medium border-b border-gray-200">
-        <Link href="/marketplace" className="hover:text-black transition-colors">Marketplace</Link>
-        <Link href="/help" className="hover:text-black transition-colors">Help & FAQs</Link>
+        <Link href="/" className="hover:text-black transition-colors">Marketplace</Link>
+        <Link href="/" className="hover:text-black transition-colors">Help & FAQs</Link>
         <button className="flex items-center gap-1">
           <img src="https://flagcdn.com/w20/vn.png" className="w-3.5 h-2.5 object-cover" alt="VN" />
         </button>
@@ -137,34 +136,33 @@ export default function Header() {
                 <div className="absolute right-0 top-full w-64 bg-white shadow-2xl border border-gray-100 z-[100] p-5 text-black">
                   {!isLoggedIn ? (
                     <div className="flex gap-3 mb-5 border-b pb-5">
-                      <Link href="/signin" className="flex-1 bg-black text-white py-2 text-[11px] font-black uppercase text-center tracking-widest">Sign In</Link>
-                      <Link href="/join" className="flex-1 border border-black py-2 text-[11px] font-bold uppercase text-center tracking-widest">Join</Link>
+                      <Link href="/login" className="flex-1 bg-black text-white py-2 text-[11px] font-black uppercase text-center tracking-widest">Sign In</Link>
+                      <Link href="/register" className="flex-1 border border-black py-2 text-[11px] font-bold uppercase text-center tracking-widest">Join</Link>
                     </div>
                   ) : (
                     <div className="mb-5 border-b pb-2 text-[14px] font-black italic uppercase">Hi {user.name}</div>
                   )}
                   <ul className="space-y-4 text-[13px] font-medium">
-                    <li><Link href="/my-account" className="hover:underline flex items-center gap-3">👤 My Account</Link></li>
-                    <li><Link href="/orders" className="hover:underline flex items-center gap-3">🛍️ My Orders</Link></li>
+                    <li><Link href="/" className="hover:underline flex items-center gap-3">👤 My Account</Link></li>
+                    <li><Link href="/" className="hover:underline flex items-center gap-3">🛍️ My Orders</Link></li>
                     {isLoggedIn && <li onClick={handleSignOut} className="hover:underline cursor-pointer text-gray-400">Sign Out</li>}
                   </ul>
                 </div>
               )}
             </div>
-            <div className="relative h-full flex items-center" ref={wishlistRef}>
-              <button onClick={() => setIsWishlistOpen(!isWishlistOpen)} className="p-2 hover:bg-[#525252] transition-colors rounded-full"><svg className="w-6 h-6 md:w-7 md:h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /></svg></button>
-            </div>
-            <div className="relative h-full flex items-center" ref={bagRef}>
-              <button onClick={() => setIsBagOpen(!isBagOpen)} className="p-2 hover:bg-[#525252] transition-colors rounded-full relative">
+            {/* Wishlist & Bag trỏ về trang chủ để tránh 404 */}
+            <Link href="/" className="relative h-full flex items-center p-2 hover:bg-[#525252] transition-colors rounded-full">
+                <svg className="w-6 h-6 md:w-7 md:h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /></svg>
+            </Link>
+            <Link href="/" className="relative h-full flex items-center p-2 hover:bg-[#525252] transition-colors rounded-full">
                 <svg className="w-6 h-6 md:w-7 md:h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" d="M16 11V7a4 4 0 11-8 0v4M5 9h14l1 12H4L5 9z" /></svg>
                 <span className="absolute bottom-1 right-1 bg-[#d01345] text-white text-[9px] w-4 h-4 rounded-full flex items-center justify-center font-bold">0</span>
-              </button>
-            </div>
+            </Link>
           </div>
         </div>
       </div>
 
-      {/* 3. SIDEBAR MOBILE - TỐI ƯU CẬP NHẬT */}
+      {/* 3. SIDEBAR MOBILE */}
       <div className={`fixed inset-0 z-[200] transition-all duration-300 ${isSideMenuOpen ? "visible" : "invisible"}`}>
         <div className={`absolute inset-0 bg-black/60 transition-opacity duration-300 ${isSideMenuOpen ? "opacity-100" : "opacity-0"}`} onClick={() => setIsSideMenuOpen(false)} />
         <div className={`absolute top-0 left-0 w-[85%] max-w-[340px] h-full bg-white transform transition-transform duration-300 flex flex-col ${isSideMenuOpen ? "translate-x-0" : "-translate-x-full"}`}>
@@ -176,7 +174,7 @@ export default function Header() {
           </div>
 
           <div className="flex-1 overflow-y-auto">
-            <Link href="/women/sale" onClick={() => setIsSideMenuOpen(false)} className="p-4 border-b border-gray-100 bg-white block">
+            <Link href="/women" onClick={() => setIsSideMenuOpen(false)} className="p-4 border-b border-gray-100 bg-white block">
               <span className="text-[11px] font-bold text-gray-500 uppercase tracking-widest block mb-1">The Winter Sale: last chance</span>
               <div className="flex justify-between items-center">
                 <span className="text-[20px] font-black italic tracking-tighter uppercase">Up to 70% off</span>
@@ -195,11 +193,11 @@ export default function Header() {
 
             <div className="bg-[#EEEEEE] p-4 text-[11px] font-black uppercase tracking-[0.2em] text-gray-500">More ASOS</div>
             <div className="grid grid-cols-2 gap-px bg-gray-200 border-b border-gray-200">
-               <Link href="/premier" onClick={() => setIsSideMenuOpen(false)} className="bg-white p-6 text-center">
+               <Link href="/" onClick={() => setIsSideMenuOpen(false)} className="bg-white p-6 text-center">
                  <span className="text-[10px] font-black uppercase tracking-widest leading-tight">ASOS Premier</span><br/>
                  <span className="text-[9px] text-gray-500 lowercase">Unlimited shipping</span>
                </Link>
-               <Link href="/students" onClick={() => setIsSideMenuOpen(false)} className="bg-white p-6 text-center border-l border-gray-50">
+               <Link href="/" onClick={() => setIsSideMenuOpen(false)} className="bg-white p-6 text-center border-l border-gray-50">
                  <span className="text-[10px] font-black uppercase tracking-widest leading-tight">10% Student</span><br/>
                  <span className="text-[9px] text-gray-500 lowercase">Discount</span>
                </Link>
@@ -210,20 +208,20 @@ export default function Header() {
                  Hi {isLoggedIn ? user.name : "Akai"}
                </h4>
                <ul className="space-y-6 text-[13px] font-bold uppercase tracking-widest">
-                 <li><Link href="/my-account" onClick={() => setIsSideMenuOpen(false)} className="flex items-center gap-4">👤 My Account</Link></li>
-                 <li><Link href="/orders" onClick={() => setIsSideMenuOpen(false)} className="flex items-center gap-4">📦 My Orders</Link></li>
-                 <li><Link href="/returns" onClick={() => setIsSideMenuOpen(false)} className="flex items-center gap-4">↩️ My Returns</Link></li>
+                 <li><Link href="/" onClick={() => setIsSideMenuOpen(false)} className="flex items-center gap-4">👤 My Account</Link></li>
+                 <li><Link href="/" onClick={() => setIsSideMenuOpen(false)} className="flex items-center gap-4">📦 My Orders</Link></li>
+                 <li><Link href="/" onClick={() => setIsSideMenuOpen(false)} className="flex items-center gap-4">↩️ My Returns</Link></li>
                  {isLoggedIn ? (
                    <li onClick={handleSignOut} className="flex items-center gap-4 text-gray-400 cursor-pointer">Sign Out</li>
                  ) : (
-                   <li><Link href="/signin" onClick={() => setIsSideMenuOpen(false)} className="flex items-center gap-4 text-gray-400 underline decoration-1 underline-offset-4">Sign In</Link></li>
+                   <li><Link href="/login" onClick={() => setIsSideMenuOpen(false)} className="flex items-center gap-4 text-gray-400 underline decoration-1 underline-offset-4">Sign In</Link></li>
                  )}
                </ul>
             </div>
           </div>
           
           <div className="p-4 border-t bg-gray-50 flex justify-between items-center text-[11px] font-bold sticky bottom-0">
-             <Link href="/settings/country" className="flex items-center gap-2 uppercase tracking-widest italic">You're in 🇻🇳 | Change</Link>
+             <Link href="/" className="flex items-center gap-2 uppercase tracking-widest italic">You're in 🇻🇳 | Change</Link>
              <img src="https://flagcdn.com/w40/vn.png" className="w-5 shadow-sm" alt="VN"/>
           </div>
         </div>
@@ -236,40 +234,6 @@ export default function Header() {
             <button key={item} onClick={() => handleCategoryClick(item)} className={`px-2 py-1 transition-colors hover:bg-white hover:text-black ${item === "Sale" ? "bg-[#d01345] text-white" : ""} ${activeCategory === item && isMegaMenuOpen ? "bg-white !text-black" : ""}`}>{item}</button>
           ))}
         </div>
-        {/* MEGA MENU */}
-        {isMegaMenuOpen && (
-          <div className="absolute top-full left-0 w-full bg-white border-b border-gray-200 shadow-2xl z-50 text-black">
-            <div className="max-w-7xl mx-auto grid grid-cols-3 gap-8 p-10">
-              <div>
-                <h3 className="font-black text-[11px] mb-6 tracking-widest uppercase border-b pb-2">Shop by Category</h3>
-                <ul className="space-y-2.5 text-gray-600 text-[12px]">
-                  {menuData.categories.map((cat, i) => (
-                    <li key={i}><Link href={`/category/${cat.toLowerCase().replace(/ /g, '-')}`} className="hover:underline">{cat}</Link></li>
-                  ))}
-                </ul>
-              </div>
-              <div className="border-x border-gray-100 px-10">
-                <h3 className="font-black text-[11px] mb-6 tracking-widest uppercase border-b pb-2">Shop by Price</h3>
-                <div className="grid grid-cols-2 gap-6">
-                  {menuData.prices.map((p, i) => (
-                    <Link href={p.path} key={i} className="flex flex-col items-center group">
-                      <img src={p.img} className="w-16 h-16 rounded-full object-cover border border-gray-200 group-hover:border-black transition-all" alt="" />
-                      <span className="text-[10px] mt-2 font-bold group-hover:underline">{p.label}</span>
-                    </Link>
-                  ))}
-                </div>
-              </div>
-              <div>
-                <h3 className="font-black text-[11px] mb-6 tracking-widest uppercase border-b pb-2">Shop by Brand</h3>
-                <ul className="space-y-2.5 text-gray-600 text-[12px]">
-                  {menuData.brands.map((b, i) => (
-                    <li key={i}><Link href={`/brand/${b.toLowerCase().replace(/ /g, '-')}`} className="hover:underline">{b}</Link></li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-          </div>
-        )}
       </div>
     </header>
   );
