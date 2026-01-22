@@ -53,20 +53,20 @@ export default function Header() {
   const menuData = {
     categories: ["Sale Winter essentials", "View all Sale", "Sale Coats & Jackets", "Sale Sweaters & Cardigans", "Sale Shoes & Sneakers", "Sale Dresses", "Sale Tops", "Sale Jeans", "Sale Activewear"],
     prices: [
-      { label: "$25 and Under", img: "https://images.asos-media.com/products/asos-design-oversized-t-shirt-in-white/204344445-1-white?$n_320w$", path: "/women/sale" },
-      { label: "$50 and Under", img: "https://images.asos-media.com/products/asos-design-slim-jeans-in-blue/204123456-1-blue?$n_320w$", path: "/women/sale" },
-      { label: "$75 and Under", img: "https://images.asos-media.com/products/asos-design-sneakers-in-white/203987654-1-white?$n_320w$", path: "/women/sale" },
-      { label: "$100 and Under", img: "https://images.asos-media.com/products/asos-design-heavyweight-t-shirt-in-black/204556677-1-black?$n_320w$", path: "/women/sale" }
+      { label: "$25 and Under", img: "https://images.asos-media.com/products/asos-design-oversized-t-shirt-in-white/204344445-1-white?$n_320w$", path: "/" },
+      { label: "$50 and Under", img: "https://images.asos-media.com/products/asos-design-slim-jeans-in-blue/204123456-1-blue?$n_320w$", path: "/" },
+      { label: "$75 and Under", img: "https://images.asos-media.com/products/asos-design-sneakers-in-white/203987654-1-white?$n_320w$", path: "/" },
+      { label: "$100 and Under", img: "https://images.asos-media.com/products/asos-design-heavyweight-t-shirt-in-black/204556677-1-black?$n_320w$", path: "/" }
     ],
     brands: ["A-Z of Brands", "adidas", "ASOS Design", "Free People", "Mango", "Miss Selfridge", "New Balance", "Nike", "Topshop"],
     mobileNav: [
       { name: "Home", img: "https://images.asos-media.com/navigation/ww_gbl_home_117075775_1x1", path: "/" },
-      { name: "Sale", img: "https://images.asos-media.com/navigation/ww_sale_gbl_1734344_1x1", path: "/women" },
-      { name: "New in", img: "https://images.asos-media.com/navigation/ww_gbl_new_in_1615715_1x1", path: "/women" },
-      { name: "Clothing", img: "https://images.asos-media.com/navigation/ww_gbl_clothing_8799_1x1", path: "/women" },
-      { name: "Dresses", img: "https://images.asos-media.com/navigation/ww_gbl_dresses_8799_1x1", path: "/women" },
-      { name: "Shoes", img: "https://images.asos-media.com/navigation/ww_gbl_shoes_4172_1x1", path: "/women" },
-      { name: "Accessories", img: "https://images.asos-media.com/navigation/ww_gbl_accessories_4174_1x1", path: "/women" }
+      { name: "Sale", img: "https://images.asos-media.com/navigation/ww_sale_gbl_1734344_1x1", path: "/" },
+      { name: "New in", img: "https://images.asos-media.com/navigation/ww_gbl_new_in_1615715_1x1", path: "/" },
+      { name: "Clothing", img: "https://images.asos-media.com/navigation/ww_gbl_clothing_8799_1x1", path: "/" },
+      { name: "Dresses", img: "https://images.asos-media.com/navigation/ww_gbl_dresses_8799_1x1", path: "/" },
+      { name: "Shoes", img: "https://images.asos-media.com/navigation/ww_gbl_shoes_4172_1x1", path: "/" },
+      { name: "Accessories", img: "https://images.asos-media.com/navigation/ww_gbl_accessories_4174_1x1", path: "/" }
     ]
   };
 
@@ -108,8 +108,8 @@ export default function Header() {
           <Link href="/" className="text-3xl md:text-[34px] font-black tracking-tighter uppercase decoration-none">asos</Link>
 
           <nav className="hidden md:flex gap-0 font-bold text-[13px] tracking-widest h-full items-center ml-4">
-            <Link href="/women" className="hover:bg-[#525252] h-full flex items-center px-6 transition-colors border-r border-gray-600">WOMEN</Link>
-            <Link href="/men" className="hover:bg-[#525252] h-full flex items-center px-6 transition-colors border-r border-gray-600">MEN</Link>
+            <Link href="/" className="hover:bg-[#525252] h-full flex items-center px-6 transition-colors border-r border-gray-600">WOMEN</Link>
+            <Link href="/" className="hover:bg-[#525252] h-full flex items-center px-6 transition-colors border-r border-gray-600">MEN</Link>
           </nav>
 
           {/* SEARCH BOX */}
@@ -136,8 +136,9 @@ export default function Header() {
                 <div className="absolute right-0 top-full w-64 bg-white shadow-2xl border border-gray-100 z-[100] p-5 text-black">
                   {!isLoggedIn ? (
                     <div className="flex gap-3 mb-5 border-b pb-5">
-                      <Link href="/login" className="flex-1 bg-black text-white py-2 text-[11px] font-black uppercase text-center tracking-widest">Sign In</Link>
-                      <Link href="/register" className="flex-1 border border-black py-2 text-[11px] font-bold uppercase text-center tracking-widest">Join</Link>
+                      {/* FIX: Trỏ về "/" để không lỗi 404 */}
+                      <Link href="/" onClick={() => setIsAccountOpen(false)} className="flex-1 bg-black text-white py-2 text-[11px] font-black uppercase text-center tracking-widest">Sign In</Link>
+                      <Link href="/" onClick={() => setIsAccountOpen(false)} className="flex-1 border border-black py-2 text-[11px] font-bold uppercase text-center tracking-widest">Join</Link>
                     </div>
                   ) : (
                     <div className="mb-5 border-b pb-2 text-[14px] font-black italic uppercase">Hi {user.name}</div>
@@ -150,7 +151,6 @@ export default function Header() {
                 </div>
               )}
             </div>
-            {/* Wishlist & Bag trỏ về trang chủ để tránh 404 */}
             <Link href="/" className="relative h-full flex items-center p-2 hover:bg-[#525252] transition-colors rounded-full">
                 <svg className="w-6 h-6 md:w-7 md:h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /></svg>
             </Link>
@@ -174,7 +174,8 @@ export default function Header() {
           </div>
 
           <div className="flex-1 overflow-y-auto">
-            <Link href="/women" onClick={() => setIsSideMenuOpen(false)} className="p-4 border-b border-gray-100 bg-white block">
+            {/* FIX: Trỏ về "/" để không lỗi 404 */}
+            <Link href="/" onClick={() => setIsSideMenuOpen(false)} className="p-4 border-b border-gray-100 bg-white block">
               <span className="text-[11px] font-bold text-gray-500 uppercase tracking-widest block mb-1">The Winter Sale: last chance</span>
               <div className="flex justify-between items-center">
                 <span className="text-[20px] font-black italic tracking-tighter uppercase">Up to 70% off</span>
@@ -193,30 +194,31 @@ export default function Header() {
 
             <div className="bg-[#EEEEEE] p-4 text-[11px] font-black uppercase tracking-[0.2em] text-gray-500">More ASOS</div>
             <div className="grid grid-cols-2 gap-px bg-gray-200 border-b border-gray-200">
-               <Link href="/" onClick={() => setIsSideMenuOpen(false)} className="bg-white p-6 text-center">
-                 <span className="text-[10px] font-black uppercase tracking-widest leading-tight">ASOS Premier</span><br/>
-                 <span className="text-[9px] text-gray-500 lowercase">Unlimited shipping</span>
-               </Link>
-               <Link href="/" onClick={() => setIsSideMenuOpen(false)} className="bg-white p-6 text-center border-l border-gray-50">
-                 <span className="text-[10px] font-black uppercase tracking-widest leading-tight">10% Student</span><br/>
-                 <span className="text-[9px] text-gray-500 lowercase">Discount</span>
-               </Link>
+                <Link href="/" onClick={() => setIsSideMenuOpen(false)} className="bg-white p-6 text-center">
+                  <span className="text-[10px] font-black uppercase tracking-widest leading-tight">ASOS Premier</span><br/>
+                  <span className="text-[9px] text-gray-500 lowercase">Unlimited shipping</span>
+                </Link>
+                <Link href="/" onClick={() => setIsSideMenuOpen(false)} className="bg-white p-6 text-center border-l border-gray-50">
+                  <span className="text-[10px] font-black uppercase tracking-widest leading-tight">10% Student</span><br/>
+                  <span className="text-[9px] text-gray-500 lowercase">Discount</span>
+                </Link>
             </div>
 
             <div className="p-5">
-               <h4 className="text-[18px] font-black italic mb-6 uppercase tracking-tighter">
-                 Hi {isLoggedIn ? user.name : "Akai"}
-               </h4>
-               <ul className="space-y-6 text-[13px] font-bold uppercase tracking-widest">
-                 <li><Link href="/" onClick={() => setIsSideMenuOpen(false)} className="flex items-center gap-4">👤 My Account</Link></li>
-                 <li><Link href="/" onClick={() => setIsSideMenuOpen(false)} className="flex items-center gap-4">📦 My Orders</Link></li>
-                 <li><Link href="/" onClick={() => setIsSideMenuOpen(false)} className="flex items-center gap-4">↩️ My Returns</Link></li>
-                 {isLoggedIn ? (
-                   <li onClick={handleSignOut} className="flex items-center gap-4 text-gray-400 cursor-pointer">Sign Out</li>
-                 ) : (
-                   <li><Link href="/login" onClick={() => setIsSideMenuOpen(false)} className="flex items-center gap-4 text-gray-400 underline decoration-1 underline-offset-4">Sign In</Link></li>
-                 )}
-               </ul>
+                <h4 className="text-[18px] font-black italic mb-6 uppercase tracking-tighter">
+                  Hi {isLoggedIn ? user.name : "Akai"}
+                </h4>
+                <ul className="space-y-6 text-[13px] font-bold uppercase tracking-widest">
+                  <li><Link href="/" onClick={() => setIsSideMenuOpen(false)} className="flex items-center gap-4">👤 My Account</Link></li>
+                  <li><Link href="/" onClick={() => setIsSideMenuOpen(false)} className="flex items-center gap-4">📦 My Orders</Link></li>
+                  <li><Link href="/" onClick={() => setIsSideMenuOpen(false)} className="flex items-center gap-4">↩️ My Returns</Link></li>
+                  {isLoggedIn ? (
+                    <li onClick={handleSignOut} className="flex items-center gap-4 text-gray-400 cursor-pointer">Sign Out</li>
+                  ) : (
+                    /* FIX: Trỏ về "/" để không lỗi 404 */
+                    <li><Link href="/" onClick={() => setIsSideMenuOpen(false)} className="flex items-center gap-4 text-gray-400 underline decoration-1 underline-offset-4">Sign In</Link></li>
+                  )}
+                </ul>
             </div>
           </div>
           
