@@ -37,10 +37,10 @@ export default function WomenPage() {
       {/* 2. HERO VIDEO SECTION (GIỮ NGUYÊN - KHÔNG CÓ TIÊU ĐỀ ĐÈ LÊN) */}
       <section className="relative w-full overflow-hidden bg-[#F6F6F6]">
         <video autoPlay muted loop playsInline className="hidden md:block w-full h-auto object-cover">
-          <source src="/images/videodaidienjpc.mp4" type="video/mp4" />
+          <source src="/videodaidienjpc.mp4" type="video/mp4" />
         </video>
         <video autoPlay muted loop playsInline className="block md:hidden w-full h-auto object-cover">
-          <source src="/images/videodt.mp4" type="video/mp4" />
+          <source src="/videodt.mp4" type="video/mp4" />
         </video>
         
         <div className="absolute bottom-4 right-4 text-white text-[10px] font-medium opacity-80">
