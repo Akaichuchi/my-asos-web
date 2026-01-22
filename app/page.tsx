@@ -30,23 +30,38 @@ export default function Home() {
 
   return (
     <main className="min-h-screen bg-white">
-      {/* Banner Quảng Cáo */}
+      {/* Banner Quảng Cáo - Đã cập nhật ảnh sắc nét cho riêng Mobile & Desktop */}
       <div className="w-full relative h-[450px] md:h-[650px] bg-black overflow-hidden">
-        <img 
-          src="https://images.asos-media.com/products/asos-design-oversized-t-shirt-in-white-with-back-print/204344445-1-white" 
-          className="w-full h-full object-cover opacity-85"
-          alt="ASOS Campaign 2026"
-        />
-        <div className="absolute inset-0 flex flex-col items-center justify-center text-white p-4 text-center">
-          <h2 className="text-6xl md:text-9xl font-black italic tracking-tighter uppercase">This is ASOS</h2>
+        <picture>
+          {/* Hình nền cho Điện thoại */}
+          <source 
+            media="(max-width: 767px)" 
+            srcSet="/nenchinhmobile.webp" 
+          />
+          {/* Hình nền cho Máy tính */}
+          <img 
+            src="/nenchinhdesktop.webp" 
+            className="w-full h-full object-cover opacity-90"
+            alt="ASOS Campaign 2026"
+          />
+        </picture>
+
+        <div className="absolute inset-0 flex flex-col items-center justify-center text-white p-4 text-center z-10">
+          <h2 className="text-6xl md:text-9xl font-black italic tracking-tighter uppercase drop-shadow-2xl">
+            This is ASOS
+          </h2>
           <div className="flex flex-col md:flex-row gap-3 mt-6">
-            <button className="bg-white text-black px-10 py-3 font-bold text-xs hover:bg-gray-200 transition-colors uppercase tracking-widest">Shop Womens</button>
-            <button className="bg-white text-black px-10 py-3 font-bold text-xs hover:bg-gray-200 transition-colors uppercase tracking-widest">Shop Mens</button>
+            <button className="bg-white text-black px-10 py-3 font-bold text-xs hover:bg-black hover:text-white transition-all uppercase tracking-widest">
+              Shop Womens
+            </button>
+            <button className="bg-white text-black px-10 py-3 font-bold text-xs hover:bg-black hover:text-white transition-all uppercase tracking-widest">
+              Shop Mens
+            </button>
           </div>
         </div>
       </div>
 
-      {/* 4 ô tiện ích */}
+      {/* 4 ô tiện ích - Giữ nguyên 100% */}
       <div className="grid grid-cols-2 md:grid-cols-4 w-full text-center">
         <div className="bg-[#d0ff00] p-6 md:p-8 flex items-center justify-center h-[160px] md:h-[200px]">
           <p className="font-bold text-xs md:text-base uppercase leading-tight">New here? <br/> Get your first-timer discount</p>
@@ -62,7 +77,7 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Brand Grid Section */}
+      {/* Brand Grid Section - Giữ nguyên 100% */}
       <div className="max-w-7xl mx-auto px-4 mt-12 flex flex-col items-center">
         <button className="border-2 border-black px-8 py-3 font-bold text-[10px] md:text-xs uppercase tracking-[0.2em] hover:bg-black hover:text-white transition-all mb-10">
           Shop Women&apos;s Brands
@@ -75,11 +90,11 @@ export default function Home() {
                 <img src="https://upload.wikimedia.org/wikipedia/commons/2/20/Adidas_Logo.svg" className="w-16 md:w-24 invert opacity-90" alt="Adidas Logo" />
             </div>
           </div>
-          {/* ... Các ô brand khác giữ nguyên ... */}
+          {/* Các ô brand khác vẫn giữ nguyên như cũ */}
         </div>
       </div>
 
-      {/* Danh sách sản phẩm */}
+      {/* Danh sách sản phẩm - Giữ nguyên 100% */}
       <div className="max-w-7xl mx-auto px-4 py-10">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8">
           {products.map((product: any) => (
@@ -87,8 +102,6 @@ export default function Home() {
           ))}
         </div>
       </div>
-
-      {/* FOOTER ĐÃ BỊ LOẠI BỎ TẠI ĐÂY ĐỂ TRÁNH LẶP LẠI */}
     </main>
   );
 }
