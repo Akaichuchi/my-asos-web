@@ -1,79 +1,91 @@
 "use client";
 import Link from "next/link";
 
+/**
+ * Footer Component - Cập nhật hiển thị Snapchat và giữ nguyên bố cục lề trái
+ */
 export default function Footer() {
   return (
     <footer className="w-full font-sans bg-white">
-      {/* 1. THANH SOCIAL & PAYMENT - Kích thước lớn và đồng đều */}
-      <div className="w-full py-6 border-t border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 flex flex-col md:flex-row justify-center items-center gap-8 md:gap-12">
-          {/* Social Icons */}
-          <div className="flex items-center gap-8">
-            <img src="/snapchat.webp" className="w-10 h-10 object-contain cursor-pointer" alt="Snapchat" />
-            <img src="https://upload.wikimedia.org/wikipedia/commons/b/b8/2021_Facebook_icon.svg" className="w-10 h-10 cursor-pointer" alt="FB" />
-            <img src="https://upload.wikimedia.org/wikipedia/commons/e/e7/Instagram_logo_2016.svg" className="w-10 h-10 cursor-pointer" alt="IG" />
-            <div className="h-10 w-[1px] bg-gray-300 mx-2 hidden md:block"></div>
+      {/* 1. THANH SOCIAL & PAYMENT - Giữ kích thước đồng nhất */}
+      <div className="w-full py-5 border-t border-gray-200">
+        <div className="max-w-7xl mx-auto px-4 flex flex-col md:flex-row justify-center items-center gap-6 md:gap-10">
+          {/* Nhóm Social */}
+          <div className="flex items-center gap-6">
+            <img src="/snapchat.webp" className="w-9 h-9 object-contain" alt="Snapchat" />
+            <img src="https://upload.wikimedia.org/wikipedia/commons/b/b8/2021_Facebook_icon.svg" className="w-9 h-9" alt="FB" />
+            <img src="https://upload.wikimedia.org/wikipedia/commons/e/e7/Instagram_logo_2016.svg" className="w-9 h-9" alt="IG" />
+            <div className="h-9 w-[1px] bg-gray-300 mx-2 hidden md:block"></div>
           </div>
 
-          {/* Payment Methods - Phóng to để cân bằng với Social */}
-          <div className="flex flex-wrap justify-center gap-6 items-center">
-            <img src="https://images.asos-media.com/navigation/visa-png" className="h-6 md:h-7" alt="Visa" />
-            <img src="https://images.asos-media.com/navigation/mastercard-png" className="h-8 md:h-10" alt="MC" />
-            <img src="https://images.asos-media.com/navigation/pay-pal-png" className="h-6 md:h-7" alt="PP" />
-            <img src="https://images.asos-media.com/navigation/american-express-png" className="h-6 md:h-7" alt="Amex" />
-            <img src="https://images.asos-media.com/navigation/visa-electron-png" className="h-6 md:h-7" alt="VisaE" />
+          {/* Nhóm Thanh toán */}
+          <div className="flex flex-wrap justify-center gap-5 items-center">
+            <img src="https://images.asos-media.com/navigation/visa-png" className="h-4 md:h-5" alt="Visa" />
+            <img src="https://images.asos-media.com/navigation/mastercard-png" className="h-7 md:h-8" alt="MC" />
+            <img src="https://images.asos-media.com/navigation/pay-pal-png" className="h-4 md:h-5" alt="PP" />
+            <img src="https://images.asos-media.com/navigation/american-express-png" className="h-4 md:h-5" alt="Amex" />
+            <img src="https://images.asos-media.com/navigation/visa-electron-png" className="h-4 md:h-5" alt="VisaE" />
           </div>
         </div>
       </div>
 
-      {/* 2. PHẦN NỘI DUNG CHÍNH (Nền xám/đen) */}
-      <div className="w-full bg-[#4a4a4a] md:bg-[#2d2d2d] text-white pt-10 pb-8">
-        <div className="max-w-7xl mx-auto px-6 flex flex-col items-center">
+      {/* 2. PHẦN NỘI DUNG CHÍNH - GIỮ LỀ TRÁI (LEFT ALIGN) NHƯ BAN ĐẦU */}
+      <div className="w-full bg-[#2d2d2d] text-white pt-12 pb-10">
+        <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-12 text-left">
           
-          {/* Logo & App Download (Hiển thị chính trên Mobile) */}
-          <div className="flex flex-col items-center mb-8">
-            <div className="flex items-center gap-4 mb-6">
-              <div className="w-16 h-16 bg-black rounded-2xl flex items-center justify-center border border-gray-500 shadow-xl">
-                <span className="text-white font-black text-4xl italic">n</span>
+          {/* MỤC DOWNLOAD APP - CĂN TRÁI 100% */}
+          <div className="flex flex-col items-start">
+            <div className="flex items-center gap-3 mb-5">
+              <div className="w-14 h-14 bg-black rounded-2xl flex items-center justify-center border border-gray-600 shadow-xl">
+                <span className="text-white font-black text-3xl italic">n</span>
               </div>
-              <div className="text-left">
-                <p className="font-black text-lg tracking-tight uppercase">NEWEGG</p>
-                <div className="flex text-white text-sm">★★★★★ <span className="ml-1 text-gray-300 text-xs">1.8m</span></div>
+              <div>
+                <p className="font-black text-sm tracking-tight uppercase">NEWEGG</p>
+                <div className="flex text-white text-xs">★★★★★ <span className="ml-1 text-gray-400">1.8m</span></div>
               </div>
             </div>
-            <button className="bg-black border-2 border-white text-white px-10 py-3 text-xs font-black uppercase tracking-[0.2em] hover:bg-white hover:text-black transition-all">
+            <button className="bg-black border border-white text-white px-6 py-2.5 text-[11px] font-black uppercase tracking-widest hover:bg-white hover:text-black transition-all">
               DOWNLOAD THE APP
             </button>
           </div>
 
-          {/* Desktop Links (Ẩn trên điện thoại theo hình mẫu) */}
-          <div className="hidden md:grid grid-cols-3 gap-20 w-full border-t border-gray-600 pt-10 mb-10">
-            <div>
-              <h4 className="font-black text-[13px] uppercase tracking-widest mb-6">Help & Information</h4>
-              <ul className="space-y-4 text-[12px] text-gray-300">
-                <li>Help</li><li>Track order</li><li>Delivery & returns</li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-black text-[13px] uppercase tracking-widest mb-6">About NEWEGG</h4>
-              <ul className="space-y-4 text-[12px] text-gray-300">
-                <li>About us</li><li>Careers</li><li>Corporate responsibility</li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-black text-[13px] uppercase tracking-widest mb-6">More From NEWEGG</h4>
-              <ul className="space-y-4 text-[12px] text-gray-300">
-                <li>Mobile apps</li><li>Gift vouchers</li><li>Black Friday</li>
-              </ul>
-            </div>
+          {/* Help & Info - Chỉ hiện trên Desktop để gọn giao diện mobile như hình */}
+          <div className="hidden md:block">
+            <h4 className="font-black text-[13px] uppercase tracking-widest mb-6">Help & Information</h4>
+            <ul className="space-y-4 text-[12px] text-gray-400">
+              <li><Link href="/" className="hover:text-white">Help</Link></li>
+              <li><Link href="/" className="hover:text-white">Track order</Link></li>
+              <li><Link href="/" className="hover:text-white">Delivery & returns</Link></li>
+              <li><Link href="/" className="hover:text-white">Sitemap</Link></li>
+            </ul>
           </div>
 
-          {/* International Flags (Luôn hiển thị) */}
-          <div className="w-full border-t border-gray-600 md:border-none pt-8 md:pt-0 flex flex-col items-center">
-            <p className="text-gray-300 text-[11px] font-bold uppercase mb-5 tracking-widest">Some of our international sites:</p>
-            <div className="flex flex-wrap justify-center gap-4 max-w-xs md:max-w-none">
+          {/* About NEWEGG - Chỉ hiện trên Desktop */}
+          <div className="hidden md:block">
+            <h4 className="font-black text-[13px] uppercase tracking-widest mb-6">About NEWEGG</h4>
+            <ul className="space-y-4 text-[12px] text-gray-400">
+              <li><Link href="/" className="hover:text-white">About us</Link></li>
+              <li><Link href="/" className="hover:text-white">Careers at NEWEGG</Link></li>
+              <li><Link href="/" className="hover:text-white">Corporate responsibility</Link></li>
+              <li><Link href="/" className="hover:text-white">Investors' site</Link></li>
+            </ul>
+          </div>
+
+          {/* Shopping From & Circular Flags */}
+          <div className="flex flex-col items-start border-t border-gray-700 pt-8 md:border-t-0 md:pt-0">
+            <h4 className="font-black text-[13px] uppercase tracking-widest mb-4">Shopping from:</h4>
+            <div className="flex items-center gap-2 mb-6 text-[12px]">
+              <span className="text-gray-400">You're in</span>
+              <div className="w-5 h-5 rounded-full overflow-hidden border border-gray-500">
+                <img src="https://flagcdn.com/w40/vn.png" className="w-full h-full object-cover" alt="VN" />
+              </div>
+              <span className="font-black text-white border-l border-gray-600 pl-2 uppercase">| CHANGE</span>
+            </div>
+            
+            <p className="text-gray-400 text-[11px] mb-4">Some of our international sites:</p>
+            <div className="flex flex-wrap gap-3">
               {['es', 'de', 'au', 'fr', 'it', 'us', 'dk', 'nl', 'pl', 'se'].map((cc) => (
-                <div key={cc} className="w-7 h-7 rounded-full overflow-hidden border-2 border-gray-500 hover:scale-110 transition-transform">
+                <div key={cc} className="w-6 h-6 rounded-full overflow-hidden border border-gray-700 cursor-pointer hover:scale-110 transition-transform">
                   <img src={`https://flagcdn.com/w40/${cc}.png`} className="w-full h-full object-cover" alt={cc} />
                 </div>
               ))}
@@ -83,13 +95,15 @@ export default function Footer() {
       </div>
 
       {/* 3. THANH COPYRIGHT */}
-      <div className="w-full bg-[#222222] py-4 text-[#999]">
+      <div className="w-full bg-[#222222] py-4 text-[#888]">
         <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center text-[10px] tracking-widest font-black uppercase">
           <p>© 2026 NEWEGG</p>
           <div className="flex gap-4 mt-3 md:mt-0">
-            <span>Privacy & Cookies</span>
+            <Link href="/" className="hover:text-white">Privacy & Cookies</Link>
             <span>|</span>
-            <span>Ts&Cs</span>
+            <Link href="/" className="hover:text-white">Ts&Cs</Link>
+            <span>|</span>
+            <Link href="/" className="hover:text-white">Accessibility</Link>
           </div>
         </div>
       </div>
