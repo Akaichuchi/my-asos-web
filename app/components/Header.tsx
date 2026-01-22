@@ -1,6 +1,6 @@
 "use client";
-import { useState } from "react";
-import Link from "next/link"; // Sử dụng Link để tối ưu hóa SEO và chuyển trang mượt mà
+import { useState, useEffect, useRef } from "react";
+import Link from "next/link"; 
 
 export default function Header() {
   const [isMegaMenuOpen, setIsMegaMenuOpen] = useState(false);
@@ -8,11 +8,33 @@ export default function Header() {
   const [isAccountOpen, setIsAccountOpen] = useState(false);
   const [activeCategory, setActiveCategory] = useState("");
 
-  // Giả lập trạng thái: Để isLoggedIn = false để kiểm tra bảng 4 nút Sign In/Join
+  // --- LOGIC TÌM KIẾM THÔNG MINH ---
+  const [searchQuery, setSearchQuery] = useState("");
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const searchRef = useRef<HTMLDivElement>(null);
+
+  const allSuggestions = [
+    "Dresses for winter", "White sneakers", "Adidas originals", 
+    "Nike Air Max", "Black coats", "Jeans slim fit", "Tops for women",
+    "Mens jackets", "Accessories for men", "Beauty care sets"
+  ];
+  
+  const filteredSuggestions = allSuggestions.filter(item => 
+    item.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
+        setShowSuggestions(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
   const [isLoggedIn, setIsLoggedIn] = useState(false); 
   const [balance, setBalance] = useState(150.00);
-
-  // Đường dẫn chính xác đến trang đăng ký của bạn để tránh lỗi 404
   const authPath = "/register-test";
 
   const menuData = {
@@ -38,7 +60,7 @@ export default function Header() {
 
   return (
     <header className="sticky top-0 z-50 w-full bg-white border-b border-gray-200 font-sans text-black">
-      {/* 1. THANH ĐEN TRÊN CÙNG (Giữ nguyên) */}
+      {/* 1. TOP BAR */}
       <div className="bg-[#2d2d2d] text-white text-[10px] py-2 px-4 flex justify-end gap-4 uppercase font-bold">
         <span className="cursor-pointer hover:underline">Help & FAQs</span>
         <span className="cursor-pointer">🇻ietnam</span>
@@ -47,147 +69,122 @@ export default function Header() {
       {/* 2. HEADER CHÍNH */}
       <div className="max-w-7xl mx-auto px-4">
         <div className="flex items-center justify-between h-14 md:h-16 gap-4">
-          
           <button className="md:hidden" onClick={() => setIsSideMenuOpen(true)}>
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
-            </svg>
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" /></svg>
           </button>
 
-          <h1 className="text-2xl md:text-3xl font-black tracking-tighter cursor-pointer uppercase">ASOS</h1>
+          <h1 className="text-2xl md:text-3xl font-black tracking-tighter cursor-pointer uppercase italic">ASOS</h1>
 
           <nav className="hidden md:flex gap-6 font-bold text-xs tracking-widest border-l border-r border-gray-200 px-6 h-full items-center">
             <span className="hover:bg-gray-100 h-full flex items-center px-4 cursor-pointer">WOMEN</span>
             <span className="hover:bg-gray-100 h-full flex items-center px-4 cursor-pointer border-l border-gray-200">MEN</span>
           </nav>
 
-          <div className="flex-1 max-w-2xl relative hidden sm:block">
+          {/* SEARCH BOX */}
+          <div className="flex-1 max-w-2xl relative hidden sm:block" ref={searchRef}>
             <input 
               type="text" 
+              value={searchQuery}
+              onChange={(e) => {
+                setSearchQuery(e.target.value);
+                setShowSuggestions(e.target.value.length > 0);
+              }}
+              onFocus={() => searchQuery.length > 0 && setShowSuggestions(true)}
               placeholder="Tìm kiếm sản phẩm ASOS 2026..." 
-              className="w-full bg-gray-100 rounded-full py-2 px-4 text-sm focus:outline-none focus:ring-1 focus:ring-black"
+              className="w-full bg-gray-100 rounded-full py-2.5 px-5 text-sm focus:outline-none focus:ring-1 focus:ring-black focus:bg-white transition-all"
             />
+            {showSuggestions && filteredSuggestions.length > 0 && (
+              <div className="absolute top-full left-0 w-full bg-white mt-2 shadow-2xl border border-gray-100 z-[110] rounded-xl overflow-hidden animate-in fade-in slide-in-from-top-1 duration-200">
+                <div className="p-3 text-[10px] font-bold text-gray-400 uppercase tracking-widest border-b border-gray-50">Gợi ý tìm kiếm</div>
+                {filteredSuggestions.map((item, index) => (
+                  <div 
+                    key={index}
+                    onClick={() => { setSearchQuery(item); setShowSuggestions(false); }}
+                    className="flex items-center gap-3 px-5 py-3 hover:bg-gray-50 cursor-pointer text-sm transition-colors border-b border-gray-50 last:border-0"
+                  >
+                    <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                    <span className="font-medium">{item}</span>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
 
-          <div className="flex gap-3 md:gap-5 items-center">
-            
-            {/* PHẦN CẬP NHẬT TÀI KHOẢN */}
-            <div className="relative group">
-              {/* MOBILE: Ấn icon sang trang đăng ký */}
-              <Link href={authPath} className="md:hidden block p-1">
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                </svg>
+          <div className="flex gap-4 items-center">
+            {/* ACCOUNT SECTION */}
+            <div className="relative group py-4" onMouseEnter={() => setIsAccountOpen(true)} onMouseLeave={() => setIsAccountOpen(false)}>
+              <Link href={authPath} className="block p-1">
+                <svg className="w-6 h-6 hover:text-gray-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
               </Link>
-
-              {/* DESKTOP: Rê chuột hiện bảng 4 nút */}
-              <div 
-                className="hidden md:block relative cursor-pointer py-4"
-                onMouseEnter={() => setIsAccountOpen(true)}
-                onMouseLeave={() => setIsAccountOpen(false)}
-              >
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                </svg>
-                
-                {isAccountOpen && (
-                  <div className="absolute right-0 top-full w-72 bg-white shadow-2xl border border-gray-200 z-[100] p-5 text-black">
-                    {!isLoggedIn ? (
-                      <div className="space-y-5">
-                        <p className="text-[11px] font-black uppercase italic tracking-tight">Welcome to ASOS</p>
-                        
-                        {/* 2 NÚT LỚN TRÊN CÙNG */}
-                        <div className="flex gap-2">
-                          <Link href={authPath} className="flex-1 bg-black text-white py-2 text-[11px] font-bold uppercase text-center hover:opacity-80 transition-all">Sign In</Link>
-                          <Link href={authPath} className="flex-1 border-2 border-black py-2 text-[11px] font-bold uppercase text-center hover:bg-gray-100 transition-all">Join</Link>
-                        </div>
-                        
-                        <hr className="border-gray-100" />
-                        
-                        <ul className="space-y-4">
-                          <li className="flex items-center gap-3 text-[11px] font-bold uppercase tracking-widest hover:text-gray-500 cursor-pointer">
-                            <span className="text-lg">👤</span> My Account
-                          </li>
-                          
-                          <li className="flex items-center justify-between border-t border-gray-50 pt-3">
-                            <div className="flex items-center gap-3 text-[11px] font-bold uppercase tracking-widest italic">
-                              <span className="text-lg">🛍️</span> My Orders
-                            </div>
-                            {/* 2 NÚT NHỎ DÒNG MY ORDERS */}
-                            <div className="flex gap-1">
-                               <Link href={authPath} className="text-[9px] bg-gray-100 px-2 py-1 font-black uppercase hover:bg-gray-200 transition-colors">Sign In</Link>
-                               <Link href={authPath} className="text-[9px] bg-gray-100 px-2 py-1 font-black uppercase hover:bg-gray-200 transition-colors">Join</Link>
-                            </div>
-                          </li>
-                          
-                          <li className="flex items-center gap-3 text-[11px] font-bold uppercase tracking-widest border-t border-gray-50 pt-3 hover:text-gray-500 cursor-pointer">
-                            <span className="text-lg">💬</span> Help & Returns
-                          </li>
-                        </ul>
+              {isAccountOpen && (
+                <div className="absolute right-[-10px] top-full w-72 bg-white shadow-2xl border border-gray-100 z-[100] p-6 text-black animate-in fade-in slide-in-from-top-1 duration-200">
+                  <div className="absolute top-[-8px] right-[15px] w-4 h-4 bg-white rotate-45 border-l border-t border-gray-100"></div>
+                  {!isLoggedIn ? (
+                    <div className="space-y-6">
+                      {/* Dòng tiêu đề tối giản - Đã loại bỏ Sign In/Join nhỏ */}
+                      <p className="text-[12px] font-black uppercase italic tracking-tight">Welcome to ASOS</p>
+                      
+                      <div className="flex gap-3">
+                        <Link href={authPath} className="flex-1 bg-black text-white py-2.5 text-[11px] font-black uppercase text-center tracking-widest hover:bg-[#333]">Sign In</Link>
+                        <Link href={authPath} className="flex-1 border-2 border-black py-2.5 text-[11px] font-black uppercase text-center tracking-widest hover:bg-gray-100">Join</Link>
                       </div>
-                    ) : (
-                      <div className="mb-4 pb-4 border-b border-gray-100">
-                        <p className="text-[10px] text-gray-400 font-bold uppercase mb-1">Account Balance</p>
-                        <p className="text-xl font-black text-green-600">${balance.toFixed(2)}</p>
-                        <ul className="mt-4 space-y-4 text-[11px] font-bold uppercase tracking-widest border-t border-gray-100 pt-4">
-                          <li className="flex items-center gap-3 hover:text-gray-500 cursor-pointer">👤 My Account</li>
-                          <li className="flex items-center gap-3 hover:text-gray-500 cursor-pointer border-t border-gray-50 pt-3">🛍️ My Orders</li>
-                          <li className="flex items-center gap-3 hover:text-gray-500 cursor-pointer border-t border-gray-50 pt-3">💬 Help & Returns</li>
-                          <li className="pt-2 text-gray-400 cursor-pointer hover:text-black transition-colors">Sign Out</li>
-                        </ul>
-                      </div>
-                    )}
-                  </div>
-                )}
-              </div>
+                      <ul className="space-y-4 pt-2">
+                        <Link href={authPath} className="flex items-center gap-4 py-1 text-[12px] font-bold uppercase tracking-widest hover:text-gray-500"><span className="text-xl opacity-70">👤</span> My Account</Link>
+                        <Link href={authPath} className="flex items-center gap-4 py-3 border-t border-gray-100 text-[12px] font-bold uppercase tracking-widest italic hover:text-gray-500"><span className="text-xl opacity-70">🛍️</span> My Orders</Link>
+                        <Link href="#" className="flex items-center gap-4 py-1 border-t border-gray-100 text-[12px] font-bold uppercase tracking-widest hover:text-gray-500"><span className="text-xl opacity-70">💬</span> Help & Returns</Link>
+                      </ul>
+                    </div>
+                  ) : (
+                    <div>
+                      <p className="text-[10px] text-gray-400 font-bold uppercase mb-1">Account Balance</p>
+                      <p className="text-xl font-black text-green-600">${balance.toFixed(2)}</p>
+                      <ul className="mt-4 space-y-4 text-[12px] font-bold uppercase tracking-widest border-t border-gray-100 pt-4">
+                        <li className="hover:text-gray-500 cursor-pointer">👤 My Account</li>
+                        <li className="hover:text-gray-500 cursor-pointer border-t border-gray-50 pt-3">🛍️ My Orders</li>
+                        <li className="hover:text-gray-500 cursor-pointer border-t border-gray-50 pt-3">💬 Help & Returns</li>
+                        <li className="pt-2 text-gray-400 cursor-pointer hover:text-black border-t border-gray-50 mt-2">Sign Out</li>
+                      </ul>
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
-
             <svg className="w-6 h-6 cursor-pointer" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /></svg>
             <svg className="w-6 h-6 cursor-pointer" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 11V7a4 4 0 11-8 0v4M5 9h14l1 12H4L5 9z" /></svg>
           </div>
         </div>
       </div>
 
-      {/* 3. THANH DANH MỤC PHỤ DESKTOP (Giữ nguyên 100%) */}
+      {/* 3. SUB-NAV (Giữ nguyên 100%) */}
       <div className="bg-[#525252] w-full hidden md:block relative">
-        <div className="max-w-7xl mx-auto px-4 flex gap-6 text-[10px] font-bold text-white uppercase tracking-widest py-2">
+        <div className="max-w-7xl mx-auto px-4 flex gap-6 text-[10px] font-bold text-white uppercase tracking-widest py-2.5">
           {["Sale", "Trending", "New in", "Clothing", "Dresses", "Shoes", "Accessories", "Brands", "Beauty"].map((item) => (
-            <button 
-              key={item}
-              onClick={() => handleCategoryClick(item)}
-              className={`px-2 py-1 transition-colors hover:bg-white hover:text-black 
-                ${item === "Sale" ? "bg-white text-black" : ""} 
-                ${item === "Trending" ? "text-[#ffeb3b]" : ""} 
-                ${activeCategory === item && isMegaMenuOpen ? "bg-white !text-black" : ""}`}
-            >
-              {item}
-            </button>
+            <button key={item} onClick={() => handleCategoryClick(item)} className={`px-2 py-1 transition-colors hover:bg-white hover:text-black ${item === "Sale" ? "bg-white text-black" : ""} ${item === "Trending" ? "text-[#ffeb3b]" : ""} ${activeCategory === item && isMegaMenuOpen ? "bg-white !text-black" : ""}`}>{item}</button>
           ))}
         </div>
-
         {isMegaMenuOpen && (
           <div className="absolute top-full left-0 w-full bg-white border-b border-gray-200 shadow-2xl z-50 text-black">
-            <div className="max-w-7xl mx-auto grid grid-cols-3 gap-8 p-8">
+            <div className="max-w-7xl mx-auto grid grid-cols-3 gap-8 p-10">
               <div>
-                <h3 className="font-bold text-[11px] mb-4 tracking-widest uppercase text-black">Shop by Category</h3>
-                <ul className="space-y-2 text-gray-600 text-[12px]">
+                <h3 className="font-black text-[11px] mb-6 tracking-widest uppercase border-b pb-2">Shop by Category</h3>
+                <ul className="space-y-2.5 text-gray-600 text-[12px]">
                   {menuData.categories.map((cat, i) => <li key={i} className="hover:underline cursor-pointer">{cat}</li>)}
                 </ul>
               </div>
-              <div className="border-x border-gray-100 px-8">
-                <h3 className="font-bold text-[11px] mb-4 tracking-widest uppercase text-black">Shop by Price</h3>
-                <div className="grid grid-cols-2 gap-4">
+              <div className="border-x border-gray-100 px-10">
+                <h3 className="font-black text-[11px] mb-6 tracking-widest uppercase border-b pb-2">Shop by Price</h3>
+                <div className="grid grid-cols-2 gap-6">
                   {menuData.prices.map((p, i) => (
-                    <div key={i} className="flex flex-col items-center">
-                      <img src={p.img} className="w-16 h-16 rounded-full object-cover border border-gray-200" alt="" />
-                      <span className="text-[10px] mt-2">{p.label}</span>
+                    <div key={i} className="flex flex-col items-center group cursor-pointer">
+                      <img src={p.img} className="w-16 h-16 rounded-full object-cover border border-gray-200 group-hover:border-black transition-all" alt="" />
+                      <span className="text-[10px] mt-2 font-bold group-hover:underline">{p.label}</span>
                     </div>
                   ))}
                 </div>
               </div>
               <div>
-                <h3 className="font-bold text-[11px] mb-4 tracking-widest uppercase text-black">Shop by Brand</h3>
-                <ul className="space-y-2 text-gray-600 text-[12px]">
+                <h3 className="font-black text-[11px] mb-6 tracking-widest uppercase border-b pb-2">Shop by Brand</h3>
+                <ul className="space-y-2.5 text-gray-600 text-[12px]">
                   {menuData.brands.map((b, i) => <li key={i} className="hover:underline cursor-pointer">{b}</li>)}
                 </ul>
               </div>
@@ -195,48 +192,6 @@ export default function Header() {
           </div>
         )}
       </div>
-
-      {/* 4. SIDE MENU MOBILE (Giữ nguyên 100%) */}
-      {isSideMenuOpen && (
-        <>
-          <div className="fixed inset-0 bg-black/50 z-[60] md:hidden" onClick={() => setIsSideMenuOpen(false)} />
-          <div className="fixed inset-y-0 left-0 w-[280px] bg-white z-[70] shadow-2xl md:hidden flex flex-col animate-in slide-in-from-left duration-300">
-            <div className="p-4 border-b border-gray-100 flex justify-between items-center">
-              <span className="font-black text-xl tracking-tighter uppercase">ASOS</span>
-              <button onClick={() => setIsSideMenuOpen(false)} className="text-gray-500 text-xl">✕</button>
-            </div>
-            
-            <div className="p-4 bg-gray-50 border-b border-gray-100">
-              {isLoggedIn ? (
-                <div>
-                  <p className="text-[10px] text-gray-400 font-bold uppercase mb-1">Your Balance</p>
-                  <p className="text-2xl font-black text-green-600">${balance.toFixed(2)}</p>
-                </div>
-              ) : (
-                <Link href={authPath} className="block w-full bg-black text-white py-3 text-xs font-bold uppercase tracking-widest text-center">Sign In / Join</Link>
-              )}
-            </div>
-
-            <div className="flex-1 overflow-y-auto py-2">
-              <div className="px-4 py-2 text-[10px] font-bold text-gray-400 uppercase tracking-widest">Discover Categories</div>
-              {["Sale", "Trending", "New in", "Clothing", "Dresses", "Shoes", "Accessories", "Brands", "Beauty"].map((item) => (
-                <button 
-                  key={item}
-                  className={`w-full text-left px-4 py-3 text-sm font-bold uppercase tracking-widest border-b border-gray-50 flex justify-between items-center
-                    ${item === "Sale" ? "text-red-600" : "text-black"}`}
-                >
-                  {item}
-                  <span className="text-gray-300">›</span>
-                </button>
-              ))}
-            </div>
-
-            <div className="p-4 bg-gray-100 text-[10px] font-bold text-center text-gray-400 uppercase tracking-widest">
-              ASOS Vietnam 2026
-            </div>
-          </div>
-        </>
-      )}
     </header>
   );
 }
