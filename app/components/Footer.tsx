@@ -2,19 +2,31 @@
 import Link from "next/link";
 
 /**
- * Footer Component - Cập nhật hiển thị Snapchat và giữ nguyên bố cục lề trái
+ * Footer Component - Căn chỉnh kích thước Snapchat đồng nhất và giữ lề trái
  */
 export default function Footer() {
   return (
     <footer className="w-full font-sans bg-white">
-      {/* 1. THANH SOCIAL & PAYMENT - Giữ kích thước đồng nhất */}
+      {/* 1. THANH SOCIAL & PAYMENT - Kích thước biểu tượng đồng đều */}
       <div className="w-full py-5 border-t border-gray-200">
         <div className="max-w-7xl mx-auto px-4 flex flex-col md:flex-row justify-center items-center gap-6 md:gap-10">
-          {/* Nhóm Social */}
+          {/* Nhóm Social: Đã đồng bộ kích thước w-9 h-9 */}
           <div className="flex items-center gap-6">
-            <img src="/images/snapchat.webp" className="w-9 h-9 object-contain" alt="Snapchat" />
-            <img src="https://upload.wikimedia.org/wikipedia/commons/b/b8/2021_Facebook_icon.svg" className="w-9 h-9" alt="FB" />
-            <img src="https://upload.wikimedia.org/wikipedia/commons/e/e7/Instagram_logo_2016.svg" className="w-9 h-9" alt="IG" />
+            <img 
+              src="/snapchat.webp" 
+              className="w-9 h-9 object-contain" 
+              alt="Snapchat" 
+            />
+            <img 
+              src="https://upload.wikimedia.org/wikipedia/commons/b/b8/2021_Facebook_icon.svg" 
+              className="w-9 h-9 object-contain" 
+              alt="FB" 
+            />
+            <img 
+              src="https://upload.wikimedia.org/wikipedia/commons/e/e7/Instagram_logo_2016.svg" 
+              className="w-9 h-9 object-contain" 
+              alt="IG" 
+            />
             <div className="h-9 w-[1px] bg-gray-300 mx-2 hidden md:block"></div>
           </div>
 
@@ -29,17 +41,17 @@ export default function Footer() {
         </div>
       </div>
 
-      {/* 2. PHẦN NỘI DUNG CHÍNH - GIỮ LỀ TRÁI (LEFT ALIGN) NHƯ BAN ĐẦU */}
+      {/* 2. PHẦN NỘI DUNG CHÍNH - GIỮ NGUYÊN BỐ CỤC LỀ TRÁI */}
       <div className="w-full bg-[#2d2d2d] text-white pt-12 pb-10">
         <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-12 text-left">
           
-          {/* MỤC DOWNLOAD APP - CĂN TRÁI 100% */}
-          <div className="flex flex-col items-start">
+          {/* MỤC DOWNLOAD APP - LUÔN CĂN LỀ TRÁI */}
+          <div className="flex flex-col items-start text-left">
             <div className="flex items-center gap-3 mb-5">
               <div className="w-14 h-14 bg-black rounded-2xl flex items-center justify-center border border-gray-600 shadow-xl">
                 <span className="text-white font-black text-3xl italic">n</span>
               </div>
-              <div>
+              <div className="text-left">
                 <p className="font-black text-sm tracking-tight uppercase">NEWEGG</p>
                 <div className="flex text-white text-xs">★★★★★ <span className="ml-1 text-gray-400">1.8m</span></div>
               </div>
@@ -49,29 +61,29 @@ export default function Footer() {
             </button>
           </div>
 
-          {/* Help & Info - Chỉ hiện trên Desktop để gọn giao diện mobile như hình */}
+          {/* Help & Information */}
           <div className="hidden md:block">
             <h4 className="font-black text-[13px] uppercase tracking-widest mb-6">Help & Information</h4>
             <ul className="space-y-4 text-[12px] text-gray-400">
-              <li><Link href="/" className="hover:text-white">Help</Link></li>
-              <li><Link href="/" className="hover:text-white">Track order</Link></li>
-              <li><Link href="/" className="hover:text-white">Delivery & returns</Link></li>
-              <li><Link href="/" className="hover:text-white">Sitemap</Link></li>
+              <li><Link href="/" className="hover:text-white transition-colors">Help</Link></li>
+              <li><Link href="/" className="hover:text-white transition-colors">Track order</Link></li>
+              <li><Link href="/" className="hover:text-white transition-colors">Delivery & returns</Link></li>
+              <li><Link href="/" className="hover:text-white transition-colors">Sitemap</Link></li>
             </ul>
           </div>
 
-          {/* About NEWEGG - Chỉ hiện trên Desktop */}
+          {/* About NEWEGG */}
           <div className="hidden md:block">
             <h4 className="font-black text-[13px] uppercase tracking-widest mb-6">About NEWEGG</h4>
             <ul className="space-y-4 text-[12px] text-gray-400">
-              <li><Link href="/" className="hover:text-white">About us</Link></li>
-              <li><Link href="/" className="hover:text-white">Careers at NEWEGG</Link></li>
-              <li><Link href="/" className="hover:text-white">Corporate responsibility</Link></li>
-              <li><Link href="/" className="hover:text-white">Investors' site</Link></li>
+              <li><Link href="/" className="hover:text-white transition-colors">About us</Link></li>
+              <li><Link href="/" className="hover:text-white transition-colors">Careers at NEWEGG</Link></li>
+              <li><Link href="/" className="hover:text-white transition-colors">Corporate responsibility</Link></li>
+              <li><Link href="/" className="hover:text-white transition-colors">Investors' site</Link></li>
             </ul>
           </div>
 
-          {/* Shopping From & Circular Flags */}
+          {/* Shopping From & Circular Flags - GIỮ LỀ TRÁI */}
           <div className="flex flex-col items-start border-t border-gray-700 pt-8 md:border-t-0 md:pt-0">
             <h4 className="font-black text-[13px] uppercase tracking-widest mb-4">Shopping from:</h4>
             <div className="flex items-center gap-2 mb-6 text-[12px]">
@@ -83,7 +95,7 @@ export default function Footer() {
             </div>
             
             <p className="text-gray-400 text-[11px] mb-4">Some of our international sites:</p>
-            <div className="flex flex-wrap gap-3">
+            <div className="flex flex-wrap gap-3 justify-start">
               {['es', 'de', 'au', 'fr', 'it', 'us', 'dk', 'nl', 'pl', 'se'].map((cc) => (
                 <div key={cc} className="w-6 h-6 rounded-full overflow-hidden border border-gray-700 cursor-pointer hover:scale-110 transition-transform">
                   <img src={`https://flagcdn.com/w40/${cc}.png`} className="w-full h-full object-cover" alt={cc} />
