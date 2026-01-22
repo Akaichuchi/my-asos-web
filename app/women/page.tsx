@@ -13,9 +13,9 @@ interface Product {
 
 export default function WomenPage() {
   const [products, setProducts] = useState<Product[]>([]);
-  const [beautyProducts, setBeautyProducts] = useState<Product[]>([]); // MỚI: Danh mục mỹ phẩm
+  const [beautyProducts, setBeautyProducts] = useState<Product[]>([]); 
   const scrollRef = useRef<HTMLDivElement>(null);
-  const beautyScrollRef = useRef<HTMLDivElement>(null); // MỚI: Ref cho mục mỹ phẩm
+  const beautyScrollRef = useRef<HTMLDivElement>(null); 
 
   const scroll = (ref: React.RefObject<HTMLDivElement>, direction: "left" | "right") => {
     if (ref.current) {
@@ -29,7 +29,6 @@ export default function WomenPage() {
   };
 
   useEffect(() => {
-    // 1. Lấy sản phẩm Sale
     fetch("/api/products?category=women&limit=20")
       .then(res => res.json())
       .then(data => setProducts(data))
@@ -40,7 +39,6 @@ export default function WomenPage() {
         ]);
       });
 
-    // 2. Lấy sản phẩm Mỹ phẩm (Beauty)
     fetch("/api/products?category=beauty&limit=20")
       .then(res => res.json())
       .then(data => setBeautyProducts(data))
@@ -54,7 +52,7 @@ export default function WomenPage() {
 
   return (
     <main className="min-h-screen bg-white w-full overflow-x-hidden">
-      {/* 1. TOP BANNER & VIDEO (GIỮ NGUYÊN 100%) */}
+      {/* 1. TOP BANNER & VIDEO */}
       <div className="bg-black text-white py-2 w-full border-b border-gray-800">
         <div className="w-full flex justify-between items-center px-4 md:px-10">
           <div className="hidden md:block border border-white px-4 py-1 text-[10px] font-bold uppercase">Women</div>
@@ -71,7 +69,7 @@ export default function WomenPage() {
         </video>
       </section>
 
-      {/* 2. HỆ THỐNG NÚT DANH MỤC (GIỮ NGUYÊN 100%) */}
+      {/* 2. HỆ THỐNG NÚT DANH MỤC */}
       <div className="w-full bg-black py-8">
         <div className="w-full px-4 flex flex-wrap justify-center gap-3">
           {["View all Sale", "Dresses", "Coats + jackets", "Footwear", "Tops", "Gifts"].map((item) => (
@@ -82,7 +80,7 @@ export default function WomenPage() {
         </div>
       </div>
 
-      {/* 3. KHU VỰC SẢN PHẨM SALE (GIỮ NGUYÊN) */}
+      {/* 3. KHU VỰC SẢN PHẨM SALE */}
       <section className="w-full py-16 relative">
         <div className="w-full text-center mb-10">
           <h2 className="text-2xl md:text-3xl font-bold lowercase tracking-tight">Sale: selling fast</h2>
@@ -113,15 +111,24 @@ export default function WomenPage() {
         </div>
       </section>
 
-      {/* BANNER ĐƯA ĐẾN MỤC MỸ PHẨM */}
+      {/* CẬP NHẬT: BANNER MỸ PHẨM CHỈ CÓ 1 NÚT ĐEN DUY NHẤT Ở GIỮA PHÍA TRÊN */}
       <div className="w-full px-4 md:px-10 max-w-[1800px] mx-auto">
-        <Link href="#" className="block group cursor-pointer">
-          <div className="block md:hidden"><img src="/images/fbmobile.webp" className="w-full border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]" /></div>
-          <div className="hidden md:block"><img src="/images/fbdesktop.webp" className="w-full border-2 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]" /></div>
-        </Link>
+        <div className="w-full flex justify-center mb-8">
+          <Link href="/shop" className="bg-black text-white px-16 py-3 text-[14px] font-black uppercase tracking-widest hover:bg-gray-800 transition-all">
+            SHOP NOW
+          </Link>
+        </div>
+        <div className="relative w-full">
+          <div className="block md:hidden">
+            <img src="/images/fbmobile.webp" className="w-full border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]" alt="Beauty Mobile" />
+          </div>
+          <div className="hidden md:block">
+            <img src="/images/fbdesktop.webp" className="w-full border-2 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]" alt="Beauty Desktop" />
+          </div>
+        </div>
       </div>
 
-      {/* MỚI: KHU VỰC SẢN PHẨM MỸ PHẨM (BEAUTY SPOTLIGHT) */}
+      {/* KHU VỰC SẢN PHẨM MỸ PHẨM */}
       <section className="w-full py-16 relative">
         <div className="w-full text-center mb-10">
           <h2 className="text-2xl md:text-3xl font-bold lowercase tracking-tight italic">Face + Body: Top Picks</h2>
@@ -151,7 +158,7 @@ export default function WomenPage() {
         </div>
       </section>
 
-      {/* 4. NÚT SHOP NOW */}
+      {/* NÚT SHOP NOW CUỐI TRANG */}
       <div className="w-full flex justify-center pb-20">
         <Link href="/shop" className="bg-black text-white px-16 py-3 text-[14px] font-black uppercase tracking-widest hover:bg-gray-800">
           SHOP NOW
