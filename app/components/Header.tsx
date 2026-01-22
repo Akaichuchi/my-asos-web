@@ -6,16 +6,17 @@ export default function Header() {
   const [isMegaMenuOpen, setIsMegaMenuOpen] = useState(false);
   const [isSideMenuOpen, setIsSideMenuOpen] = useState(false);
   const [isAccountOpen, setIsAccountOpen] = useState(false);
-  const [isWishlistOpen, setIsWishlistOpen] = useState(false); // New
-  const [isBagOpen, setIsBagOpen] = useState(false); // New
+  const [isWishlistOpen, setIsWishlistOpen] = useState(false);
+  const [isBagOpen, setIsBagOpen] = useState(false);
   const [activeCategory, setActiveCategory] = useState("");
 
   // --- LOGIC TÌM KIẾM THÔNG MINH ---
   const [searchQuery, setSearchQuery] = useState("");
   const [showSuggestions, setShowSuggestions] = useState(false);
   const searchRef = useRef<HTMLDivElement>(null);
-  const wishlistRef = useRef<HTMLDivElement>(null); // New
-  const bagRef = useRef<HTMLDivElement>(null); // New
+  const wishlistRef = useRef<HTMLDivElement>(null);
+  const bagRef = useRef<HTMLDivElement>(null);
+  const accountRef = useRef<HTMLDivElement>(null);
 
   const allSuggestions = [
     "Dresses for winter", "White sneakers", "Adidas originals", 
@@ -29,20 +30,17 @@ export default function Header() {
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
-        setShowSuggestions(false);
-      }
-      if (wishlistRef.current && !wishlistRef.current.contains(event.target as Node)) {
-        setIsWishlistOpen(false);
-      }
-      if (bagRef.current && !bagRef.current.contains(event.target as Node)) {
-        setIsBagOpen(false);
-      }
+      const target = event.target as Node;
+      if (searchRef.current && !searchRef.current.contains(target)) setShowSuggestions(false);
+      if (wishlistRef.current && !wishlistRef.current.contains(target)) setIsWishlistOpen(false);
+      if (bagRef.current && !bagRef.current.contains(target)) setIsBagOpen(false);
+      if (accountRef.current && !accountRef.current.contains(target)) setIsAccountOpen(false);
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  // Giả lập trạng thái đăng nhập để test tính năng (Thay bằng true để xem menu đã đăng nhập)
   const [isLoggedIn, setIsLoggedIn] = useState(false); 
   const [balance, setBalance] = useState(150.00);
   const authPath = "/register-test";
@@ -68,43 +66,30 @@ export default function Header() {
     }
   };
 
-  // Logic xử lý khi click vào các icon chức năng
-  const handleIconClick = (type: 'wishlist' | 'bag') => {
-    if (!isLoggedIn) {
-      window.location.href = authPath;
-    } else {
-      if (type === 'wishlist') {
-        setIsWishlistOpen(!isWishlistOpen);
-        setIsBagOpen(false);
-        setIsAccountOpen(false);
-      } else {
-        setIsBagOpen(!isBagOpen);
-        setIsWishlistOpen(false);
-        setIsAccountOpen(false);
-      }
-    }
-  };
-
   return (
     <header className="sticky top-0 z-50 w-full bg-white border-b border-gray-200 font-sans text-black">
       {/* 1. TOP BAR */}
-      <div className="bg-[#2d2d2d] text-white text-[10px] py-2 px-4 flex justify-end gap-4 uppercase font-bold">
-        <span className="cursor-pointer hover:underline">Help & FAQs</span>
-        <span className="cursor-pointer">🇻ietnam</span>
+      <div className="bg-[#eeeeee] text-gray-500 text-[10px] py-1.5 px-4 flex justify-end gap-5 uppercase font-medium border-b border-gray-200">
+        <span className="cursor-pointer hover:text-black transition-colors">Marketplace</span>
+        <span className="cursor-pointer hover:text-black transition-colors">Help & FAQs</span>
+        <span className="cursor-pointer flex items-center gap-1">
+          <img src="https://flagcdn.com/w20/vn.png" className="w-3.5 h-2.5 object-cover" alt="VN" />
+        </span>
       </div>
 
       {/* 2. HEADER CHÍNH */}
-      <div className="max-w-7xl mx-auto px-4">
-        <div className="flex items-center justify-between h-14 md:h-16 gap-4">
+      <div className="bg-[#2d2d2d] text-white">
+        <div className="max-w-7xl mx-auto px-4 flex items-center justify-between h-14 md:h-16 gap-4">
           <button className="md:hidden" onClick={() => setIsSideMenuOpen(true)}>
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" /></svg>
           </button>
 
-          <h1 className="text-2xl md:text-3xl font-black tracking-tighter cursor-pointer uppercase italic">ASOS</h1>
+          {/* LOGO - Quay về trang chủ */}
+          <Link href="/" className="text-3xl md:text-[34px] font-black tracking-tighter uppercase lowercase decoration-none">asos</Link>
 
-          <nav className="hidden md:flex gap-6 font-bold text-xs tracking-widest border-l border-r border-gray-200 px-6 h-full items-center">
-            <span className="hover:bg-gray-100 h-full flex items-center px-4 cursor-pointer">WOMEN</span>
-            <span className="hover:bg-gray-100 h-full flex items-center px-4 cursor-pointer border-l border-gray-200">MEN</span>
+          <nav className="hidden md:flex gap-0 font-bold text-[13px] tracking-widest h-full items-center ml-4">
+            <Link href="/women" className="hover:bg-[#525252] h-full flex items-center px-6 transition-colors border-r border-gray-600">WOMEN</Link>
+            <Link href="/men" className="hover:bg-[#525252] h-full flex items-center px-6 transition-colors border-r border-gray-600">MEN</Link>
           </nav>
 
           {/* SEARCH BOX */}
@@ -116,106 +101,66 @@ export default function Header() {
                 setSearchQuery(e.target.value);
                 setShowSuggestions(e.target.value.length > 0);
               }}
-              onFocus={() => searchQuery.length > 0 && setShowSuggestions(true)}
-              placeholder="Tìm kiếm sản phẩm ASOS 2026..." 
-              className="w-full bg-gray-100 rounded-full py-2.5 px-5 text-sm focus:outline-none focus:ring-1 focus:ring-black focus:bg-white transition-all"
+              placeholder="Search for items, brands and inspiration..." 
+              className="w-full bg-white text-black rounded-full py-2 px-5 pr-10 text-sm focus:outline-none"
             />
+            <button className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-black">
+               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+            </button>
             {showSuggestions && filteredSuggestions.length > 0 && (
-              <div className="absolute top-full left-0 w-full bg-white mt-2 shadow-2xl border border-gray-100 z-[110] rounded-xl overflow-hidden animate-in fade-in slide-in-from-top-1 duration-200">
-                <div className="p-3 text-[10px] font-bold text-gray-400 uppercase tracking-widest border-b border-gray-50">Gợi ý tìm kiếm</div>
+              <div className="absolute top-full left-0 w-full bg-white mt-1 shadow-2xl border border-gray-100 z-[110] rounded-lg text-black overflow-hidden animate-in fade-in slide-in-from-top-1 duration-200">
                 {filteredSuggestions.map((item, index) => (
-                  <div 
-                    key={index}
-                    onClick={() => { setSearchQuery(item); setShowSuggestions(false); }}
-                    className="flex items-center gap-3 px-5 py-3 hover:bg-gray-50 cursor-pointer text-sm transition-colors border-b border-gray-50 last:border-0"
-                  >
+                  <div key={index} onClick={() => { setSearchQuery(item); setShowSuggestions(false); }} className="px-5 py-3 hover:bg-gray-100 cursor-pointer text-sm transition-colors border-b border-gray-50 last:border-0 flex items-center gap-3">
                     <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                    <span className="font-medium">{item}</span>
+                    {item}
                   </div>
                 ))}
               </div>
             )}
           </div>
 
-          <div className="flex gap-4 items-center">
+          <div className="flex gap-1.5 md:gap-4 items-center h-full">
             {/* ACCOUNT SECTION */}
-            <div className="relative group py-4" onMouseEnter={() => setIsAccountOpen(true)} onMouseLeave={() => setIsAccountOpen(false)}>
-              <Link href={authPath} className="block p-1">
-                <svg className="w-6 h-6 hover:text-gray-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
-              </Link>
+            <div className="relative h-full flex items-center" ref={accountRef} onMouseEnter={() => setIsAccountOpen(true)} onMouseLeave={() => setIsAccountOpen(false)}>
+              <button className="p-2 hover:bg-[#525252] transition-colors rounded-full"><svg className="w-6 h-6 md:w-7 md:h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg></button>
               {isAccountOpen && (
-                <div className="absolute right-[-10px] top-full w-72 bg-white shadow-2xl border border-gray-100 z-[100] p-6 text-black animate-in fade-in slide-in-from-top-1 duration-200">
-                  <div className="absolute top-[-8px] right-[15px] w-4 h-4 bg-white rotate-45 border-l border-t border-gray-100"></div>
-                  {!isLoggedIn ? (
-                    <div className="space-y-6">
-                      <p className="text-[12px] font-black uppercase italic tracking-tight">Welcome to ASOS</p>
-                      <div className="flex gap-3">
-                        <Link href={authPath} className="flex-1 bg-black text-white py-2.5 text-[11px] font-black uppercase text-center tracking-widest hover:bg-[#333]">Sign In</Link>
-                        <Link href={authPath} className="flex-1 border-2 border-black py-2.5 text-[11px] font-black uppercase text-center tracking-widest hover:bg-gray-100">Join</Link>
-                      </div>
-                      <ul className="space-y-4 pt-2">
-                        <Link href={authPath} className="flex items-center gap-4 py-1 text-[12px] font-bold uppercase tracking-widest hover:text-gray-500"><span className="text-xl opacity-70">👤</span> My Account</Link>
-                        <Link href={authPath} className="flex items-center gap-4 py-3 border-t border-gray-100 text-[12px] font-bold uppercase tracking-widest italic hover:text-gray-500"><span className="text-xl opacity-70">🛍️</span> My Orders</Link>
-                        <Link href="#" className="flex items-center gap-4 py-1 border-t border-gray-100 text-[12px] font-bold uppercase tracking-widest hover:text-gray-500"><span className="text-xl opacity-70">💬</span> Help & Returns</Link>
-                      </ul>
-                    </div>
-                  ) : (
-                    <div>
-                      <p className="text-[10px] text-gray-400 font-bold uppercase mb-1">Account Balance</p>
-                      <p className="text-xl font-black text-green-600">${balance.toFixed(2)}</p>
-                      <ul className="mt-4 space-y-4 text-[12px] font-bold uppercase tracking-widest border-t border-gray-100 pt-4">
-                        <li className="hover:text-gray-500 cursor-pointer">👤 My Account</li>
-                        <li className="hover:text-gray-500 cursor-pointer border-t border-gray-50 pt-3">🛍️ My Orders</li>
-                        <li className="hover:text-gray-500 cursor-pointer border-t border-gray-50 pt-3">💬 Help & Returns</li>
-                        <li className="pt-2 text-gray-400 cursor-pointer hover:text-black border-t border-gray-50 mt-2">Sign Out</li>
-                      </ul>
-                    </div>
-                  )}
+                <div className="absolute right-0 top-full w-64 bg-white shadow-2xl border border-gray-100 z-[100] p-5 text-black animate-in fade-in slide-in-from-top-1 duration-200">
+                  <div className="flex gap-3 mb-5 border-b pb-5">
+                    <Link href={authPath} className="flex-1 bg-black text-white py-2 text-[11px] font-black uppercase text-center tracking-widest hover:bg-[#333]">Sign In</Link>
+                    <Link href={authPath} className="flex-1 border border-black py-2 text-[11px] font-bold uppercase text-center tracking-widest hover:bg-gray-100">Join</Link>
+                  </div>
+                  <ul className="space-y-4 text-[13px] font-medium">
+                    <li className="flex items-center gap-3 cursor-pointer hover:underline"><span className="text-lg">👤</span> My Account</li>
+                    <li className="flex items-center gap-3 cursor-pointer hover:underline"><span className="text-lg">🛍️</span> My Orders</li>
+                    <li className="flex items-center gap-3 cursor-pointer hover:underline"><span className="text-lg">💬</span> Help & Returns</li>
+                  </ul>
                 </div>
               )}
             </div>
 
-            {/* WISHLIST SECTION - Updated */}
-            <div className="relative py-4" ref={wishlistRef}>
-              <button onClick={() => handleIconClick('wishlist')} className="p-1 hover:text-gray-500 transition-colors">
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /></svg>
-              </button>
-              {isLoggedIn && isWishlistOpen && (
-                <div className="absolute right-[-20px] top-full w-80 bg-white shadow-2xl border border-gray-100 z-[100] animate-in fade-in slide-in-from-top-1 duration-200">
-                  <div className="absolute top-[-8px] right-[25px] w-4 h-4 bg-white rotate-45 border-l border-t border-gray-100"></div>
-                  <div className="p-8 flex flex-col items-center text-center">
-                    <svg className="w-10 h-10 text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /></svg>
-                    <p className="font-bold text-sm mb-2">You have no Saved Items</p>
-                    <p className="text-[11px] text-gray-500 leading-relaxed mb-6">Start saving as you shop by selecting the little heart.</p>
-                    <button className="w-full bg-black text-white py-3 text-[11px] font-black uppercase tracking-widest hover:bg-[#333]">Start Shopping</button>
-                  </div>
+            {/* WISHLIST SECTION */}
+            <div className="relative h-full flex items-center" ref={wishlistRef}>
+              <button onClick={() => setIsWishlistOpen(!isWishlistOpen)} className="p-2 hover:bg-[#525252] transition-colors rounded-full"><svg className="w-6 h-6 md:w-7 md:h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /></svg></button>
+              {isWishlistOpen && (
+                <div className="absolute right-[-10px] top-full w-72 bg-white shadow-2xl border border-gray-100 z-[100] p-6 text-black animate-in fade-in slide-in-from-top-1 duration-200 text-center">
+                  <p className="font-bold text-sm mb-1">Your Saved Items is empty</p>
+                  <p className="text-[11px] text-gray-500 mb-4">Click the heart icon on products to save them for later.</p>
+                  <button className="w-full bg-black text-white py-2 text-[11px] font-black uppercase">Start Shopping</button>
                 </div>
               )}
             </div>
 
-            {/* SHOPPING BAG SECTION - Updated */}
-            <div className="relative py-4" ref={bagRef}>
-              <button onClick={() => handleIconClick('bag')} className="p-1 hover:text-gray-500 transition-colors relative">
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 11V7a4 4 0 11-8 0v4M5 9h14l1 12H4L5 9z" /></svg>
-                <span className="absolute top-1 right-0 bg-black text-white text-[9px] w-4 h-4 rounded-full flex items-center justify-center font-bold">0</span>
+            {/* SHOPPING BAG SECTION */}
+            <div className="relative h-full flex items-center" ref={bagRef}>
+              <button onClick={() => setIsBagOpen(!isBagOpen)} className="p-2 hover:bg-[#525252] transition-colors rounded-full relative">
+                <svg className="w-6 h-6 md:w-7 md:h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" d="M16 11V7a4 4 0 11-8 0v4M5 9h14l1 12H4L5 9z" /></svg>
+                <span className="absolute bottom-1 right-1 bg-[#d01345] text-white text-[9px] w-4 h-4 rounded-full flex items-center justify-center font-bold border border-[#2d2d2d]">0</span>
               </button>
-              {isLoggedIn && isBagOpen && (
-                <div className="absolute right-[-10px] top-full w-80 bg-white shadow-2xl border border-gray-100 z-[100] animate-in fade-in slide-in-from-top-1 duration-200">
-                  <div className="absolute top-[-8px] right-[15px] w-4 h-4 bg-white rotate-45 border-l border-t border-gray-100"></div>
-                  <div className="p-6">
-                    <div className="flex justify-between items-center mb-6">
-                      <p className="font-bold text-[11px] uppercase tracking-widest">My Bag, 0 items</p>
-                      <p className="font-bold text-sm">$0.00</p>
-                    </div>
-                    <div className="py-10 flex flex-col items-center border-t border-b border-gray-50">
-                      <svg className="w-12 h-12 text-gray-200 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1" d="M16 11V7a4 4 0 11-8 0v4M5 9h14l1 12H4L5 9z" /></svg>
-                      <p className="text-[12px] font-medium text-gray-500">Your bag is empty</p>
-                    </div>
-                    <button className="w-full bg-black text-white py-3 text-[11px] font-black uppercase tracking-widest mt-6 hover:bg-[#333]">View Bag</button>
-                  </div>
-                  <div className="bg-gray-50 p-3 text-center border-t border-gray-100">
-                    <p className="text-[10px] text-gray-400 font-bold uppercase">Free Delivery Worldwide*</p>
-                  </div>
+              {isBagOpen && (
+                <div className="absolute right-0 top-full w-72 bg-white shadow-2xl border border-gray-100 z-[100] p-6 text-black animate-in fade-in slide-in-from-top-1 duration-200">
+                  <div className="flex justify-between font-bold text-xs uppercase mb-4"><span>My Bag</span><span>$0.00</span></div>
+                  <div className="py-8 text-center border-y border-gray-100"><p className="text-[12px] text-gray-400 font-medium">Your bag is empty</p></div>
+                  <button className="w-full bg-[#018849] text-white py-2.5 text-[11px] font-black uppercase tracking-widest mt-4">Checkout</button>
                 </div>
               )}
             </div>
@@ -223,15 +168,16 @@ export default function Header() {
         </div>
       </div>
 
-      {/* 3. SUB-NAV (Giữ nguyên 100%) */}
-      <div className="bg-[#525252] w-full hidden md:block relative">
-        <div className="max-w-7xl mx-auto px-4 flex gap-6 text-[10px] font-bold text-white uppercase tracking-widest py-2.5">
+      {/* 3. SUB-NAV */}
+      <div className="bg-[#525252] w-full hidden md:block">
+        <div className="max-w-7xl mx-auto px-4 flex gap-6 text-[11px] font-bold text-white uppercase tracking-widest py-2">
           {["Sale", "Trending", "New in", "Clothing", "Dresses", "Shoes", "Accessories", "Brands", "Beauty"].map((item) => (
-            <button key={item} onClick={() => handleCategoryClick(item)} className={`px-2 py-1 transition-colors hover:bg-white hover:text-black ${item === "Sale" ? "bg-white text-black" : ""} ${item === "Trending" ? "text-[#ffeb3b]" : ""} ${activeCategory === item && isMegaMenuOpen ? "bg-white !text-black" : ""}`}>{item}</button>
+            <button key={item} onClick={() => handleCategoryClick(item)} className={`px-2 py-1 transition-colors hover:bg-white hover:text-black ${item === "Sale" ? "bg-[#d01345] text-white" : ""} ${activeCategory === item && isMegaMenuOpen ? "bg-white !text-black" : ""}`}>{item}</button>
           ))}
         </div>
+        {/* MEGA MENU (Giữ nguyên 100%) */}
         {isMegaMenuOpen && (
-          <div className="absolute top-full left-0 w-full bg-white border-b border-gray-200 shadow-2xl z-50 text-black">
+          <div className="absolute top-full left-0 w-full bg-white border-b border-gray-200 shadow-2xl z-50 text-black animate-in fade-in duration-200">
             <div className="max-w-7xl mx-auto grid grid-cols-3 gap-8 p-10">
               <div>
                 <h3 className="font-black text-[11px] mb-6 tracking-widest uppercase border-b pb-2">Shop by Category</h3>

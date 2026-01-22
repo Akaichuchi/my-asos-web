@@ -1,6 +1,10 @@
-import Header from "./components/Header";
 import ProductCard from "./components/ProductCard";
 
+/**
+ * TRANG CHỦ ASOS 2026
+ * Đã sửa lỗi lặp Header bằng cách loại bỏ import Header tại đây.
+ * Layout chung đã quản lý Header cho toàn bộ ứng dụng.
+ */
 export default function Home() {
   const products = [
     { 
@@ -31,7 +35,7 @@ export default function Home() {
 
   return (
     <main className="min-h-screen bg-white">
-      <Header />
+      {/* KHÔNG GỌI <Header /> Ở ĐÂY ĐỂ TRÁNH LỖI 2 ĐẦU TRANG */}
       
       {/* Banner Quảng Cáo Giữ Nguyên Bố Cục 100% */}
       <div className="w-full relative h-[450px] md:h-[650px] bg-black overflow-hidden">
@@ -75,32 +79,28 @@ export default function Home() {
           <div className="relative aspect-[3/4] bg-gray-100 group cursor-pointer overflow-hidden">
             <img src="https://images.asos-media.com/products/adidas-originals-adicolor-classics-t-shirt-in-burgundy/204111222-1-burgundy" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt="Adidas" />
             <div className="absolute inset-0 flex items-center justify-center bg-black/5">
-               <img src="https://upload.wikimedia.org/wikipedia/commons/2/20/Adidas_Logo.svg" className="w-16 md:w-24 invert opacity-90" alt="Adidas Logo" />
+                <img src="https://upload.wikimedia.org/wikipedia/commons/2/20/Adidas_Logo.svg" className="w-16 md:w-24 invert opacity-90" alt="Adidas Logo" />
             </div>
           </div>
           <div className="relative aspect-[3/4] bg-gray-100 group cursor-pointer overflow-hidden">
             <img src="https://images.asos-media.com/products/new-balance-9060-sneakers-in-grey-and-black/203555666-1-grey" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt="New Balance" />
             <div className="absolute inset-0 flex items-center justify-center bg-black/5">
-               <img src="https://upload.wikimedia.org/wikipedia/commons/e/ea/New_Balance_logo.svg" className="w-16 md:w-24 invert opacity-90" alt="NB Logo" />
+                <img src="https://upload.wikimedia.org/wikipedia/commons/e/ea/New_Balance_logo.svg" className="w-16 md:w-24 invert opacity-90" alt="NB Logo" />
             </div>
           </div>
           <div className="relative aspect-[3/4] bg-gray-100 group cursor-pointer overflow-hidden">
             <img src="https://images.asos-media.com/products/asos-design-relaxed-revere-shirt-in-green-textured-fabric/204777888-1-green" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt="ASOS Design" />
             <div className="absolute inset-0 flex items-center justify-center bg-black/10">
-               <span className="text-white font-black text-xl md:text-3xl italic tracking-tighter">asos <span className="text-xs font-normal not-italic">design</span></span>
+                <span className="text-white font-black text-xl md:text-3xl italic tracking-tighter">asos <span className="text-xs font-normal not-italic">design</span></span>
             </div>
           </div>
           <div className="relative aspect-[3/4] bg-gray-100 group cursor-pointer overflow-hidden">
             <img src="https://images.asos-media.com/products/topman-oversized-t-shirt-with-front-and-back-city-print-in-white/204344465-1-white" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt="Topman" />
             <div className="absolute inset-0 flex items-center justify-center bg-black/10">
-               <span className="text-white font-black text-xl md:text-3xl uppercase tracking-tighter">Topman</span>
+                <span className="text-white font-black text-xl md:text-3xl uppercase tracking-tighter">Topman</span>
             </div>
           </div>
         </div>
-      </div>
-
-      <div className="max-w-7xl mx-auto px-4 mt-16 text-center">
-        <h3 className="text-xl md:text-3xl font-bold uppercase tracking-widest italic">The biggest brands</h3>
       </div>
 
       {/* Danh sách sản phẩm Giữ Nguyên 100% */}
@@ -112,45 +112,9 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Discover & Categories - Giữ Nguyên 100% */}
-      <div className="max-w-7xl mx-auto px-4 py-16 border-t border-gray-100">
-        <div className="flex flex-col items-center mb-16">
-          <button className="border-2 border-black px-8 py-3 font-bold text-[10px] md:text-xs uppercase tracking-[0.2em] hover:bg-black hover:text-white transition-all">
-            Shop Men&apos;s Brands
-          </button>
-        </div>
-
-        <div className="mb-14">
-          <h3 className="text-lg md:text-xl font-bold mb-6 tracking-tight">Discover more from</h3>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-y-3 text-[11px] md:text-xs text-gray-500">
-            {["adidas", "AllSaints", "Calvin Klein", "Converse", "Crocs", "Dr Martens", "Levi&apos;s", "New Balance", "Puma", "The North Face", "Timberland", "Tommy Hilfiger"].map((brand) => (
-              <a key={brand} href="#" className="hover:underline hover:text-black transition-colors">{brand}</a>
-            ))}
-          </div>
-        </div>
-
-        <div className="mb-14 text-gray-500 text-[11px] md:text-xs">
-          <h3 className="text-black text-lg md:text-xl font-bold mb-6 tracking-tight">Women&apos;s categories</h3>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-y-3">
-            {["Women's Activewear", "Blouses", "Women's Boots", "Dresses", "Women's Gifts", "Women's Jeans", "Women's Jewelry", "Women's Loungewear", "Women's Pants", "Women's Petite Clothing", "Women's Plus Size Clothing", "Women's Shirts", "Women's Shoes", "Women's Shorts", "Skirts", "Women's Suits", "Women's Swimwear", "Women's Tall Clothing", "Women's Tops", "Women's Tracksuits"].map((cat) => (
-              <a key={cat} href="#" className="hover:underline hover:text-black transition-colors">{cat}</a>
-            ))}
-          </div>
-        </div>
-
-        <div className="mb-14 text-gray-500 text-[11px] md:text-xs">
-          <h3 className="text-black text-lg md:text-xl font-bold mb-6 tracking-tight">Men&apos;s categories</h3>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-y-3">
-            {["Men's Accessories", "Men's Bags", "Men's Coats & Jackets", "Gifts for Men", "Men's Jeans", "Men's Jewelry", "Men's Loungewear", "Men's Partywear", "Men's Plus Size Clothing", "Men's Polo Shirts", "Men's Shirts", "Men's Shoes", "Men's Shorts", "Men's Sportswear", "Men's Suits", "Men's Swimwear", "Men's Tall Clothing", "Men's Tracksuits", "Men's Two Piece Sets", "Men's Workwear"].map((cat) => (
-              <a key={cat} href="#" className="hover:underline hover:text-black transition-colors">{cat}</a>
-            ))}
-          </div>
-        </div>
-      </div>
-      
-      {/* CẬP NHẬT FOOTER CHUẨN 3 TẦNG ASOS */}
+      {/* CẬP NHẬT FOOTER CHUẨN 3 TẦNG ASOS (Giống hình mẫu image_9c19d6.png) */}
       <footer className="w-full">
-        {/* TẦNG 1: SOCIAL & PAYMENT (Màu xám nhạt #eeeeee) */}
+        {/* TẦNG 1: SOCIAL & PAYMENT */}
         <div className="bg-[#eeeeee] py-6 border-t border-gray-200">
           <div className="max-w-7xl mx-auto px-4 flex flex-col md:flex-row justify-center items-center gap-8">
             <div className="flex gap-6 items-center md:pr-8 md:border-r border-gray-300">
@@ -165,14 +129,13 @@ export default function Home() {
               <img src="https://upload.wikimedia.org/wikipedia/commons/3/30/American_Express_logo.svg" className="h-4" alt="Amex" />
               <img src="https://upload.wikimedia.org/wikipedia/commons/c/c4/Klarna_Logo.svg" className="h-3 px-1 bg-[#ffb3c7]" alt="Klarna" />
               <img src="https://upload.wikimedia.org/wikipedia/commons/f/fa/Apple_Pay_logo.svg" className="h-4 border border-black px-1 bg-white" alt="Apple Pay" />
-              <img src="https://upload.wikimedia.org/wikipedia/commons/0/05/Afterpay_logo_2021.svg" className="h-4 px-1 bg-[#b2fce4]" alt="Afterpay" />
             </div>
           </div>
         </div>
 
-        {/* TẦNG 2: DIRECTORY LINKS (Màu xám vừa #dddddd) */}
+        {/* TẦNG 2: DIRECTORY LINKS */}
         <div className="bg-[#dddddd] py-12">
-          <div className="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-4 gap-10">
+          <div className="max-w-7xl mx-auto px-4 grid grid-cols-2 md:grid-cols-4 gap-10">
             <div>
               <h4 className="text-[12px] font-bold uppercase tracking-widest mb-5 text-gray-800">Help and Information</h4>
               <ul className="text-[11px] text-gray-600 space-y-3">
@@ -180,7 +143,6 @@ export default function Home() {
                 <li><a href="#" className="hover:text-black">Track order</a></li>
                 <li><a href="#" className="hover:text-black">Delivery & returns</a></li>
                 <li><a href="#" className="hover:text-black">ASOS Premier</a></li>
-                <li><a href="#" className="hover:text-black">10% Student Discount</a></li>
               </ul>
             </div>
             <div>
@@ -199,35 +161,26 @@ export default function Home() {
                 <li><a href="#" className="hover:text-black">ASOS Marketplace</a></li>
                 <li><a href="#" className="hover:text-black">Gift vouchers</a></li>
                 <li><a href="#" className="hover:text-black">Black Friday</a></li>
-                <li><a href="#" className="hover:text-black">ASOS x Thrift+</a></li>
               </ul>
             </div>
             <div>
               <h4 className="text-[12px] font-bold uppercase tracking-widest mb-5 text-gray-800">Shopping from:</h4>
-              <div className="flex items-center gap-2 text-[11px] text-gray-600 mb-5">
+              <div className="flex items-center gap-2 text-[11px] text-gray-600 mb-5 italic">
                 <span>You&apos;re in</span>
-                <img src="https://flagcdn.com/w20/vn.png" className="w-4 h-3 object-cover rounded-sm" alt="VN" />
-                <span className="font-bold border-l border-gray-400 pl-2 ml-1">CHANGE</span>
-              </div>
-              <p className="text-[11px] text-gray-600 mb-3">Some of our international sites:</p>
-              <div className="flex flex-wrap gap-2">
-                {['gb', 'us', 'de', 'fr', 'au', 'it', 'es', 'jp'].map(flag => (
-                  <img key={flag} src={`https://flagcdn.com/w20/${flag}.png`} className="w-4 h-4 rounded-full object-cover border border-gray-300" alt={flag} />
-                ))}
+                <img src="https://flagcdn.com/w20/vn.png" className="w-4 h-3 object-cover" alt="VN" />
+                <span className="font-bold border-l border-gray-400 pl-2">CHANGE</span>
               </div>
             </div>
           </div>
         </div>
 
-        {/* TẦNG 3: LEGAL & COPYRIGHT (Màu xám đậm #cccccc) */}
+        {/* TẦNG 3: LEGAL & COPYRIGHT */}
         <div className="bg-[#cccccc] py-4">
-          <div className="max-w-7xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center text-[10px] text-gray-700 font-bold uppercase tracking-widest gap-4">
+          <div className="max-w-7xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center text-[10px] text-gray-700 font-bold uppercase tracking-widest">
             <span>© 2026 ASOS</span>
-            <div className="flex gap-4 items-center">
+            <div className="flex gap-4">
               <a href="#" className="hover:underline">Privacy & Cookies</a>
-              <span className="opacity-30">|</span>
               <a href="#" className="hover:underline">Ts&Cs</a>
-              <span className="opacity-30">|</span>
               <a href="#" className="hover:underline">Accessibility</a>
             </div>
           </div>
