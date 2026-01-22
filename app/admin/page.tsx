@@ -4,13 +4,23 @@ import { useState, useEffect } from 'react';
 export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState('users');
   const [users, setUsers] = useState<any[]>([]);
+  const [products, setProducts] = useState<any[]>([]); // Danh sách sản phẩm thực tế
   const [loading, setLoading] = useState(true);
   const [pin, setPin] = useState('');
   const [isAuthorized, setIsAuthorized] = useState(false);
   const correctPin = '1234'; 
 
-  // State cho chỉnh sửa sản phẩm và số dư
+  // State cho sản phẩm
   const [editingProduct, setEditingProduct] = useState<any>(null);
+  const [productForm, setProductForm] = useState({
+    name: "",
+    price: "",
+    originalPrice: "",
+    img: "",
+    category: "women",
+    tag: "SELLING FAST"
+  });
+
   const [amountChange, setAmountChange] = useState<{ [key: string]: string }>({});
 
   const handlePinSubmit = (e: React.FormEvent) => {
@@ -24,49 +34,72 @@ export default function AdminDashboard() {
       const res = await fetch('/api/register');
       const data: any = await res.json();
       if (Array.isArray(data)) setUsers(data);
-    } catch (error) {
-      console.error("Lỗi tải dữ liệu:", error);
-    } finally {
-      setLoading(false);
-    }
+    } catch (error) { console.error("Lỗi tải dữ liệu:", error); }
+    finally { setLoading(false); }
+  };
+
+  const fetchProducts = async () => {
+    try {
+      const res = await fetch('/api/products'); // API tổng hợp bạn vừa tạo
+      const data = await res.json();
+      if (Array.isArray(data)) setProducts(data);
+    } catch (error) { console.error("Lỗi tải sản phẩm:", error); }
   };
 
   useEffect(() => {
-    if (isAuthorized) fetchUsers();
+    if (isAuthorized) {
+      fetchUsers();
+      fetchProducts();
+    }
   }, [isAuthorized]);
 
-  // --- TÍNH NĂNG 1: XÓA KHÁCH HÀNG (KẾT NỐI DB) ---
+  // --- QUẢN LÝ SẢN PHẨM (MỚI) ---
+  const handleProductSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const method = editingProduct ? 'PUT' : 'POST';
+    try {
+      const res = await fetch('/api/products', {
+        method: method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(editingProduct ? { ...productForm, id: editingProduct.id } : productForm),
+      });
+
+      if (res.ok) {
+        alert(editingProduct ? 'Cập nhật thành công!' : 'Đã đăng sản phẩm mới!');
+        setEditingProduct(null);
+        setProductForm({ name: "", price: "", originalPrice: "", img: "", category: "women", tag: "SELLING FAST" });
+        fetchProducts();
+      }
+    } catch (error) { alert('Lỗi thao tác sản phẩm!'); }
+  };
+
+  const handleDeleteProduct = async (id: number) => {
+    if (confirm('Xóa sản phẩm này?')) {
+      await fetch(`/api/products?id=${id}`, { method: 'DELETE' });
+      fetchProducts();
+    }
+  };
+
+  // --- CÁC TÍNH NĂNG CŨ (GIỮ NGUYÊN 100%) ---
   const handleDeleteUser = async (id: string) => {
     if (confirm('XÁC NHẬN: Bạn muốn xóa khách hàng này vĩnh viễn?')) {
       try {
         const res = await fetch(`/api/register?id=${id}`, { method: 'DELETE' });
-        if (res.ok) {
-          setUsers(users.filter(u => u.id !== id));
-          alert('Đã xóa thành công!');
-        }
-      } catch (error) {
-        alert('Lỗi khi xóa!');
-      }
+        if (res.ok) { setUsers(users.filter(u => u.id !== id)); alert('Đã xóa thành công!'); }
+      } catch (error) { alert('Lỗi khi xóa!'); }
     }
   };
 
-  // --- TÍNH NĂNG 2: CẬP NHẬT SỐ DƯ ---
   const handleUpdateBalance = async (userId: string) => {
     const change = parseFloat(amountChange[userId]);
     if (isNaN(change)) return alert('Vui lòng nhập số tiền hợp lệ');
-
     try {
       const res = await fetch('/api/register', {
         method: 'PUT',
         body: JSON.stringify({ userId, change }),
       });
-      if (res.ok) {
-        alert('Đã cập nhật số dư!');
-        fetchUsers();
-      }
-    } catch (error) {
-      alert('Lỗi cập nhật!');
-    }
+      if (res.ok) { alert('Đã cập nhật số dư!'); fetchUsers(); }
+    } catch (error) { alert('Lỗi cập nhật!'); }
   };
 
   if (!isAuthorized) {
@@ -83,7 +116,6 @@ export default function AdminDashboard() {
 
   return (
     <div className="min-h-screen bg-[#f3f3f3] font-sans">
-      {/* Top Bar */}
       <div className="bg-black text-white p-4 flex justify-between items-center shadow-lg">
         <h1 className="text-2xl font-black uppercase tracking-tighter italic">ASOS Management Hub</h1>
         <div className="flex gap-4">
@@ -93,7 +125,6 @@ export default function AdminDashboard() {
       </div>
 
       <div className="max-w-6xl mx-auto p-6 lg:p-10">
-        {/* QUẢN LÝ KHÁCH HÀNG & XÓA */}
         {activeTab === 'users' && (
           <div className="bg-white border-2 border-black p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
             <h2 className="text-2xl font-black uppercase mb-6 italic underline">User Control</h2>
@@ -115,16 +146,11 @@ export default function AdminDashboard() {
                       <td className="p-3 font-bold">{user.email}</td>
                       <td className="p-3 font-bold text-green-600">${user.balance?.toFixed(2)}</td>
                       <td className="p-3">
-                        <input 
-                          type="number" 
-                          className="border-2 border-black p-1 w-20 outline-none" 
-                          placeholder="+/-"
-                          onChange={(e) => setAmountChange({...amountChange, [user.id]: e.target.value})}
-                        />
+                        <input type="number" className="border-2 border-black p-1 w-20 outline-none" placeholder="+/-" onChange={(e) => setAmountChange({...amountChange, [user.id]: e.target.value})} />
                       </td>
                       <td className="p-3 text-right flex justify-end gap-2">
-                        <button onClick={() => handleUpdateBalance(user.id)} className="bg-black text-white px-3 py-1 text-[10px] font-bold uppercase hover:bg-green-600">Lưu $</button>
-                        <button onClick={() => handleDeleteUser(user.id)} className="bg-red-600 text-white px-3 py-1 text-[10px] font-bold uppercase hover:bg-red-800">Xóa</button>
+                        <button onClick={() => handleUpdateBalance(user.id)} className="bg-black text-white px-3 py-1 text-[10px] font-bold uppercase">Lưu $</button>
+                        <button onClick={() => handleDeleteUser(user.id)} className="bg-red-600 text-white px-3 py-1 text-[10px] font-bold uppercase">Xóa</button>
                       </td>
                     </tr>
                   ))}
@@ -134,30 +160,59 @@ export default function AdminDashboard() {
           </div>
         )}
 
-        {/* QUẢN LÝ & CHỈNH SỬA SẢN PHẨM */}
         {activeTab === 'products' && (
-          <div className="bg-white border-2 border-black p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
-            <h2 className="text-2xl font-black uppercase mb-6 italic underline">Product Inventory</h2>
-            <form className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-gray-50 border border-dashed border-black">
-              <div className="md:col-span-2">
-                <label className="text-[10px] font-bold uppercase">Tên sản phẩm:*</label>
-                <input type="text" className="w-full border-2 border-gray-200 p-2 outline-none focus:border-black" defaultValue={editingProduct?.name || ''} />
+          <div className="space-y-10">
+            {/* FORM ĐĂNG SẢN PHẨM PHÂN LOẠI NAM/NỮ */}
+            <div className="bg-white border-2 border-black p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+              <h2 className="text-2xl font-black uppercase mb-6 italic underline">{editingProduct ? 'Edit Product' : 'Add New Product'}</h2>
+              <form onSubmit={handleProductSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-gray-50 border border-dashed border-black">
+                <div className="md:col-span-2">
+                  <label className="text-[10px] font-bold uppercase">Tên sản phẩm:*</label>
+                  <input type="text" className="w-full border-2 border-black p-2 outline-none" value={productForm.name} onChange={(e) => setProductForm({...productForm, name: e.target.value})} required />
+                </div>
+                <div>
+                  <label className="text-[10px] font-bold uppercase">Giá Sale ($):*</label>
+                  <input type="text" className="w-full border-2 border-black p-2 outline-none" value={productForm.price} onChange={(e) => setProductForm({...productForm, price: e.target.value})} required />
+                </div>
+                <div>
+                  <label className="text-[10px] font-bold uppercase">Giá Gốc ($ - Hiện gạch ngang):</label>
+                  <input type="text" className="w-full border-2 border-black p-2 outline-none" value={productForm.originalPrice} onChange={(e) => setProductForm({...productForm, originalPrice: e.target.value})} />
+                </div>
+                <div>
+                  <label className="text-[10px] font-bold uppercase">Link hình ảnh (URL):*</label>
+                  <input type="text" className="w-full border-2 border-black p-2 outline-none" value={productForm.img} onChange={(e) => setProductForm({...productForm, img: e.target.value})} required />
+                </div>
+                <div>
+                  <label className="text-[10px] font-bold uppercase">Danh mục:*</label>
+                  <select className="w-full border-2 border-black p-2 outline-none font-bold" value={productForm.category} onChange={(e) => setProductForm({...productForm, category: e.target.value})}>
+                    <option value="women">Nữ (Women)</option>
+                    <option value="men">Nam (Men)</option>
+                  </select>
+                </div>
+                <button type="submit" className="md:col-span-2 bg-black text-white py-3 font-black uppercase hover:bg-gray-800">
+                  {editingProduct ? 'Cập nhật sản phẩm' : 'Đăng sản phẩm ngay'}
+                </button>
+              </form>
+            </div>
+
+            {/* DANH SÁCH SẢN PHẨM ĐÃ ĐĂNG */}
+            <div className="bg-white border-2 border-black p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+              <h2 className="text-xl font-black uppercase mb-4">Inventory List</h2>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                {products.map((p) => (
+                  <div key={p.id} className="border border-black p-2 relative group bg-white">
+                    <img src={p.img} className="w-full aspect-[3/4] object-cover mb-2" />
+                    <p className="text-[10px] font-bold truncate uppercase">{p.name}</p>
+                    <p className="text-[10px] text-red-600 font-bold">{p.price} <span className="text-gray-400 line-through ml-1">{p.originalPrice}</span></p>
+                    <div className="mt-2 flex gap-1">
+                       <button onClick={() => { setEditingProduct(p); setProductForm(p); }} className="bg-black text-white text-[8px] p-1 flex-1 font-bold">SỬA</button>
+                       <button onClick={() => handleDeleteProduct(p.id)} className="bg-red-600 text-white text-[8px] p-1 flex-1 font-bold">XÓA</button>
+                    </div>
+                    <span className="absolute top-1 right-1 bg-black text-white text-[8px] px-1 font-bold uppercase">{p.category}</span>
+                  </div>
+                ))}
               </div>
-              <div>
-                <label className="text-[10px] font-bold uppercase">Giá tiền ($):*</label>
-                <input type="number" className="w-full border-2 border-gray-200 p-2 outline-none focus:border-black" defaultValue={editingProduct?.price || ''} />
-              </div>
-              <div>
-                <label className="text-[10px] font-bold uppercase">Lượt Tym ❤️:*</label>
-                <input type="number" className="w-full border-2 border-gray-200 p-2 outline-none focus:border-black" defaultValue={editingProduct?.hearts || ''} />
-              </div>
-              <button type="submit" className="md:col-span-2 bg-black text-white py-3 font-black uppercase hover:bg-gray-800">
-                {editingProduct ? 'Cập nhật sản phẩm' : 'Đăng sản phẩm mới'}
-              </button>
-              {editingProduct && (
-                <button type="button" onClick={() => setEditingProduct(null)} className="md:col-span-2 border-2 border-black py-2 font-bold uppercase text-xs">Hủy</button>
-              )}
-            </form>
+            </div>
           </div>
         )}
       </div>

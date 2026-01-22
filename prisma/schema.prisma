@@ -13,3 +13,13 @@ model User {
   balance Float  @default(0.0)
   role    String @default("USER")
 }
+model Product {
+  id            Int      @id @default(autoincrement())
+  name          String
+  price         String
+  originalPrice String?  // Để hiển thị giá gạch ngang như hình mẫu
+  img           String
+  category      String   // "women" hoặc "men"
+  tag           String?  // "SELLING FAST" hoặc "NEW IN"
+  createdAt     DateTime @default(now())
+}
