@@ -51,10 +51,10 @@ export default function WomenPage() {
       {/* 3. HERO VIDEO SECTION (Đã loại bỏ tiêu đề đè lên theo yêu cầu) */}
       <section className="relative w-full overflow-hidden bg-[#F6F6F6]">
         <video autoPlay muted loop playsInline className="hidden md:block w-full h-auto object-cover">
-          <source src="/images/videodaidienjpc.mp4" type="video/mp4" />
+          <source src="/videodaidienjpc.mp4" type="video/mp4" />
         </video>
         <video autoPlay muted loop playsInline className="block md:hidden w-full h-auto object-cover">
-          <source src="/images/videodt.mp4" type="video/mp4" />
+          <source src="/videodt.mp4" type="video/mp4" />
         </video>
         
         {/* Chỉ giữ lại dòng text nhỏ ở góc dưới nếu cần, hoặc xóa sạch để video thoáng */}
