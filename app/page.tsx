@@ -1,3 +1,4 @@
+import Link from "next/link";
 import ProductCard from "./components/ProductCard";
 
 export default function Home() {
@@ -30,15 +31,13 @@ export default function Home() {
 
   return (
     <main className="min-h-screen bg-white">
-      {/* Banner Quảng Cáo - Đã cập nhật ảnh sắc nét cho riêng Mobile & Desktop */}
+      {/* Banner Quảng Cáo - Đã cập nhật nút chuyển hướng */}
       <div className="w-full relative h-[450px] md:h-[650px] bg-black overflow-hidden">
         <picture>
-          {/* Hình nền cho Điện thoại */}
           <source 
             media="(max-width: 767px)" 
             srcSet="/images/nenchinhmobile.webp" 
           />
-          {/* Hình nền cho Máy tính */}
           <img 
             src="/images/nenchinhdesktop.webp" 
             className="w-full h-full object-cover opacity-90"
@@ -51,12 +50,20 @@ export default function Home() {
             This is ASOS
           </h2>
           <div className="flex flex-col md:flex-row gap-3 mt-6">
-            <button className="bg-white text-black px-10 py-3 font-bold text-xs hover:bg-black hover:text-white transition-all uppercase tracking-widest">
+            {/* Nút Shop Womens đã được chuyển thành Link */}
+            <Link 
+              href="/women" 
+              className="bg-white text-black px-10 py-3 font-bold text-xs hover:bg-black hover:text-white transition-all uppercase tracking-widest flex items-center justify-center min-w-[180px]"
+            >
               Shop Womens
-            </button>
-            <button className="bg-white text-black px-10 py-3 font-bold text-xs hover:bg-black hover:text-white transition-all uppercase tracking-widest">
+            </Link>
+            {/* Nút Shop Mens đã được chuyển thành Link */}
+            <Link 
+              href="/men" 
+              className="bg-white text-black px-10 py-3 font-bold text-xs hover:bg-black hover:text-white transition-all uppercase tracking-widest flex items-center justify-center min-w-[180px]"
+            >
               Shop Mens
-            </button>
+            </Link>
           </div>
         </div>
       </div>
@@ -79,9 +86,13 @@ export default function Home() {
 
       {/* Brand Grid Section - Giữ nguyên 100% */}
       <div className="max-w-7xl mx-auto px-4 mt-12 flex flex-col items-center">
-        <button className="border-2 border-black px-8 py-3 font-bold text-[10px] md:text-xs uppercase tracking-[0.2em] hover:bg-black hover:text-white transition-all mb-10">
+        {/* Nút Shop Brands cũng được cập nhật thành Link */}
+        <Link 
+          href="/brands" 
+          className="border-2 border-black px-8 py-3 font-bold text-[10px] md:text-xs uppercase tracking-[0.2em] hover:bg-black hover:text-white transition-all mb-10 inline-block"
+        >
           Shop Women&apos;s Brands
-        </button>
+        </Link>
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 w-full">
           <div className="relative aspect-[3/4] bg-gray-100 group cursor-pointer overflow-hidden">
@@ -90,7 +101,6 @@ export default function Home() {
                 <img src="https://upload.wikimedia.org/wikipedia/commons/2/20/Adidas_Logo.svg" className="w-16 md:w-24 invert opacity-90" alt="Adidas Logo" />
             </div>
           </div>
-          {/* Các ô brand khác vẫn giữ nguyên như cũ */}
         </div>
       </div>
 
