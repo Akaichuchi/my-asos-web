@@ -12,7 +12,7 @@ export default function Footer() {
         <div className="max-w-7xl mx-auto px-4 flex flex-col md:flex-row justify-center items-center gap-6 md:gap-10">
           {/* Nhóm Social */}
           <div className="flex items-center gap-6">
-            <img src="/snapchat.webp" className="w-9 h-9 object-contain" alt="Snapchat" />
+            <img src="/images/snapchat.webp" className="w-9 h-9 object-contain" alt="Snapchat" />
             <img src="https://upload.wikimedia.org/wikipedia/commons/b/b8/2021_Facebook_icon.svg" className="w-9 h-9" alt="FB" />
             <img src="https://upload.wikimedia.org/wikipedia/commons/e/e7/Instagram_logo_2016.svg" className="w-9 h-9" alt="IG" />
             <div className="h-9 w-[1px] bg-gray-300 mx-2 hidden md:block"></div>
