@@ -14,13 +14,13 @@ export default function Home() {
           <img 
             src="/images/nenchinhdesktop.webp" 
             className="w-full h-full object-cover opacity-90"
-            alt="ASOS Campaign 2026"
+            alt="NEWEGG Campaign 2026"
           />
         </picture>
 
         <div className="absolute inset-0 flex flex-col items-center justify-center text-white p-4 text-center z-10">
           <h2 className="text-6xl md:text-9xl font-black italic tracking-tighter uppercase drop-shadow-2xl">
-            This is ASOS
+            This is NEWEGG
           </h2>
           <div className="flex flex-col md:flex-row gap-3 mt-6">
             <Link 
@@ -48,7 +48,7 @@ export default function Home() {
           <p className="font-bold text-xs md:text-base uppercase leading-tight">Download our app for exclusive discounts</p>
         </div>
         <div className="bg-[#ffc1d1] p-6 md:p-8 flex items-center justify-center h-[160px] md:h-[200px]">
-          <p className="font-bold text-xs md:text-base uppercase leading-tight">ASOS PREMIER <br/> UNLIMITED DELIVERY</p>
+          <p className="font-bold text-xs md:text-base uppercase leading-tight">NEWEGG PREMIER <br/> UNLIMITED DELIVERY</p>
         </div>
         <div className="bg-[#26e382] p-6 md:p-8 flex items-center justify-center h-[160px] md:h-[200px]">
           <p className="font-bold text-xs md:text-base uppercase leading-tight">Easy returns</p>
@@ -63,7 +63,7 @@ export default function Home() {
         <div className="grid grid-cols-2 md:grid-cols-4 w-full gap-0">
           <img src="/images/promo_bau_hp_ww_01v2.webp" alt="Adidas" className="w-full h-auto block" />
           <img src="/images/promo_bau_hp_ww_02---v3.webp" alt="Mango" className="w-full h-auto block" />
-          <img src="/images/promo_bau_hp_ww_03.webp" alt="Asos Design" className="w-full h-auto block" />
+          <img src="/images/promo_bau_hp_ww_03.webp" alt="NEWEGG Design" className="w-full h-auto block" />
           <img src="/images/promo_bau_hp_ww_04.webp" alt="Topshop" className="w-full h-auto block" />
         </div>
         <div className="flex justify-center mt-12 mb-16">
@@ -81,7 +81,7 @@ export default function Home() {
         <div className="grid grid-cols-2 md:grid-cols-4 w-full gap-0 pt-12">
           <img src="/images/promo_bau_hp_mw_01.webp" alt="Adidas Men" className="w-full h-auto block" />
           <img src="/images/promo_bau_hp_mw_02---v3.webp" alt="New Balance" className="w-full h-auto block" />
-          <img src="/images/promo_bau_hp_mw_03.webp" alt="Asos Design Men" className="w-full h-auto block" />
+          <img src="/images/promo_bau_hp_mw_03.webp" alt="NEWEGG Design Men" className="w-full h-auto block" />
           <img src="/images/promo_bau_hp_mw_04.webp" alt="Topman" className="w-full h-auto block" />
         </div>
         <div className="flex justify-center mt-12">

@@ -2,7 +2,7 @@
 import Link from "next/link";
 
 /**
- * Footer Component - Đồng bộ giao diện ASOS cho tất cả các trang
+ * Footer Component - Đồng bộ giao diện NEWEGG cho tất cả các trang
  */
 export default function Footer() {
   return (
@@ -34,18 +34,18 @@ export default function Footer() {
           </ul>
         </div>
         <div>
-          <h4 className="text-[11px] font-black uppercase tracking-widest mb-4 text-gray-500">About ASOS</h4>
+          <h4 className="text-[11px] font-black uppercase tracking-widest mb-4 text-gray-500">About NEWEGG</h4>
           <ul className="text-[12px] space-y-3 text-gray-600">
             <li><Link href="/" className="hover:text-blue-600">About us</Link></li>
-            <li><Link href="/" className="hover:text-blue-600">Careers at ASOS</Link></li>
+            <li><Link href="/" className="hover:text-blue-600">Careers at NEWEGG</Link></li>
             <li><Link href="/" className="hover:text-blue-600">Corporate responsibility</Link></li>
           </ul>
         </div>
         <div>
-          <h4 className="text-[11px] font-black uppercase tracking-widest mb-4 text-gray-500">More From ASOS</h4>
+          <h4 className="text-[11px] font-black uppercase tracking-widest mb-4 text-gray-500">More From NEWEGG</h4>
           <ul className="text-[12px] space-y-3 text-gray-600">
-            <li><Link href="/" className="hover:text-blue-600">Mobile and ASOS apps</Link></li>
-            <li><Link href="/" className="hover:text-blue-600">ASOS Marketplace</Link></li>
+            <li><Link href="/" className="hover:text-blue-600">Mobile and NEWEGG apps</Link></li>
+            <li><Link href="/" className="hover:text-blue-600">NEWEGG Marketplace</Link></li>
             <li><Link href="/" className="hover:text-blue-600">Gift vouchers</Link></li>
           </ul>
         </div>
@@ -62,7 +62,7 @@ export default function Footer() {
       {/* Bottom Legal Bar */}
       <div className="bg-[#dddddd] py-3">
         <div className="max-w-7xl mx-auto px-4 flex justify-between items-center text-[10px] text-gray-600 font-medium">
-          <p>© 2026 ASOS</p>
+          <p>© 2026 NEWEGG</p>
           <div className="flex gap-4">
             <Link href="/">Privacy & Cookies</Link>
             <Link href="/">Ts&Cs</Link>

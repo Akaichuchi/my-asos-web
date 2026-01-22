@@ -90,7 +90,7 @@ export default function Header() {
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" /></svg>
           </button>
 
-          <Link href="/" className="text-3xl md:text-[34px] font-black tracking-tighter uppercase decoration-none">asos</Link>
+          <Link href="/" className="text-3xl md:text-[34px] font-black tracking-tighter uppercase decoration-none">NEWEGG</Link>
 
           <nav className="hidden md:flex gap-0 font-bold text-[13px] tracking-widest h-full items-center ml-4">
             <Link href="/women" className="hover:bg-[#525252] h-full flex items-center px-6 transition-colors border-r border-gray-600">WOMEN</Link>
@@ -190,7 +190,7 @@ export default function Header() {
             {/* Sidebar Account Section - DYNAMIC GREETING */}
             <div className="p-5 mt-6 border-t border-gray-100">
                 <h4 className="text-[20px] font-black italic mb-6 uppercase tracking-tighter">
-                  {isLoggedIn ? `HI ${user.name.toUpperCase()}` : "WELCOME TO ASOS"}
+                  {isLoggedIn ? `HI ${user.name.toUpperCase()}` : "WELCOME TO NEWEGG"}
                 </h4>
                 
                 {!isLoggedIn && (
