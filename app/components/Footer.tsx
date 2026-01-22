@@ -1,114 +1,103 @@
 "use client";
 import Link from "next/link";
 
-/**
- * Footer Component - Khớp 100% theo mẫu hình ảnh NEWEGG (Black Theme)
- * Đưa mạng xã hội và logo thanh toán lên thanh trên cùng của chân trang
- */
 export default function Footer() {
   return (
-    <footer className="w-full font-sans">
-      {/* THANH TRÊN CÙNG: Mạng xã hội & Logo thanh toán (Nền trắng/xám cực nhẹ) */}
-      <div className="w-full bg-[#ffffff] py-4 border-t border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 flex justify-center items-center">
-          {/* Nhóm Mạng xã hội */}
-          <div className="flex gap-8 items-center border-r border-gray-300 pr-10">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/b/b8/2021_Facebook_icon.svg" className="w-6 h-6 cursor-pointer" alt="Facebook" />
-            <img src="https://upload.wikimedia.org/wikipedia/commons/e/e7/Instagram_logo_2016.svg" className="w-6 h-6 cursor-pointer" alt="Instagram" />
-            <img src="https://upload.wikimedia.org/wikipedia/commons/c/c2/Snapchat_logo.svg" className="w-6 h-6 bg-[#fffc00] p-1 rounded-full cursor-pointer" alt="Snapchat" />
+    <footer className="w-full font-sans bg-white">
+      {/* 1. THANH SOCIAL & PAYMENT (Căn giữa, responsive) */}
+      <div className="w-full py-4 border-t border-gray-200">
+        <div className="max-w-7xl mx-auto px-4 flex flex-col md:flex-row justify-center items-center gap-6">
+          <div className="flex items-center gap-6">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/b/b8/2021_Facebook_icon.svg" className="w-5 h-5" alt="FB" />
+            <img src="https://upload.wikimedia.org/wikipedia/commons/e/e7/Instagram_logo_2016.svg" className="w-5 h-5" alt="IG" />
+            <img src="https://upload.wikimedia.org/wikipedia/commons/c/c2/Snapchat_logo.svg" className="w-5 h-5 bg-[#fffc00] p-0.5 rounded-full" alt="SC" />
+            <div className="h-5 w-[1px] bg-gray-300 mx-2 hidden md:block"></div>
           </div>
-
-          {/* Dấu gạch đứng phân cách (Nếu cần giống ảnh 100%) */}
-          <div className="h-8 w-[1px] bg-gray-300 mx-4 hidden md:block"></div>
-
-          {/* Nhóm Cổng thanh toán */}
-          <div className="flex gap-6 items-center pl-4">
-            <img src="https://images.asos-media.com/navigation/visa-png" alt="Visa" className="h-4" />
-            <img src="https://images.asos-media.com/navigation/mastercard-png" alt="Mastercard" className="h-6" />
-            <img src="https://images.asos-media.com/navigation/pay-pal-png" alt="PayPal" className="h-4" />
-            <img src="https://images.asos-media.com/navigation/american-express-png" alt="Amex" className="h-4" />
-            <img src="https://images.asos-media.com/navigation/visa-electron-png" alt="Visa Electron" className="h-4" />
+          <div className="flex flex-wrap justify-center gap-4">
+            <img src="https://images.asos-media.com/navigation/visa-png" className="h-3" alt="Visa" />
+            <img src="https://images.asos-media.com/navigation/mastercard-png" className="h-5" alt="MC" />
+            <img src="https://images.asos-media.com/navigation/pay-pal-png" className="h-3" alt="PP" />
+            <img src="https://images.asos-media.com/navigation/american-express-png" className="h-3" alt="Amex" />
+            <img src="https://images.asos-media.com/navigation/visa-electron-png" className="h-3" alt="VisaE" />
           </div>
         </div>
       </div>
 
-      {/* PHẦN CHÍNH: Nền đen (Nội dung NEWEGG) */}
-      <div className="w-full bg-[#2d2d2d] text-white py-12">
-        <div className="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-4 gap-12">
+      {/* 2. PHẦN NỘI DUNG CHÍNH (Nền đen xám đậm) */}
+      <div className="w-full bg-[#2d2d2d] text-white pt-12 pb-8">
+        <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-10">
           
-          {/* App Section */}
-          <div className="flex flex-col items-center md:items-start space-y-4">
-            <div className="flex items-center gap-3">
-              <div className="w-14 h-14 bg-black rounded-2xl flex items-center justify-center border border-gray-600">
-                <span className="text-white font-black text-3xl italic">n</span>
+          {/* App Section - Tối ưu hiển thị mobile */}
+          <div className="flex flex-col items-center md:items-start text-center md:text-left">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-12 h-12 bg-black rounded-xl flex items-center justify-center border border-gray-600">
+                <span className="text-white font-black text-2xl italic">n</span>
               </div>
-              <div className="text-[11px]">
-                <p className="font-bold text-[13px] tracking-tight">NEWEGG</p>
-                <p className="text-gray-400">★★★★★ 1.8m</p>
+              <div className="text-left">
+                <p className="font-bold text-sm tracking-tighter uppercase">NEWEGG</p>
+                <p className="text-[11px] text-gray-400">★★★★★ 1.8m</p>
               </div>
             </div>
-            <button className="bg-black border border-white text-white px-6 py-2.5 text-[11px] font-bold uppercase tracking-widest hover:bg-white hover:text-black transition-all">
+            <button className="w-full md:w-auto bg-black border border-white text-white px-6 py-2.5 text-[11px] font-black uppercase tracking-widest hover:bg-white hover:text-black transition-all">
               DOWNLOAD THE APP
             </button>
           </div>
 
-          {/* Help & Information */}
-          <div className="text-[12px]">
-            <h4 className="font-black uppercase tracking-widest mb-6 text-white">Help & Information</h4>
-            <ul className="space-y-3 text-gray-400 font-medium">
-              <li><Link href="/" className="hover:text-white">Help</Link></li>
-              <li><Link href="/" className="hover:text-white">Track order</Link></li>
-              <li><Link href="/" className="hover:text-white">Delivery & returns</Link></li>
-              <li><Link href="/" className="hover:text-white">Sitemap</Link></li>
+          {/* Links Columns - Tự động giãn cách trên Mobile */}
+          <div className="text-center md:text-left">
+            <h4 className="font-black text-[12px] uppercase tracking-widest mb-5">Help & Information</h4>
+            <ul className="space-y-3 text-[12px] text-gray-400">
+              <li><Link href="/" className="hover:text-white transition-colors">Help</Link></li>
+              <li><Link href="/" className="hover:text-white transition-colors">Track order</Link></li>
+              <li><Link href="/" className="hover:text-white transition-colors">Delivery & returns</Link></li>
+              <li><Link href="/" className="hover:text-white transition-colors">Sitemap</Link></li>
             </ul>
           </div>
 
-          {/* About NEWEGG */}
-          <div className="text-[12px]">
-            <h4 className="font-black uppercase tracking-widest mb-6 text-white">About NEWEGG</h4>
-            <ul className="space-y-3 text-gray-400 font-medium">
-              <li><Link href="/" className="hover:text-white">About us</Link></li>
-              <li><Link href="/" className="hover:text-white">Careers at NEWEGG</Link></li>
-              <li><Link href="/" className="hover:text-white">Corporate responsibility</Link></li>
-              <li><Link href="/" className="hover:text-white">Investors' site</Link></li>
+          <div className="text-center md:text-left">
+            <h4 className="font-black text-[12px] uppercase tracking-widest mb-5">About NEWEGG</h4>
+            <ul className="space-y-3 text-[12px] text-gray-400">
+              <li><Link href="/" className="hover:text-white transition-colors">About us</Link></li>
+              <li><Link href="/" className="hover:text-white transition-colors">Careers at NEWEGG</Link></li>
+              <li><Link href="/" className="hover:text-white transition-colors">Corporate responsibility</Link></li>
+              <li><Link href="/" className="hover:text-white transition-colors">Investors' site</Link></li>
             </ul>
           </div>
 
-          {/* More From & Shopping From */}
-          <div className="text-[12px]">
-            <h4 className="font-black uppercase tracking-widest mb-6 text-white">More From NEWEGG</h4>
-            <ul className="space-y-3 text-gray-400 font-medium mb-8">
-              <li><Link href="/" className="hover:text-white">Mobile and NEWEGG apps</Link></li>
-              <li><Link href="/" className="hover:text-white">Gift vouchers</Link></li>
-              <li><Link href="/" className="hover:text-white">Black Friday</Link></li>
+          <div className="text-center md:text-left">
+            <h4 className="font-black text-[12px] uppercase tracking-widest mb-5">More From NEWEGG</h4>
+            <ul className="space-y-3 text-[12px] text-gray-400 mb-6">
+              <li><Link href="/" className="hover:text-white transition-colors">Mobile and NEWEGG apps</Link></li>
+              <li><Link href="/" className="hover:text-white transition-colors">Gift vouchers</Link></li>
+              <li><Link href="/" className="hover:text-white transition-colors">Black Friday</Link></li>
             </ul>
             
-            <h4 className="font-black uppercase tracking-widest mb-3 text-white">Shopping from:</h4>
-            <div className="flex items-center gap-2 mb-4">
-              <span className="text-gray-400">You're in</span>
-              <img src="https://flagcdn.com/w20/vn.png" className="w-5 h-3.5 object-cover" alt="Vietnam" />
-              <span className="font-black border-l border-gray-600 pl-2 text-white cursor-pointer uppercase tracking-tighter">| CHANGE</span>
-            </div>
-
-            <p className="text-gray-400 text-[11px] mb-2">Some of our international sites:</p>
-            <div className="flex flex-wrap gap-2.5 opacity-70">
-              {['es', 'de', 'au', 'fr', 'dk', 'it', 'nl', 'pl', 'us', 'se'].map((cc) => (
-                <img key={cc} src={`https://flagcdn.com/w20/${cc}.png`} alt={cc} className="w-4 h-3 cursor-pointer hover:opacity-100 transition-opacity" />
-              ))}
+            <div className="pt-4 border-t border-gray-700">
+              <p className="font-black text-[11px] uppercase mb-3">Shopping from:</p>
+              <div className="flex items-center justify-center md:justify-start gap-2 mb-4">
+                <span className="text-gray-400 text-[11px]">You're in</span>
+                <img src="https://flagcdn.com/w20/vn.png" className="w-4 h-3" alt="VN" />
+                <span className="font-black text-white text-[11px] border-l border-gray-600 pl-2 cursor-pointer">| CHANGE</span>
+              </div>
+              <div className="flex flex-wrap justify-center md:justify-start gap-2 opacity-60">
+                {['es', 'de', 'au', 'fr', 'it', 'us'].map((cc) => (
+                  <img key={cc} src={`https://flagcdn.com/w20/${cc}.png`} alt={cc} className="w-4 h-3 cursor-pointer hover:opacity-100" />
+                ))}
+              </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* THANH CUỐI: Bản quyền */}
-      <div className="w-full bg-[#222222] py-4 text-[#999999]">
-        <div className="max-w-7xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center text-[10px] tracking-widest font-bold uppercase">
+      {/* 3. THANH COPYRIGHT (Màu đen tuyền cực mỏng) */}
+      <div className="w-full bg-[#222222] py-3 text-[#777] border-t border-gray-800">
+        <div className="max-w-7xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center text-[10px] tracking-tighter uppercase font-bold">
           <p>© 2026 NEWEGG</p>
-          <div className="flex gap-5 mt-2 md:mt-0">
+          <div className="flex gap-4 mt-2 md:mt-0">
             <Link href="/" className="hover:text-white">Privacy & Cookies</Link>
-            <span className="text-gray-700">|</span>
+            <span>|</span>
             <Link href="/" className="hover:text-white">Ts&Cs</Link>
-            <span className="text-gray-700">|</span>
+            <span>|</span>
             <Link href="/" className="hover:text-white">Accessibility</Link>
           </div>
         </div>
