@@ -20,7 +20,6 @@ export default function Header() {
   const bagRef = useRef<HTMLDivElement>(null);
   const accountRef = useRef<HTMLDivElement>(null);
 
-  // Logic điều hướng dựa trên trạng thái đăng nhập
   const wishlistPath = isLoggedIn ? "/wishlist" : "/register-test";
   const bagPath = isLoggedIn ? "/cart" : "/register-test";
 
@@ -45,14 +44,6 @@ export default function Header() {
   }, []);
 
   const menuData = {
-    categories: ["Sale Winter essentials", "View all Sale", "Sale Coats & Jackets", "Sale Sweaters & Cardigans", "Sale Shoes & Sneakers", "Sale Dresses", "Sale Tops", "Sale Jeans", "Sale Activewear"],
-    prices: [
-      { label: "$25 and Under", img: "https://images.asos-media.com/products/asos-design-oversized-t-shirt-in-white/204344445-1-white?$n_320w$", path: "/women" },
-      { label: "$50 and Under", img: "https://images.asos-media.com/products/asos-design-slim-jeans-in-blue/204123456-1-blue?$n_320w$", path: "/women" },
-      { label: "$75 and Under", img: "https://images.asos-media.com/products/asos-design-sneakers-in-white/203987654-1-white?$n_320w$", path: "/women" },
-      { label: "$100 and Under", img: "https://images.asos-media.com/products/asos-design-heavyweight-t-shirt-in-black/204556677-1-black?$n_320w$", path: "/women" }
-    ],
-    brands: ["A-Z of Brands", "adidas", "ASOS Design", "Free People", "Mango", "Miss Selfridge", "New Balance", "Nike", "Topshop"],
     mobileNav: [
       { name: "Home", img: "https://images.asos-media.com/navigation/ww_gbl_home_117075775_1x1", path: "/" },
       { name: "Sale", img: "https://images.asos-media.com/navigation/ww_sale_gbl_1734344_1x1", path: "/women" },
@@ -83,6 +74,7 @@ export default function Header() {
 
   return (
     <header className="sticky top-0 z-50 w-full bg-white border-b border-gray-200 font-sans text-black">
+      {/* TOP STRIP */}
       <div className="bg-[#eeeeee] text-gray-500 text-[10px] py-1.5 px-4 flex justify-end gap-5 uppercase font-medium border-b border-gray-200">
         <Link href="/" className="hover:text-black transition-colors">Marketplace</Link>
         <Link href="/" className="hover:text-black transition-colors">Help & FAQs</Link>
@@ -91,6 +83,7 @@ export default function Header() {
         </button>
       </div>
 
+      {/* MAIN NAV BAR */}
       <div className="bg-[#2d2d2d] text-white">
         <div className="max-w-7xl mx-auto px-4 flex items-center justify-between h-14 md:h-16 gap-4">
           <button className="md:hidden p-2" onClick={() => setIsSideMenuOpen(true)}>
@@ -100,7 +93,6 @@ export default function Header() {
           <Link href="/" className="text-3xl md:text-[34px] font-black tracking-tighter uppercase decoration-none">asos</Link>
 
           <nav className="hidden md:flex gap-0 font-bold text-[13px] tracking-widest h-full items-center ml-4">
-            {/* Cập nhật Link trang Women */}
             <Link href="/women" className="hover:bg-[#525252] h-full flex items-center px-6 transition-colors border-r border-gray-600">WOMEN</Link>
             <Link href="/" className="hover:bg-[#525252] h-full flex items-center px-6 transition-colors border-r border-gray-600">MEN</Link>
           </nav>
@@ -117,7 +109,7 @@ export default function Header() {
               className="w-full bg-white text-black rounded-full py-2 px-5 pr-10 text-sm focus:outline-none"
             />
             <button className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-black">
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
             </button>
           </div>
 
@@ -145,12 +137,10 @@ export default function Header() {
               )}
             </div>
 
-            {/* Cập nhật Logic Wishlist */}
             <Link href={wishlistPath} className="relative h-full flex items-center p-2 hover:bg-[#525252] transition-colors rounded-full" title="My Wishlist">
                 <svg className="w-6 h-6 md:w-7 md:h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /></svg>
             </Link>
 
-            {/* Cập nhật Logic Shopping Bag */}
             <Link href={bagPath} className="relative h-full flex items-center p-2 hover:bg-[#525252] transition-colors rounded-full" title="My Shopping Bag">
                 <svg className="w-6 h-6 md:w-7 md:h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" d="M16 11V7a4 4 0 11-8 0v4M5 9h14l1 12H4L5 9z" /></svg>
                 <span className="absolute bottom-1 right-1 bg-[#d01345] text-white text-[9px] w-4 h-4 rounded-full flex items-center justify-center font-bold">0</span>
@@ -159,7 +149,7 @@ export default function Header() {
         </div>
       </div>
 
-      {/* MOBILE NAV - Giữ nguyên */}
+      {/* MOBILE SIDEBAR - THEO HÌNH MẪU */}
       <div className={`fixed inset-0 z-[200] transition-all duration-300 ${isSideMenuOpen ? "visible" : "invisible"}`}>
         <div className={`absolute inset-0 bg-black/60 transition-opacity duration-300 ${isSideMenuOpen ? "opacity-100" : "opacity-0"}`} onClick={() => setIsSideMenuOpen(false)} />
         <div className={`absolute top-0 left-0 w-[85%] max-w-[340px] h-full bg-white transform transition-transform duration-300 flex flex-col ${isSideMenuOpen ? "translate-x-0" : "-translate-x-full"}`}>
@@ -170,6 +160,7 @@ export default function Header() {
           </div>
 
           <div className="flex-1 overflow-y-auto">
+            {/* Promo Banner */}
             <Link href="/women" onClick={() => setIsSideMenuOpen(false)} className="p-4 border-b border-gray-100 bg-white block">
               <span className="text-[11px] font-bold text-gray-500 uppercase tracking-widest block mb-1">The Winter Sale: last chance</span>
               <div className="flex justify-between items-center">
@@ -178,40 +169,43 @@ export default function Header() {
               </div>
             </Link>
 
+            {/* List with Images on Right */}
             {menuData.mobileNav.map((item) => (
               <Link key={item.name} href={item.path === "/" ? "/women" : item.path} onClick={() => setIsSideMenuOpen(false)} className="flex items-center justify-between p-4 border-b border-gray-50 active:bg-gray-100 transition-colors">
                 <span className="text-[13px] font-bold uppercase tracking-[0.15em]">{item.name}</span>
-                <div className="w-[60px] h-[60px] rounded-full overflow-hidden bg-gray-100 border border-gray-100 shadow-sm">
+                <div className="w-[60px] h-[60px] overflow-hidden">
                   <img src={item.img} alt={item.name} className="w-full h-full object-cover" />
                 </div>
               </Link>
             ))}
 
-            <div className="p-5">
-                <h4 className="text-[18px] font-black italic mb-6 uppercase tracking-tighter">
+            {/* Sidebar Account Section */}
+            <div className="p-5 bg-gray-50 mt-4">
+                <h4 className="text-[18px] font-black italic mb-6 uppercase tracking-tighter border-b pb-2">
                   Hi {isLoggedIn ? user.name : "Akai"}
                 </h4>
+                <div className="flex gap-3 mb-8">
+                  <Link href="/register-test" onClick={() => setIsSideMenuOpen(false)} className="flex-1 bg-black text-white py-3 text-[11px] font-black uppercase text-center tracking-widest">Sign In</Link>
+                  <Link href="/register-test" onClick={() => setIsSideMenuOpen(false)} className="flex-1 border border-black py-3 text-[11px] font-bold uppercase text-center tracking-widest bg-white">Join</Link>
+                </div>
                 <ul className="space-y-6 text-[13px] font-bold uppercase tracking-widest">
                   <li><Link href="/" onClick={() => setIsSideMenuOpen(false)}>👤 My Account</Link></li>
                   <li><Link href={bagPath} onClick={() => setIsSideMenuOpen(false)}>📦 My Orders</Link></li>
-                  {isLoggedIn ? (
-                    <li onClick={handleSignOut} className="text-gray-400 cursor-pointer">Sign Out</li>
-                  ) : (
-                    <li><Link href="/register-test" onClick={() => setIsSideMenuOpen(false)} className="text-gray-400 underline underline-offset-4">Sign In</Link></li>
-                  )}
+                  {isLoggedIn && <li onClick={handleSignOut} className="text-gray-400 cursor-pointer">Sign Out</li>}
+                  <li className="flex justify-between items-center border-t pt-4">Help & Information <span>+</span></li>
                 </ul>
             </div>
           </div>
         </div>
       </div>
 
-      {/* CATEGORY NAV - Giữ nguyên */}
+      {/* CATEGORY NAV - DESKTOP */}
       <div className="bg-[#525252] w-full hidden md:block">
         <div className="max-w-7xl mx-auto px-4 flex gap-6 text-[11px] font-bold text-white uppercase tracking-widest py-2">
           {["Sale", "Trending", "New in", "Clothing", "Dresses", "Shoes", "Accessories", "Brands", "Beauty"].map((item) => (
             <button 
               key={item} 
-              onClick={() => handleCategoryClick(item)} 
+              onMouseEnter={() => {setActiveCategory(item); setIsMegaMenuOpen(true);}}
               className={`px-2 py-1 transition-colors hover:bg-white hover:text-black ${item === "Sale" ? "bg-[#d01345] text-white" : ""} ${activeCategory === item && isMegaMenuOpen ? "bg-white !text-black" : ""}`}
             >
               {item}
@@ -219,6 +213,65 @@ export default function Header() {
           ))}
         </div>
       </div>
+
+      {/* MEGA MENU - THEO HÌNH MẪU */}
+      {isMegaMenuOpen && (
+        <div 
+          className="absolute top-full left-0 w-full bg-white border-b border-gray-200 shadow-2xl hidden md:block"
+          onMouseLeave={() => setIsMegaMenuOpen(false)}
+        >
+          <div className="max-w-7xl mx-auto p-10 grid grid-cols-4 gap-10">
+            {/* COLUMN 1 */}
+            <div>
+              <h4 className="font-bold text-[13px] mb-6 uppercase tracking-widest border-b pb-2">New Products</h4>
+              <ul className="space-y-4 text-[12px] text-gray-500">
+                {["View all", "New In: Today", "New In: Selling Fast", "Clothing", "Dresses", "Tops", "Shoes"].map(i => (
+                  <li key={i} className="hover:text-black hover:underline cursor-pointer">{i}</li>
+                ))}
+              </ul>
+            </div>
+
+            {/* COLUMN 2 (WITH ROUND IMAGES) */}
+            <div>
+              <h4 className="font-bold text-[13px] mb-6 uppercase tracking-widest border-b pb-2">Winter</h4>
+              <ul className="space-y-4">
+                {[
+                  { name: "Essentials", img: "https://images.asos-media.com/navigation/ww_gbl_winter_essentials_117075775_1x1" },
+                  { name: "Loungewear", img: "https://images.asos-media.com/navigation/ww_gbl_loungewear_117075775_1x1" },
+                  { name: "Faux fur", img: "https://images.asos-media.com/navigation/ww_gbl_faux_fur_117075775_1x1" },
+                  { name: "Leather", img: "https://images.asos-media.com/navigation/ww_gbl_leather_117075775_1x1" }
+                ].map(item => (
+                  <li key={item.name} className="flex items-center gap-3 text-[12px] text-gray-500 hover:text-black cursor-pointer group">
+                    <img src={item.img} className="w-8 h-8 rounded-full border group-hover:opacity-80" />
+                    <span>{item.name}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* COLUMN 3 */}
+            <div>
+              <h4 className="font-bold text-[13px] mb-6 uppercase tracking-widest border-b pb-2">Your Most Hyped</h4>
+              <ul className="space-y-4 text-[12px] text-gray-500">
+                {["Dresses", "Tops", "Knits & sweats", "Jeans", "Collections"].map(i => (
+                  <li key={i} className="hover:text-black hover:underline cursor-pointer">{i}</li>
+                ))}
+              </ul>
+            </div>
+
+            {/* COLUMN 4 (PROMO) */}
+            <div className="border-l pl-10 text-center">
+              <h4 className="font-bold text-[13px] mb-6 uppercase tracking-widest">New Edits</h4>
+              <div className="relative group cursor-pointer overflow-hidden aspect-[3/4] mb-4">
+                <img src="https://images.asos-media.com/navigation/ww_gbl_new_edits_117075775_1x1" className="w-full h-full object-cover transition-transform group-hover:scale-105" />
+                <div className="absolute inset-0 bg-black/5 flex items-end justify-center p-4">
+                  <span className="bg-white text-black text-[10px] font-bold px-6 py-2 uppercase tracking-widest shadow-lg">Arrange</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </header>
   );
 }
