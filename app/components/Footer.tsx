@@ -13,7 +13,7 @@ export default function Footer() {
           {/* Nhóm Social: Đã đồng bộ kích thước w-9 h-9 */}
           <div className="flex items-center gap-6">
             <img 
-              src="/snapchat.webp" 
+              src="/images/snapchat.webp" 
               className="w-9 h-9 object-contain" 
               alt="Snapchat" 
             />
