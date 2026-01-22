@@ -60,7 +60,6 @@ export default function Header() {
       { label: "$100 and Under", img: "https://images.asos-media.com/products/asos-design-heavyweight-t-shirt-in-black/204556677-1-black?$n_320w$", path: "/women/sale/under-100" }
     ],
     brands: ["A-Z of Brands", "adidas", "ASOS Design", "Free People", "Mango", "Miss Selfridge", "New Balance", "Nike", "Topshop"],
-    // Cập nhật đường dẫn cho Mobile Sidebar
     mobileNav: [
       { name: "Home", img: "https://images.asos-media.com/navigation/ww_gbl_home_117075775_1x1", path: "/" },
       { name: "Sale", img: "https://images.asos-media.com/navigation/ww_sale_gbl_1734344_1x1", path: "/women/sale" },
@@ -129,16 +128,6 @@ export default function Header() {
             <button className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-black">
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
             </button>
-            {showSuggestions && filteredSuggestions.length > 0 && (
-              <div className="absolute top-full left-0 w-full bg-white mt-1 shadow-2xl border border-gray-100 z-[110] rounded-lg text-black overflow-hidden">
-                {filteredSuggestions.map((item, index) => (
-                  <div key={index} onClick={() => { setSearchQuery(item); setShowSuggestions(false); }} className="px-5 py-3 hover:bg-gray-100 cursor-pointer text-sm transition-colors border-b border-gray-50 flex items-center gap-3">
-                    <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                    {item}
-                  </div>
-                ))}
-              </div>
-            )}
           </div>
 
           <div className="flex gap-1.5 md:gap-4 items-center h-full">
@@ -175,60 +164,67 @@ export default function Header() {
         </div>
       </div>
 
-      {/* 3. SIDEBAR MOBILE (CHUYỂN HƯỚNG 100% NHƯ DESKTOP) */}
+      {/* 3. SIDEBAR MOBILE - TỐI ƯU CẬP NHẬT */}
       <div className={`fixed inset-0 z-[200] transition-all duration-300 ${isSideMenuOpen ? "visible" : "invisible"}`}>
         <div className={`absolute inset-0 bg-black/60 transition-opacity duration-300 ${isSideMenuOpen ? "opacity-100" : "opacity-0"}`} onClick={() => setIsSideMenuOpen(false)} />
         <div className={`absolute top-0 left-0 w-[85%] max-w-[340px] h-full bg-white transform transition-transform duration-300 flex flex-col ${isSideMenuOpen ? "translate-x-0" : "-translate-x-full"}`}>
           
           <div className="flex border-b border-gray-200">
-            <button className="flex-1 py-4 text-[13px] font-bold uppercase border-b-2 border-black">Women</button>
-            <button className="flex-1 py-4 text-[13px] font-bold uppercase text-gray-400 bg-gray-50 border-b-2 border-transparent">Men</button>
+            <button className="flex-1 py-4 text-[13px] font-bold uppercase border-b-2 border-black tracking-widest">Women</button>
+            <button className="flex-1 py-4 text-[13px] font-bold uppercase text-gray-400 bg-gray-50 border-b-2 border-transparent tracking-widest">Men</button>
             <button onClick={() => setIsSideMenuOpen(false)} className="p-4 bg-black text-white"><svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg></button>
           </div>
 
           <div className="flex-1 overflow-y-auto">
-            {/* Sale Banner - Nút điều hướng */}
-            <Link href="/women/sale" onClick={() => setIsSideMenuOpen(false)} className="p-4 border-b border-gray-100 bg-white flex items-center justify-between">
-              <span className="text-[14px] font-black italic tracking-tighter uppercase">Up to 70% off Winter Sale</span>
-              <span className="text-[10px] border border-black px-2 py-0.5 font-bold uppercase">Shop</span>
+            <Link href="/women/sale" onClick={() => setIsSideMenuOpen(false)} className="p-4 border-b border-gray-100 bg-white block">
+              <span className="text-[11px] font-bold text-gray-500 uppercase tracking-widest block mb-1">The Winter Sale: last chance</span>
+              <div className="flex justify-between items-center">
+                <span className="text-[20px] font-black italic tracking-tighter uppercase">Up to 70% off</span>
+                <span className="text-[10px] border border-black px-3 py-1 font-bold uppercase">Shop</span>
+              </div>
             </Link>
 
-            {/* List Menu - Các nút ấn chuyển hướng */}
             {menuData.mobileNav.map((item) => (
               <Link key={item.name} href={item.path} onClick={() => setIsSideMenuOpen(false)} className="flex items-center justify-between p-4 border-b border-gray-50 active:bg-gray-100 transition-colors">
-                <span className="text-[13px] font-bold uppercase tracking-widest">{item.name}</span>
-                <div className="w-12 h-12 rounded-full overflow-hidden bg-gray-100 border border-gray-100">
-                  <img src={item.img + "?$n_80w$"} alt={item.name} className="w-full h-full object-cover" />
+                <span className="text-[13px] font-bold uppercase tracking-[0.15em]">{item.name}</span>
+                <div className="w-[60px] h-[60px] rounded-full overflow-hidden bg-gray-100 border border-gray-100 shadow-sm">
+                  <img src={item.img} alt={item.name} className="w-full h-full object-cover" />
                 </div>
               </Link>
             ))}
 
-            <div className="bg-[#EEEEEE] p-4 text-[11px] font-black uppercase tracking-widest text-gray-500">More ASOS</div>
+            <div className="bg-[#EEEEEE] p-4 text-[11px] font-black uppercase tracking-[0.2em] text-gray-500">More ASOS</div>
             <div className="grid grid-cols-2 gap-px bg-gray-200 border-b border-gray-200">
-               <Link href="/premier" onClick={() => setIsSideMenuOpen(false)} className="bg-white p-6 text-center text-[10px] font-black uppercase leading-tight">ASOS Premier<br/><span className="font-normal text-[8px] lowercase tracking-normal">Unlimited shipping</span></Link>
-               <Link href="/students" onClick={() => setIsSideMenuOpen(false)} className="bg-white p-6 text-center text-[10px] font-black uppercase leading-tight">10% Student<br/><span className="font-normal text-[8px] lowercase tracking-normal">Discount</span></Link>
+               <Link href="/premier" onClick={() => setIsSideMenuOpen(false)} className="bg-white p-6 text-center">
+                 <span className="text-[10px] font-black uppercase tracking-widest leading-tight">ASOS Premier</span><br/>
+                 <span className="text-[9px] text-gray-500 lowercase">Unlimited shipping</span>
+               </Link>
+               <Link href="/students" onClick={() => setIsSideMenuOpen(false)} className="bg-white p-6 text-center border-l border-gray-50">
+                 <span className="text-[10px] font-black uppercase tracking-widest leading-tight">10% Student</span><br/>
+                 <span className="text-[9px] text-gray-500 lowercase">Discount</span>
+               </Link>
             </div>
 
-            {/* Account Info - Điều hướng theo tài khoản */}
             <div className="p-5">
-               <h4 className="text-[15px] font-black mb-5 uppercase tracking-tighter italic underline decoration-2">
-                 Hi {isLoggedIn ? user.name : "Guest"}
+               <h4 className="text-[18px] font-black italic mb-6 uppercase tracking-tighter">
+                 Hi {isLoggedIn ? user.name : "Akai"}
                </h4>
-               <ul className="space-y-5 text-[13px] font-bold uppercase tracking-widest">
+               <ul className="space-y-6 text-[13px] font-bold uppercase tracking-widest">
                  <li><Link href="/my-account" onClick={() => setIsSideMenuOpen(false)} className="flex items-center gap-4">👤 My Account</Link></li>
                  <li><Link href="/orders" onClick={() => setIsSideMenuOpen(false)} className="flex items-center gap-4">📦 My Orders</Link></li>
+                 <li><Link href="/returns" onClick={() => setIsSideMenuOpen(false)} className="flex items-center gap-4">↩️ My Returns</Link></li>
                  {isLoggedIn ? (
                    <li onClick={handleSignOut} className="flex items-center gap-4 text-gray-400 cursor-pointer">Sign Out</li>
                  ) : (
-                   <li><Link href="/signin" onClick={() => setIsSideMenuOpen(false)} className="flex items-center gap-4">Sign In</Link></li>
+                   <li><Link href="/signin" onClick={() => setIsSideMenuOpen(false)} className="flex items-center gap-4 text-gray-400 underline decoration-1 underline-offset-4">Sign In</Link></li>
                  )}
                </ul>
             </div>
           </div>
           
-          <div className="p-4 border-t bg-gray-50 flex justify-between items-center text-[11px] font-bold">
+          <div className="p-4 border-t bg-gray-50 flex justify-between items-center text-[11px] font-bold sticky bottom-0">
              <Link href="/settings/country" className="flex items-center gap-2 uppercase tracking-widest italic">You're in 🇻🇳 | Change</Link>
-             <img src="https://flagcdn.com/w40/vn.png" className="w-5" alt="VN"/>
+             <img src="https://flagcdn.com/w40/vn.png" className="w-5 shadow-sm" alt="VN"/>
           </div>
         </div>
       </div>
