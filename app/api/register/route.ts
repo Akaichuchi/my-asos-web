@@ -1,31 +1,27 @@
 import { NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma'; // Đường dẫn đến file ở Bước 1
+import { prisma } from '@/lib/prisma';
 
-export async function POST(request: Request) {
+// LỆNH LẤY DỮ LIỆU (GET): Giúp trang Admin hiển thị danh sách khách
+export async function GET() {
   try {
-    const body = await request.json();
-    const { email } = body;
-
-    // Kiểm tra xem email đã tồn tại chưa
-    const existingUser = await prisma.user.findUnique({
-      where: { email: email }
+    const users = await prisma.user.findMany({
+      orderBy: { id: 'desc' } // Khách mới nhất lên đầu
     });
-
-    if (existingUser) {
-      return NextResponse.json({ error: "Email này đã được đăng ký!" }, { status: 400 });
-    }
-
-    // Tạo khách hàng mới vào Database
-    const newUser = await prisma.user.create({
-      data: {
-        email: email,
-        balance: 0.0, // Mặc định là 0.0 như trong schema của bạn
-        role: "USER"
-      },
-    });
-
-    return NextResponse.json({ message: "Tạo tài khoản thành công!", user: newUser });
+    return NextResponse.json(users);
   } catch (error) {
-    return NextResponse.json({ error: "Lỗi hệ thống, vui lòng thử lại!" }, { status: 500 });
+    return NextResponse.json({ error: 'Không thể lấy dữ liệu' }, { status: 500 });
+  }
+}
+
+// LỆNH ĐĂNG KÝ (POST): Giữ nguyên logic nạp tiền của bạn
+export async function POST(req: Request) {
+  try {
+    const { email } = await req.json();
+    const newUser = await prisma.user.create({
+      data: { email: email, balance: 0.0, role: 'USER' },
+    });
+    return NextResponse.json(newUser);
+  } catch (error) {
+    return NextResponse.json({ error: 'Lỗi đăng ký' }, { status: 500 });
   }
 }
