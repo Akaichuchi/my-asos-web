@@ -33,7 +33,7 @@ export default function RegisterPage() {
       <div className="w-full lg:w-3/5 flex flex-col items-center px-4 pt-10 pb-12">
         {/* Logo */}
         <div className="mb-8">
-          <h1 className="text-4xl font-black tracking-tighter">asos</h1>
+          <h1 className="text-4xl font-black tracking-tighter uppercase">asos</h1>
         </div>
 
         <div className="w-full max-w-md">
@@ -52,7 +52,7 @@ export default function RegisterPage() {
                 <div className="w-10 h-10 border border-gray-300 rounded-full flex items-center justify-center mb-1 text-lg">
                   {item.icon}
                 </div>
-                <span className="text-[10px] text-center leading-tight text-gray-600">{item.label}</span>
+                <span className="text-[10px] text-center leading-tight text-gray-600 font-bold uppercase">{item.label}</span>
               </div>
             ))}
           </div>
@@ -60,7 +60,7 @@ export default function RegisterPage() {
           {/* Form Đăng ký */}
           <form onSubmit={handleRegister} className="space-y-4">
             <div>
-              <label className="block text-xs font-bold text-gray-500 mb-1 uppercase">Email address:*</label>
+              <label className="block text-xs font-bold text-gray-500 mb-1 uppercase tracking-widest">Email address:*</label>
               <input 
                 type="email" 
                 value={email}
@@ -84,19 +84,28 @@ export default function RegisterPage() {
             </div>
           )}
 
-          {/* Phụ trợ */}
+          {/* Cập nhật Phụ trợ với Logo chuyên nghiệp */}
           <div className="mt-10 text-center border-t pt-6">
-            <p className="text-xs text-gray-400 font-bold uppercase mb-4">Or continue with</p>
+            <p className="text-xs text-gray-400 font-bold uppercase mb-6 tracking-widest">Or continue with</p>
             <div className="flex justify-center gap-6">
-              <button className="w-12 h-12 border flex items-center justify-center hover:bg-gray-50">G</button>
-              <button className="w-12 h-12 border flex items-center justify-center hover:bg-gray-50">F</button>
-              <button className="w-12 h-12 border flex items-center justify-center hover:bg-gray-50">A</button>
+              {/* Google */}
+              <button className="w-12 h-12 border border-gray-200 flex items-center justify-center hover:bg-gray-50 transition-all">
+                <img src="https://www.gstatic.com/images/branding/product/1x/gsa_512dp.png" className="w-6 h-6" alt="Google" />
+              </button>
+              {/* Facebook */}
+              <button className="w-12 h-12 border border-gray-200 flex items-center justify-center hover:bg-gray-50 transition-all">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/b/b8/2021_Facebook_icon.svg" className="w-6 h-6" alt="Facebook" />
+              </button>
+              {/* Apple */}
+              <button className="w-12 h-12 border border-gray-200 flex items-center justify-center hover:bg-gray-50 transition-all">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/f/fa/Apple_logo_black.svg" className="w-5 h-5" alt="Apple" />
+              </button>
             </div>
           </div>
         </div>
       </div>
 
-      {/* PHẦN MÃ VẠCH (PATTERN) BÊN PHẢI: Hiển thị 2/5 màn hình trên PC, ở trên cùng trên Mobile */}
+      {/* PHẦN MÃ VẠCH (PATTERN) BÊN PHẢI: Giữ nguyên bố cục bạn đã gửi */}
       <div 
         className="w-full lg:w-2/5 h-48 lg:h-auto bg-repeat"
         style={{ 
@@ -104,7 +113,6 @@ export default function RegisterPage() {
           backgroundSize: '300px'
         }}
       >
-        {/* Phần này tạo điểm nhấn thương hiệu giống hình mẫu bạn gửi */}
       </div>
       
     </div>
