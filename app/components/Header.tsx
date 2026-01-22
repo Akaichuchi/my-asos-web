@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import Link from "next/link"; // Sử dụng Link để tối ưu hóa SEO và chuyển trang mượt mà
 
 export default function Header() {
   const [isMegaMenuOpen, setIsMegaMenuOpen] = useState(false);
@@ -7,9 +8,12 @@ export default function Header() {
   const [isAccountOpen, setIsAccountOpen] = useState(false);
   const [activeCategory, setActiveCategory] = useState("");
 
-  // Giả lập trạng thái (Để hiện bảng Sign In/Join giống hình bạn gửi, hãy để isLoggedIn = false)
+  // Giả lập trạng thái: Để isLoggedIn = false để kiểm tra bảng 4 nút Sign In/Join
   const [isLoggedIn, setIsLoggedIn] = useState(false); 
   const [balance, setBalance] = useState(150.00);
+
+  // Đường dẫn chính xác đến trang đăng ký của bạn để tránh lỗi 404
+  const authPath = "/register-test";
 
   const menuData = {
     categories: ["Sale Winter essentials", "View all Sale", "Sale Coats & Jackets", "Sale Sweaters & Cardigans", "Sale Shoes & Sneakers", "Sale Dresses", "Sale Tops", "Sale Jeans", "Sale Activewear"],
@@ -34,7 +38,7 @@ export default function Header() {
 
   return (
     <header className="sticky top-0 z-50 w-full bg-white border-b border-gray-200 font-sans text-black">
-      {/* 1. THANH ĐEN TRÊN CÙNG */}
+      {/* 1. THANH ĐEN TRÊN CÙNG (Giữ nguyên) */}
       <div className="bg-[#2d2d2d] text-white text-[10px] py-2 px-4 flex justify-end gap-4 uppercase font-bold">
         <span className="cursor-pointer hover:underline">Help & FAQs</span>
         <span className="cursor-pointer">🇻ietnam</span>
@@ -65,19 +69,18 @@ export default function Header() {
             />
           </div>
 
-          {/* ICONS TIỆN ÍCH */}
           <div className="flex gap-3 md:gap-5 items-center">
             
-            {/* PHẦN CẬP NHẬT: TÀI KHOẢN MOBILE & DESKTOP */}
+            {/* PHẦN CẬP NHẬT TÀI KHOẢN */}
             <div className="relative group">
-              {/* MOBILE: Ấn vào icon là đi thẳng đến đăng ký */}
-              <a href="/register" className="md:hidden block p-1">
+              {/* MOBILE: Ấn icon sang trang đăng ký */}
+              <Link href={authPath} className="md:hidden block p-1">
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                 </svg>
-              </a>
+              </Link>
 
-              {/* DESKTOP: Rê chuột hiện bảng như hình bạn gửi */}
+              {/* DESKTOP: Rê chuột hiện bảng 4 nút */}
               <div 
                 className="hidden md:block relative cursor-pointer py-4"
                 onMouseEnter={() => setIsAccountOpen(true)}
@@ -88,37 +91,52 @@ export default function Header() {
                 </svg>
                 
                 {isAccountOpen && (
-                  <div className="absolute right-0 top-full w-64 bg-white shadow-2xl border border-gray-200 z-[100] p-4 text-black animate-in fade-in zoom-in-95 duration-200">
+                  <div className="absolute right-0 top-full w-72 bg-white shadow-2xl border border-gray-200 z-[100] p-5 text-black">
                     {!isLoggedIn ? (
-                      <div className="space-y-4">
-                        <div className="flex justify-between items-center">
-                          <p className="text-[11px] font-black uppercase italic">Welcome to ASOS</p>
-                        </div>
+                      <div className="space-y-5">
+                        <p className="text-[11px] font-black uppercase italic tracking-tight">Welcome to ASOS</p>
+                        
+                        {/* 2 NÚT LỚN TRÊN CÙNG */}
                         <div className="flex gap-2">
-                          <a href="/login" className="flex-1 bg-black text-white py-2 text-[10px] font-bold uppercase text-center hover:bg-gray-800">Sign In</a>
-                          <a href="/register" className="flex-1 border-2 border-black py-2 text-[10px] font-bold uppercase text-center hover:bg-gray-100">Join</a>
+                          <Link href={authPath} className="flex-1 bg-black text-white py-2 text-[11px] font-bold uppercase text-center hover:opacity-80 transition-all">Sign In</Link>
+                          <Link href={authPath} className="flex-1 border-2 border-black py-2 text-[11px] font-bold uppercase text-center hover:bg-gray-100 transition-all">Join</Link>
                         </div>
+                        
+                        <hr className="border-gray-100" />
+                        
+                        <ul className="space-y-4">
+                          <li className="flex items-center gap-3 text-[11px] font-bold uppercase tracking-widest hover:text-gray-500 cursor-pointer">
+                            <span className="text-lg">👤</span> My Account
+                          </li>
+                          
+                          <li className="flex items-center justify-between border-t border-gray-50 pt-3">
+                            <div className="flex items-center gap-3 text-[11px] font-bold uppercase tracking-widest italic">
+                              <span className="text-lg">🛍️</span> My Orders
+                            </div>
+                            {/* 2 NÚT NHỎ DÒNG MY ORDERS */}
+                            <div className="flex gap-1">
+                               <Link href={authPath} className="text-[9px] bg-gray-100 px-2 py-1 font-black uppercase hover:bg-gray-200 transition-colors">Sign In</Link>
+                               <Link href={authPath} className="text-[9px] bg-gray-100 px-2 py-1 font-black uppercase hover:bg-gray-200 transition-colors">Join</Link>
+                            </div>
+                          </li>
+                          
+                          <li className="flex items-center gap-3 text-[11px] font-bold uppercase tracking-widest border-t border-gray-50 pt-3 hover:text-gray-500 cursor-pointer">
+                            <span className="text-lg">💬</span> Help & Returns
+                          </li>
+                        </ul>
                       </div>
                     ) : (
                       <div className="mb-4 pb-4 border-b border-gray-100">
                         <p className="text-[10px] text-gray-400 font-bold uppercase mb-1">Account Balance</p>
                         <p className="text-xl font-black text-green-600">${balance.toFixed(2)}</p>
+                        <ul className="mt-4 space-y-4 text-[11px] font-bold uppercase tracking-widest border-t border-gray-100 pt-4">
+                          <li className="flex items-center gap-3 hover:text-gray-500 cursor-pointer">👤 My Account</li>
+                          <li className="flex items-center gap-3 hover:text-gray-500 cursor-pointer border-t border-gray-50 pt-3">🛍️ My Orders</li>
+                          <li className="flex items-center gap-3 hover:text-gray-500 cursor-pointer border-t border-gray-50 pt-3">💬 Help & Returns</li>
+                          <li className="pt-2 text-gray-400 cursor-pointer hover:text-black transition-colors">Sign Out</li>
+                        </ul>
                       </div>
                     )}
-                    <ul className="mt-4 space-y-4 text-[11px] font-bold uppercase tracking-widest border-t border-gray-100 pt-4">
-                      <li className="flex items-center gap-3 hover:text-gray-500 cursor-pointer">👤 My Account</li>
-                      <li className="flex items-center gap-3 hover:text-gray-500 cursor-pointer border-t border-gray-50 pt-3">
-                        🛍️ My Orders
-                        {!isLoggedIn && (
-                          <div className="ml-auto flex gap-1">
-                             <a href="/login" className="text-[8px] bg-gray-100 px-1.5 py-0.5 font-black uppercase">Sign In</a>
-                             <a href="/register" className="text-[8px] bg-gray-100 px-1.5 py-0.5 font-black uppercase">Join</a>
-                          </div>
-                        )}
-                      </li>
-                      <li className="flex items-center gap-3 hover:text-gray-500 cursor-pointer border-t border-gray-50 pt-3">💬 Help & Returns</li>
-                      {isLoggedIn && <li className="pt-2 text-gray-400 cursor-pointer hover:text-black transition-colors">Sign Out</li>}
-                    </ul>
                   </div>
                 )}
               </div>
@@ -195,7 +213,7 @@ export default function Header() {
                   <p className="text-2xl font-black text-green-600">${balance.toFixed(2)}</p>
                 </div>
               ) : (
-                <a href="/register" className="block w-full bg-black text-white py-3 text-xs font-bold uppercase tracking-widest text-center">Sign In / Join</a>
+                <Link href={authPath} className="block w-full bg-black text-white py-3 text-xs font-bold uppercase tracking-widest text-center">Sign In / Join</Link>
               )}
             </div>
 
