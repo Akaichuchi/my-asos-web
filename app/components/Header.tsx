@@ -2,10 +2,6 @@
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link"; 
 
-/**
- * Header Component - Optimized for SEO and User Experience
- * Phù hợp với tiêu chuẩn giao diện thương mại điện tử quốc tế (ASOS Style)
- */
 export default function Header() {
   const [isMegaMenuOpen, setIsMegaMenuOpen] = useState(false);
   const [isSideMenuOpen, setIsSideMenuOpen] = useState(false);
@@ -17,7 +13,6 @@ export default function Header() {
   const [isLoggedIn, setIsLoggedIn] = useState(false); 
   const [user, setUser] = useState({ name: "" });
 
-  // Keywords optimization for internal search
   const [searchQuery, setSearchQuery] = useState("");
   const [showSuggestions, setShowSuggestions] = useState(false);
   const searchRef = useRef<HTMLDivElement>(null);
@@ -32,16 +27,6 @@ export default function Header() {
       setIsLoggedIn(true);
     }
   }, []);
-
-  const allSuggestions = [
-    "Dresses for winter", "White sneakers", "Adidas originals", 
-    "Nike Air Max", "Black coats", "Jeans slim fit", "Tops for women",
-    "Mens jackets", "Accessories for men", "Beauty care sets"
-  ];
-  
-  const filteredSuggestions = allSuggestions.filter(item => 
-    item.toLowerCase().includes(searchQuery.toLowerCase())
-  );
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -94,7 +79,6 @@ export default function Header() {
 
   return (
     <header className="sticky top-0 z-50 w-full bg-white border-b border-gray-200 font-sans text-black">
-      {/* 1. TOP BAR - Secondary Navigation */}
       <div className="bg-[#eeeeee] text-gray-500 text-[10px] py-1.5 px-4 flex justify-end gap-5 uppercase font-medium border-b border-gray-200">
         <Link href="/" className="hover:text-black transition-colors" title="Visit Marketplace">Marketplace</Link>
         <Link href="/" className="hover:text-black transition-colors" title="Customer Help & FAQs">Help & FAQs</Link>
@@ -103,7 +87,6 @@ export default function Header() {
         </button>
       </div>
 
-      {/* 2. MAIN HEADER */}
       <div className="bg-[#2d2d2d] text-white">
         <div className="max-w-7xl mx-auto px-4 flex items-center justify-between h-14 md:h-16 gap-4">
           <button className="md:hidden p-2" onClick={() => setIsSideMenuOpen(true)} aria-label="Open Mobile Menu">
@@ -170,11 +153,9 @@ export default function Header() {
         </div>
       </div>
 
-      {/* 3. SIDEBAR MOBILE */}
       <div className={`fixed inset-0 z-[200] transition-all duration-300 ${isSideMenuOpen ? "visible" : "invisible"}`}>
         <div className={`absolute inset-0 bg-black/60 transition-opacity duration-300 ${isSideMenuOpen ? "opacity-100" : "opacity-0"}`} onClick={() => setIsSideMenuOpen(false)} />
         <div className={`absolute top-0 left-0 w-[85%] max-w-[340px] h-full bg-white transform transition-transform duration-300 flex flex-col ${isSideMenuOpen ? "translate-x-0" : "-translate-x-full"}`}>
-          
           <div className="flex border-b border-gray-200">
             <button className="flex-1 py-4 text-[13px] font-bold uppercase border-b-2 border-black tracking-widest">Women</button>
             <button className="flex-1 py-4 text-[13px] font-bold uppercase text-gray-400 bg-gray-50 border-b-2 border-transparent tracking-widest">Men</button>
@@ -235,7 +216,6 @@ export default function Header() {
         </div>
       </div>
 
-      {/* 4. SUB-NAV (DESKTOP) */}
       <div className="bg-[#525252] w-full hidden md:block">
         <div className="max-w-7xl mx-auto px-4 flex gap-6 text-[11px] font-bold text-white uppercase tracking-widest py-2">
           {["Sale", "Trending", "New in", "Clothing", "Dresses", "Shoes", "Accessories", "Brands", "Beauty"].map((item) => (

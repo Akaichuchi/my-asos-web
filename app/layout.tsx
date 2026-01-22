@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-// Import Header từ thư mục components theo cấu trúc file của bạn
+// Import Header & Footer từ thư mục components
 import Header from "./components/Header"; 
+import Footer from "./components/Footer"; 
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -24,17 +25,16 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        {/* Đặt Header ở đây để nó luôn hiển thị ở đầu trang 
-            trước khi nội dung của {children} được nạp vào.
-        */}
+        {/* Header luôn hiển thị ở đầu tất cả các trang */}
         <Header />
         
-        {/* Phần nội dung chính của các trang sẽ nằm ở đây */}
+        {/* Phần nội dung chính của các trang (Home, Register, Products...) */}
         <main>
           {children}
         </main>
 
-        {/* Bạn có thể thêm Footer ở đây sau này để đồng bộ toàn trang */}
+        {/* Footer đã được đồng bộ ở đây - Nó sẽ xuất hiện ở cuối tất cả các trang con */}
+        <Footer />
       </body>
     </html>
   );
