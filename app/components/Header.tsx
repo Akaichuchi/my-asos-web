@@ -149,50 +149,68 @@ export default function Header() {
         </div>
       </div>
 
-      {/* MOBILE SIDEBAR - THEO HÌNH MẪU */}
+      {/* MOBILE SIDEBAR - UPDATED TO MATCH IMAGE 100% */}
       <div className={`fixed inset-0 z-[200] transition-all duration-300 ${isSideMenuOpen ? "visible" : "invisible"}`}>
         <div className={`absolute inset-0 bg-black/60 transition-opacity duration-300 ${isSideMenuOpen ? "opacity-100" : "opacity-0"}`} onClick={() => setIsSideMenuOpen(false)} />
         <div className={`absolute top-0 left-0 w-[85%] max-w-[340px] h-full bg-white transform transition-transform duration-300 flex flex-col ${isSideMenuOpen ? "translate-x-0" : "-translate-x-full"}`}>
-          <div className="flex border-b border-gray-200">
+          <div className="flex border-b border-gray-200 sticky top-0 bg-white z-10">
             <button className="flex-1 py-4 text-[13px] font-bold uppercase border-b-2 border-black tracking-widest">Women</button>
             <button className="flex-1 py-4 text-[13px] font-bold uppercase text-gray-400 bg-gray-50 border-b-2 border-transparent tracking-widest">Men</button>
             <button onClick={() => setIsSideMenuOpen(false)} className="p-4 bg-black text-white"><svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg></button>
           </div>
 
-          <div className="flex-1 overflow-y-auto">
-            {/* Promo Banner */}
-            <Link href="/women" onClick={() => setIsSideMenuOpen(false)} className="p-4 border-b border-gray-100 bg-white block">
-              <span className="text-[11px] font-bold text-gray-500 uppercase tracking-widest block mb-1">The Winter Sale: last chance</span>
-              <div className="flex justify-between items-center">
-                <span className="text-[20px] font-black italic tracking-tighter uppercase">Up to 70% off</span>
-                <span className="text-[10px] border border-black px-3 py-1 font-bold uppercase">Shop</span>
+          <div className="flex-1 overflow-y-auto pb-10">
+            {/* Promo Banners (As seen in image) */}
+            <div className="p-3">
+              <div className="bg-black text-white p-4 text-center mb-2">
+                <p className="text-[10px] font-bold uppercase tracking-widest">Extra 30% off 1000s of Sale styles</p>
+                <p className="text-[13px] font-black italic uppercase">With code: EXTRA30</p>
               </div>
-            </Link>
-
-            {/* List with Images on Right */}
-            {menuData.mobileNav.map((item) => (
-              <Link key={item.name} href={item.path === "/" ? "/women" : item.path} onClick={() => setIsSideMenuOpen(false)} className="flex items-center justify-between p-4 border-b border-gray-50 active:bg-gray-100 transition-colors">
-                <span className="text-[13px] font-bold uppercase tracking-[0.15em]">{item.name}</span>
-                <div className="w-[60px] h-[60px] overflow-hidden">
-                  <img src={item.img} alt={item.name} className="w-full h-full object-cover" />
+              <Link href="/women" onClick={() => setIsSideMenuOpen(false)} className="border-2 border-black p-4 bg-white block text-center">
+                <span className="text-[11px] font-bold text-gray-500 uppercase tracking-widest block mb-1">The Winter Sale: last chance</span>
+                <div className="flex justify-between items-center px-2">
+                  <span className="text-[22px] font-black italic tracking-tighter uppercase">Up to 70% off</span>
+                  <span className="text-[10px] border border-black px-4 py-1.5 font-bold uppercase">Shop</span>
                 </div>
               </Link>
-            ))}
+            </div>
 
-            {/* Sidebar Account Section */}
-            <div className="p-5 bg-gray-50 mt-4">
-                <h4 className="text-[18px] font-black italic mb-6 uppercase tracking-tighter border-b pb-2">
-                  Hi {isLoggedIn ? user.name : "Akai"}
+            {/* List with Images on Right (Exactly like ASOS App) */}
+            <div className="px-3 space-y-1">
+              {menuData.mobileNav.map((item) => (
+                <Link key={item.name} href={item.path === "/" ? "/women" : item.path} onClick={() => setIsSideMenuOpen(false)} className="flex items-center justify-between p-4 bg-gray-50 hover:bg-gray-100 transition-colors rounded-sm">
+                  <span className="text-[12px] font-bold uppercase tracking-[0.2em]">{item.name}</span>
+                  <div className="w-[56px] h-[56px] overflow-hidden">
+                    <img src={item.img} alt={item.name} className="w-full h-full object-cover" />
+                  </div>
+                </Link>
+              ))}
+            </div>
+
+            {/* Sidebar Account Section - DYNAMIC GREETING */}
+            <div className="p-5 mt-6 border-t border-gray-100">
+                <h4 className="text-[20px] font-black italic mb-6 uppercase tracking-tighter">
+                  {isLoggedIn ? `HI ${user.name.toUpperCase()}` : "WELCOME TO ASOS"}
                 </h4>
-                <div className="flex gap-3 mb-8">
-                  <Link href="/register-test" onClick={() => setIsSideMenuOpen(false)} className="flex-1 bg-black text-white py-3 text-[11px] font-black uppercase text-center tracking-widest">Sign In</Link>
-                  <Link href="/register-test" onClick={() => setIsSideMenuOpen(false)} className="flex-1 border border-black py-3 text-[11px] font-bold uppercase text-center tracking-widest bg-white">Join</Link>
-                </div>
+                
+                {!isLoggedIn && (
+                  <div className="flex gap-3 mb-8">
+                    <Link href="/register-test" onClick={() => setIsSideMenuOpen(false)} className="flex-1 bg-black text-white py-3.5 text-[11px] font-black uppercase text-center tracking-widest">Sign In</Link>
+                    <Link href="/register-test" onClick={() => setIsSideMenuOpen(false)} className="flex-1 border border-gray-300 py-3.5 text-[11px] font-bold uppercase text-center tracking-widest bg-white">Join</Link>
+                  </div>
+                )}
+
                 <ul className="space-y-6 text-[13px] font-bold uppercase tracking-widest">
-                  <li><Link href="/" onClick={() => setIsSideMenuOpen(false)}>👤 My Account</Link></li>
-                  <li><Link href={bagPath} onClick={() => setIsSideMenuOpen(false)}>📦 My Orders</Link></li>
-                  {isLoggedIn && <li onClick={handleSignOut} className="text-gray-400 cursor-pointer">Sign Out</li>}
-                  <li className="flex justify-between items-center border-t pt-4">Help & Information <span>+</span></li>
+                  <li className="flex items-center gap-4">
+                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
+                    <Link href="/" onClick={() => setIsSideMenuOpen(false)}>My Account</Link>
+                  </li>
+                  <li className="flex items-center gap-4">
+                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 002-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /></svg>
+                    <Link href={bagPath} onClick={() => setIsSideMenuOpen(false)}>My Orders</Link>
+                  </li>
+                  {isLoggedIn && <li onClick={handleSignOut} className="text-gray-400 cursor-pointer pl-10">Sign Out</li>}
+                  <li className="flex justify-between items-center border-t pt-6 text-[11px] text-gray-500">Help & Information <span className="text-lg">+</span></li>
                 </ul>
             </div>
           </div>
@@ -214,14 +232,13 @@ export default function Header() {
         </div>
       </div>
 
-      {/* MEGA MENU - THEO HÌNH MẪU */}
+      {/* MEGA MENU - DESKTOP 4 COLUMNS */}
       {isMegaMenuOpen && (
         <div 
           className="absolute top-full left-0 w-full bg-white border-b border-gray-200 shadow-2xl hidden md:block"
           onMouseLeave={() => setIsMegaMenuOpen(false)}
         >
           <div className="max-w-7xl mx-auto p-10 grid grid-cols-4 gap-10">
-            {/* COLUMN 1 */}
             <div>
               <h4 className="font-bold text-[13px] mb-6 uppercase tracking-widest border-b pb-2">New Products</h4>
               <ul className="space-y-4 text-[12px] text-gray-500">
@@ -231,7 +248,6 @@ export default function Header() {
               </ul>
             </div>
 
-            {/* COLUMN 2 (WITH ROUND IMAGES) */}
             <div>
               <h4 className="font-bold text-[13px] mb-6 uppercase tracking-widest border-b pb-2">Winter</h4>
               <ul className="space-y-4">
@@ -249,7 +265,6 @@ export default function Header() {
               </ul>
             </div>
 
-            {/* COLUMN 3 */}
             <div>
               <h4 className="font-bold text-[13px] mb-6 uppercase tracking-widest border-b pb-2">Your Most Hyped</h4>
               <ul className="space-y-4 text-[12px] text-gray-500">
@@ -259,7 +274,6 @@ export default function Header() {
               </ul>
             </div>
 
-            {/* COLUMN 4 (PROMO) */}
             <div className="border-l pl-10 text-center">
               <h4 className="font-bold text-[13px] mb-6 uppercase tracking-widest">New Edits</h4>
               <div className="relative group cursor-pointer overflow-hidden aspect-[3/4] mb-4">
