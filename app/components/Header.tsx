@@ -4,11 +4,11 @@ import { useState } from "react";
 export default function Header() {
   const [isMegaMenuOpen, setIsMegaMenuOpen] = useState(false);
   const [isSideMenuOpen, setIsSideMenuOpen] = useState(false);
-  const [isAccountOpen, setIsAccountOpen] = useState(false); // Quản lý dropdown tài khoản
+  const [isAccountOpen, setIsAccountOpen] = useState(false);
   const [activeCategory, setActiveCategory] = useState("");
 
-  // Giả lập trạng thái đăng nhập và số dư (Bạn có thể thay bằng logic thực tế sau)
-  const [isLoggedIn, setIsLoggedIn] = useState(true); 
+  // Giả lập trạng thái (Để hiện bảng Sign In/Join giống hình bạn gửi, hãy để isLoggedIn = false)
+  const [isLoggedIn, setIsLoggedIn] = useState(false); 
   const [balance, setBalance] = useState(150.00);
 
   const menuData = {
@@ -33,7 +33,7 @@ export default function Header() {
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full bg-white border-b border-gray-200 font-sans">
+    <header className="sticky top-0 z-50 w-full bg-white border-b border-gray-200 font-sans text-black">
       {/* 1. THANH ĐEN TRÊN CÙNG */}
       <div className="bg-[#2d2d2d] text-white text-[10px] py-2 px-4 flex justify-end gap-4 uppercase font-bold">
         <span className="cursor-pointer hover:underline">Help & FAQs</span>
@@ -50,7 +50,7 @@ export default function Header() {
             </svg>
           </button>
 
-          <h1 className="text-2xl md:text-3xl font-black tracking-tighter cursor-pointer">ASOS</h1>
+          <h1 className="text-2xl md:text-3xl font-black tracking-tighter cursor-pointer uppercase">ASOS</h1>
 
           <nav className="hidden md:flex gap-6 font-bold text-xs tracking-widest border-l border-r border-gray-200 px-6 h-full items-center">
             <span className="hover:bg-gray-100 h-full flex items-center px-4 cursor-pointer">WOMEN</span>
@@ -65,48 +65,72 @@ export default function Header() {
             />
           </div>
 
-          {/* ICONS TIỆN ÍCH KÈM DROPDOWN TÀI KHOẢN */}
-          <div className="flex gap-3 md:gap-5 items-center relative">
-            <div 
-              className="relative group cursor-pointer"
-              onMouseEnter={() => setIsAccountOpen(true)}
-              onMouseLeave={() => setIsAccountOpen(false)}
-            >
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
-              
-              {/* DROPDOWN ĐĂNG NHẬP & SỐ DƯ */}
-              {isAccountOpen && (
-                <div className="absolute right-0 top-full w-64 bg-white shadow-2xl border border-gray-100 z-[100] p-4 text-black animate-in fade-in zoom-in-95 duration-200">
-                  {!isLoggedIn ? (
-                    <div className="space-y-3">
-                      <div className="flex gap-2">
-                        <button className="flex-1 bg-black text-white py-2 text-[11px] font-bold uppercase tracking-widest">Sign In</button>
-                        <button className="flex-1 border border-gray-300 py-2 text-[11px] font-bold uppercase tracking-widest">Join</button>
+          {/* ICONS TIỆN ÍCH */}
+          <div className="flex gap-3 md:gap-5 items-center">
+            
+            {/* PHẦN CẬP NHẬT: TÀI KHOẢN MOBILE & DESKTOP */}
+            <div className="relative group">
+              {/* MOBILE: Ấn vào icon là đi thẳng đến đăng ký */}
+              <a href="/register" className="md:hidden block p-1">
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+              </a>
+
+              {/* DESKTOP: Rê chuột hiện bảng như hình bạn gửi */}
+              <div 
+                className="hidden md:block relative cursor-pointer py-4"
+                onMouseEnter={() => setIsAccountOpen(true)}
+                onMouseLeave={() => setIsAccountOpen(false)}
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+                
+                {isAccountOpen && (
+                  <div className="absolute right-0 top-full w-64 bg-white shadow-2xl border border-gray-200 z-[100] p-4 text-black animate-in fade-in zoom-in-95 duration-200">
+                    {!isLoggedIn ? (
+                      <div className="space-y-4">
+                        <div className="flex justify-between items-center">
+                          <p className="text-[11px] font-black uppercase italic">Welcome to ASOS</p>
+                        </div>
+                        <div className="flex gap-2">
+                          <a href="/login" className="flex-1 bg-black text-white py-2 text-[10px] font-bold uppercase text-center hover:bg-gray-800">Sign In</a>
+                          <a href="/register" className="flex-1 border-2 border-black py-2 text-[10px] font-bold uppercase text-center hover:bg-gray-100">Join</a>
+                        </div>
                       </div>
-                    </div>
-                  ) : (
-                    <div className="mb-4 pb-4 border-b border-gray-100">
-                      <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mb-1">Account Balance</p>
-                      <p className="text-xl font-black text-green-600">${balance.toFixed(2)}</p>
-                      <p className="text-[10px] text-blue-600 hover:underline mt-1">Top up balance</p>
-                    </div>
-                  )}
-                  <ul className="mt-3 space-y-3 text-[12px] font-medium">
-                    <li className="flex items-center gap-3 hover:underline">👤 My Account</li>
-                    <li className="flex items-center gap-3 hover:underline">🛍️ My Orders</li>
-                    <li className="flex items-center gap-3 hover:underline">💬 Returns Information</li>
-                    <li className="flex items-center gap-3 hover:underline text-gray-400">Sign Out</li>
-                  </ul>
-                </div>
-              )}
+                    ) : (
+                      <div className="mb-4 pb-4 border-b border-gray-100">
+                        <p className="text-[10px] text-gray-400 font-bold uppercase mb-1">Account Balance</p>
+                        <p className="text-xl font-black text-green-600">${balance.toFixed(2)}</p>
+                      </div>
+                    )}
+                    <ul className="mt-4 space-y-4 text-[11px] font-bold uppercase tracking-widest border-t border-gray-100 pt-4">
+                      <li className="flex items-center gap-3 hover:text-gray-500 cursor-pointer">👤 My Account</li>
+                      <li className="flex items-center gap-3 hover:text-gray-500 cursor-pointer border-t border-gray-50 pt-3">
+                        🛍️ My Orders
+                        {!isLoggedIn && (
+                          <div className="ml-auto flex gap-1">
+                             <a href="/login" className="text-[8px] bg-gray-100 px-1.5 py-0.5 font-black uppercase">Sign In</a>
+                             <a href="/register" className="text-[8px] bg-gray-100 px-1.5 py-0.5 font-black uppercase">Join</a>
+                          </div>
+                        )}
+                      </li>
+                      <li className="flex items-center gap-3 hover:text-gray-500 cursor-pointer border-t border-gray-50 pt-3">💬 Help & Returns</li>
+                      {isLoggedIn && <li className="pt-2 text-gray-400 cursor-pointer hover:text-black transition-colors">Sign Out</li>}
+                    </ul>
+                  </div>
+                )}
+              </div>
             </div>
+
             <svg className="w-6 h-6 cursor-pointer" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /></svg>
             <svg className="w-6 h-6 cursor-pointer" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 11V7a4 4 0 11-8 0v4M5 9h14l1 12H4L5 9z" /></svg>
           </div>
         </div>
       </div>
 
-      {/* 3. THANH DANH MỤC PHỤ DESKTOP */}
+      {/* 3. THANH DANH MỤC PHỤ DESKTOP (Giữ nguyên 100%) */}
       <div className="bg-[#525252] w-full hidden md:block relative">
         <div className="max-w-7xl mx-auto px-4 flex gap-6 text-[10px] font-bold text-white uppercase tracking-widest py-2">
           {["Sale", "Trending", "New in", "Clothing", "Dresses", "Shoes", "Accessories", "Brands", "Beauty"].map((item) => (
@@ -154,17 +178,16 @@ export default function Header() {
         )}
       </div>
 
-      {/* 4. SIDE MENU MOBILE CẬP NHẬT TÍNH NĂNG TÀI KHOẢN */}
+      {/* 4. SIDE MENU MOBILE (Giữ nguyên 100%) */}
       {isSideMenuOpen && (
         <>
           <div className="fixed inset-0 bg-black/50 z-[60] md:hidden" onClick={() => setIsSideMenuOpen(false)} />
           <div className="fixed inset-y-0 left-0 w-[280px] bg-white z-[70] shadow-2xl md:hidden flex flex-col animate-in slide-in-from-left duration-300">
             <div className="p-4 border-b border-gray-100 flex justify-between items-center">
-              <span className="font-black text-xl tracking-tighter">ASOS</span>
+              <span className="font-black text-xl tracking-tighter uppercase">ASOS</span>
               <button onClick={() => setIsSideMenuOpen(false)} className="text-gray-500 text-xl">✕</button>
             </div>
             
-            {/* THÔNG TIN TÀI KHOẢN TRÊN MOBILE */}
             <div className="p-4 bg-gray-50 border-b border-gray-100">
               {isLoggedIn ? (
                 <div>
@@ -172,7 +195,7 @@ export default function Header() {
                   <p className="text-2xl font-black text-green-600">${balance.toFixed(2)}</p>
                 </div>
               ) : (
-                <button className="w-full bg-black text-white py-3 text-xs font-bold uppercase tracking-widest">Sign In / Join</button>
+                <a href="/register" className="block w-full bg-black text-white py-3 text-xs font-bold uppercase tracking-widest text-center">Sign In / Join</a>
               )}
             </div>
 
