@@ -17,7 +17,7 @@ export default function Footer() {
           {/* Nhóm Social - Snapchat tăng kích thước lên w-12 h-12 */}
           <div className="flex items-center gap-6">
             <img 
-              src="/snapchat.webp" 
+              src="/images/snapchat.webp" 
               className="w-12 h-12 object-contain" 
               alt="Snapchat" 
             />
