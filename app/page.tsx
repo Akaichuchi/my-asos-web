@@ -82,26 +82,18 @@ export default function Home() {
         </div>
       </div>
 
-      {/* PHẦN MỚI THÊM: The biggest labels (Giống hình 100%) */}
-      <div className="max-w-7xl mx-auto px-4 py-12">
-        <h2 className="text-center text-3xl md:text-5xl font-bold mb-10 tracking-tight">The biggest labels</h2>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
-          <div className="flex flex-col items-center">
-            <img src="/images/promo_bau_hp_ww_01v2.webp" alt="Adidas" className="w-full h-auto object-cover" />
-          </div>
-          <div className="flex flex-col items-center">
-            <img src="/images/promo_bau_hp_ww_02---v3.webp" alt="Mango" className="w-full h-auto object-cover" />
-          </div>
-          <div className="flex flex-col items-center">
-            <img src="/images/promo_bau_hp_ww_03.webp" alt="Asos Design" className="w-full h-auto object-cover" />
-          </div>
-          <div className="flex flex-col items-center">
-            <img src="/images/promo_bau_hp_ww_04.webp" alt="Topshop" className="w-full h-auto object-cover" />
-          </div>
+      {/* PHẦN CẬP NHẬT: The biggest labels - Thiết kế Tràn màn hình & Không khoảng cách */}
+      <div className="w-full py-12 bg-white">
+        <h2 className="text-center text-3xl md:text-4xl font-bold mb-8 tracking-tight">The biggest labels</h2>
+        <div className="grid grid-cols-2 md:grid-cols-4 w-full gap-0">
+          <img src="/images/promo_bau_hp_ww_01v2.webp" alt="Adidas" className="w-full h-auto block" />
+          <img src="/images/promo_bau_hp_ww_02---v3.webp" alt="Mango" className="w-full h-auto block" />
+          <img src="/images/promo_bau_hp_ww_03.webp" alt="Asos Design" className="w-full h-auto block" />
+          <img src="/images/promo_bau_hp_ww_04.webp" alt="Topshop" className="w-full h-auto block" />
         </div>
       </div>
 
-      {/* Brand Grid Section (Giữ nguyên) */}
+      {/* Brand Grid Section - Giữ nguyên 100% */}
       <div className="max-w-7xl mx-auto px-4 mt-6 flex flex-col items-center">
         <Link 
           href="/brands" 
@@ -120,7 +112,7 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Danh sách sản phẩm (Giữ nguyên) */}
+      {/* Danh sách sản phẩm - Giữ nguyên 100% */}
       <div className="max-w-7xl mx-auto px-4 py-10">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8">
           {products.map((product: any) => (
