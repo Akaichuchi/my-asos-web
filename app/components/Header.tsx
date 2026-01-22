@@ -106,25 +106,17 @@ export default function Header() {
       {/* 2. MAIN HEADER */}
       <div className="bg-[#2d2d2d] text-white">
         <div className="max-w-7xl mx-auto px-4 flex items-center justify-between h-14 md:h-16 gap-4">
-          {/* Mobile Menu Toggle */}
-          <button 
-            className="md:hidden p-2" 
-            onClick={() => setIsSideMenuOpen(true)}
-            aria-label="Open Mobile Menu"
-          >
+          <button className="md:hidden p-2" onClick={() => setIsSideMenuOpen(true)} aria-label="Open Mobile Menu">
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" /></svg>
           </button>
 
-          {/* Logo - Primary SEO Branding */}
           <Link href="/" className="text-3xl md:text-[34px] font-black tracking-tighter uppercase decoration-none" title="ASOS Home">asos</Link>
 
-          {/* Gender Navigation */}
           <nav className="hidden md:flex gap-0 font-bold text-[13px] tracking-widest h-full items-center ml-4">
             <Link href="/" className="hover:bg-[#525252] h-full flex items-center px-6 transition-colors border-r border-gray-600">WOMEN</Link>
             <Link href="/" className="hover:bg-[#525252] h-full flex items-center px-6 transition-colors border-r border-gray-600">MEN</Link>
           </nav>
 
-          {/* SEARCH BOX - Functionality Retained 100% */}
           <div className="flex-1 max-w-2xl relative hidden sm:block" ref={searchRef}>
             <input 
               type="text" 
@@ -142,9 +134,7 @@ export default function Header() {
             </button>
           </div>
 
-          {/* User Actions */}
           <div className="flex gap-1.5 md:gap-4 items-center h-full">
-            {/* Account Dropdown */}
             <div className="relative h-full flex items-center" ref={accountRef} onMouseEnter={() => setIsAccountOpen(true)} onMouseLeave={() => setIsAccountOpen(false)}>
               <button className="p-2 hover:bg-[#525252] transition-colors rounded-full" aria-haspopup="true">
                 <svg className="w-6 h-6 md:w-7 md:h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
@@ -153,8 +143,8 @@ export default function Header() {
                 <div className="absolute right-0 top-full w-64 bg-white shadow-2xl border border-gray-100 z-[100] p-5 text-black">
                   {!isLoggedIn ? (
                     <div className="flex gap-3 mb-5 border-b pb-5">
-                      <Link href="/" onClick={() => setIsAccountOpen(false)} className="flex-1 bg-black text-white py-2 text-[11px] font-black uppercase text-center tracking-widest">Sign In</Link>
-                      <Link href="/" onClick={() => setIsAccountOpen(false)} className="flex-1 border border-black py-2 text-[11px] font-bold uppercase text-center tracking-widest">Join</Link>
+                      <Link href="/register-test" onClick={() => setIsAccountOpen(false)} className="flex-1 bg-black text-white py-2 text-[11px] font-black uppercase text-center tracking-widest">Sign In</Link>
+                      <Link href="/register-test" onClick={() => setIsAccountOpen(false)} className="flex-1 border border-black py-2 text-[11px] font-bold uppercase text-center tracking-widest">Join</Link>
                     </div>
                   ) : (
                     <div className="mb-5 border-b pb-2 text-[14px] font-black italic uppercase">Hi {user.name}</div>
@@ -168,12 +158,10 @@ export default function Header() {
               )}
             </div>
 
-            {/* Wishlist */}
             <Link href="/" className="relative h-full flex items-center p-2 hover:bg-[#525252] transition-colors rounded-full" title="My Wishlist">
                 <svg className="w-6 h-6 md:w-7 md:h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /></svg>
             </Link>
 
-            {/* Shopping Bag */}
             <Link href="/" className="relative h-full flex items-center p-2 hover:bg-[#525252] transition-colors rounded-full" title="My Shopping Bag">
                 <svg className="w-6 h-6 md:w-7 md:h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" d="M16 11V7a4 4 0 11-8 0v4M5 9h14l1 12H4L5 9z" /></svg>
                 <span className="absolute bottom-1 right-1 bg-[#d01345] text-white text-[9px] w-4 h-4 rounded-full flex items-center justify-center font-bold">0</span>
@@ -182,7 +170,7 @@ export default function Header() {
         </div>
       </div>
 
-      {/* 3. SIDEBAR MOBILE - Retained 100% Functionality */}
+      {/* 3. SIDEBAR MOBILE */}
       <div className={`fixed inset-0 z-[200] transition-all duration-300 ${isSideMenuOpen ? "visible" : "invisible"}`}>
         <div className={`absolute inset-0 bg-black/60 transition-opacity duration-300 ${isSideMenuOpen ? "opacity-100" : "opacity-0"}`} onClick={() => setIsSideMenuOpen(false)} />
         <div className={`absolute top-0 left-0 w-[85%] max-w-[340px] h-full bg-white transform transition-transform duration-300 flex flex-col ${isSideMenuOpen ? "translate-x-0" : "-translate-x-full"}`}>
@@ -234,7 +222,7 @@ export default function Header() {
                   {isLoggedIn ? (
                     <li onClick={handleSignOut} className="flex items-center gap-4 text-gray-400 cursor-pointer">Sign Out</li>
                   ) : (
-                    <li><Link href="/" onClick={() => setIsSideMenuOpen(false)} className="flex items-center gap-4 text-gray-400 underline decoration-1 underline-offset-4">Sign In</Link></li>
+                    <li><Link href="/register-test" onClick={() => setIsSideMenuOpen(false)} className="flex items-center gap-4 text-gray-400 underline decoration-1 underline-offset-4">Sign In</Link></li>
                   )}
                 </ul>
             </div>
@@ -247,7 +235,7 @@ export default function Header() {
         </div>
       </div>
 
-      {/* 4. SUB-NAV (DESKTOP) - Keyword Optimized Category Bar */}
+      {/* 4. SUB-NAV (DESKTOP) */}
       <div className="bg-[#525252] w-full hidden md:block">
         <div className="max-w-7xl mx-auto px-4 flex gap-6 text-[11px] font-bold text-white uppercase tracking-widest py-2">
           {["Sale", "Trending", "New in", "Clothing", "Dresses", "Shoes", "Accessories", "Brands", "Beauty"].map((item) => (
