@@ -36,11 +36,11 @@ export default function Home() {
           {/* Hình nền cho Điện thoại */}
           <source 
             media="(max-width: 767px)" 
-            srcSet="/nenchinhmobile.webp" 
+            srcSet="/images/nenchinhmobile.webp" 
           />
           {/* Hình nền cho Máy tính */}
           <img 
-            src="/nenchinhdesktop.webp" 
+            src="/images/nenchinhdesktop.webp" 
             className="w-full h-full object-cover opacity-90"
             alt="ASOS Campaign 2026"
           />
