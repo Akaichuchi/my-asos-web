@@ -2,19 +2,23 @@
 import Link from "next/link";
 
 /**
- * Footer Component - Tăng size Snapchat, ẩn Payment trên Mobile, giữ lề trái 100%
+ * Footer Component - Nâng cấp: 
+ * 1. Ẩn hoàn toàn mạng xã hội & thanh toán trên Mobile.
+ * 2. Tăng kích thước logo Snapchat (/snapchat.webp) thêm một chút.
+ * 3. Giữ nguyên bố cục lề trái 100%.
  */
 export default function Footer() {
   return (
     <footer className="w-full font-sans bg-white">
-      {/* 1. THANH SOCIAL & PAYMENT */}
-      <div className="w-full py-5 border-t border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 flex flex-col md:flex-row justify-center items-center gap-6 md:gap-10">
-          {/* Nhóm Social: Snapchat to hơn (w-12), các icon khác w-9 */}
+      {/* 1. THANH SOCIAL & PAYMENT - ẨN HOÀN TOÀN TRÊN MOBILE (hidden md:block) */}
+      <div className="hidden md:block w-full py-5 border-t border-gray-200">
+        <div className="max-w-7xl mx-auto px-4 flex flex-row justify-center items-center gap-10">
+          
+          {/* Nhóm Social - Snapchat tăng kích thước lên w-12 h-12 */}
           <div className="flex items-center gap-6">
             <img 
-              src="/images/snapchat.webp" 
-              className="w-11 h-11 object-contain" 
+              src="/snapchat.webp" 
+              className="w-12 h-12 object-contain" 
               alt="Snapchat" 
             />
             <img 
@@ -27,11 +31,11 @@ export default function Footer() {
               className="w-9 h-9 object-contain" 
               alt="IG" 
             />
-            <div className="h-9 w-[1px] bg-gray-300 mx-2 hidden md:block"></div>
+            <div className="h-9 w-[1px] bg-gray-300 mx-2"></div>
           </div>
 
-          {/* Nhóm Thanh toán: Thêm lớp 'hidden md:flex' để ẨN TRÊN MOBILE */}
-          <div className="hidden md:flex flex-wrap justify-center gap-5 items-center">
+          {/* Nhóm Thanh toán */}
+          <div className="flex flex-wrap gap-5 items-center">
             <img src="https://images.asos-media.com/navigation/visa-png" className="h-5" alt="Visa" />
             <img src="https://images.asos-media.com/navigation/mastercard-png" className="h-8" alt="MC" />
             <img src="https://images.asos-media.com/navigation/pay-pal-png" className="h-5" alt="PP" />
@@ -45,7 +49,7 @@ export default function Footer() {
       <div className="w-full bg-[#2d2d2d] text-white pt-12 pb-10">
         <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-12 text-left">
           
-          {/* MỤC DOWNLOAD APP - LUÔN CĂN LỀ TRÁI */}
+          {/* MỤC DOWNLOAD APP - CĂN TRÁI TUYỆT ĐỐI */}
           <div className="flex flex-col items-start text-left">
             <div className="flex items-center gap-3 mb-5">
               <div className="w-14 h-14 bg-black rounded-2xl flex items-center justify-center border border-gray-600 shadow-xl">
@@ -61,7 +65,7 @@ export default function Footer() {
             </button>
           </div>
 
-          {/* Help & Information - Ẩn trên mobile để tối ưu diện tích */}
+          {/* Help & Information - Chỉ hiện Desktop */}
           <div className="hidden md:block">
             <h4 className="font-black text-[13px] uppercase tracking-widest mb-6">Help & Information</h4>
             <ul className="space-y-4 text-[12px] text-gray-400">
@@ -72,7 +76,7 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* About NEWEGG - Ẩn trên mobile */}
+          {/* About NEWEGG - Chỉ hiện Desktop */}
           <div className="hidden md:block">
             <h4 className="font-black text-[13px] uppercase tracking-widest mb-6">About NEWEGG</h4>
             <ul className="space-y-4 text-[12px] text-gray-400">
