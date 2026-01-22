@@ -2,11 +2,6 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 
-/**
- * @SEO_Journalism_Note: Trang Women được tối ưu hóa giao diện tối giản, 
- * tập trung vào trải nghiệm thị giác video và danh mục sản phẩm nhanh.
- */
-
 interface Product {
   id: string | number;
   name: string;
@@ -25,45 +20,35 @@ export default function WomenPage() {
 
   return (
     <main className="min-h-screen bg-white">
-      {/* 1. THANH BANNER ĐEN TRÊN CÙNG */}
+      {/* 1. THANH BANNER ĐEN TRÊN CÙNG (GIỮ NGUYÊN) */}
       <div className="bg-black text-white py-2 px-4 border-b border-gray-800">
         <div className="max-w-7xl mx-auto flex justify-between items-center text-center">
-          <div className="hidden md:block border border-white px-4 py-1 text-[10px] font-bold uppercase">Women</div>
+          <div className="hidden md:block border border-white px-4 py-1 text-[10px] font-bold uppercase tracking-widest">Women</div>
           <div>
             <p className="text-[12px] font-black uppercase tracking-tighter">The Winter Sale: up to 70% off*</p>
             <p className="text-[9px] italic">Last chance to save big</p>
           </div>
-          <div className="hidden md:block border border-white px-4 py-1 text-[10px] font-bold uppercase">Men</div>
+          <div className="hidden md:block border border-white px-4 py-1 text-[10px] font-bold uppercase tracking-widest">Men</div>
         </div>
       </div>
 
-      {/* 2. THANH CHỮ CHẠY SALE: LAST CHANCE */}
-      <div className="w-full bg-black py-3 overflow-hidden border-b border-gray-900">
-        <div className="flex whitespace-nowrap animate-marquee">
-          {[1, 2, 3, 4].map((i) => (
-            <span key={i} className="text-white font-black text-2xl md:text-4xl italic tracking-tighter uppercase mx-8">
-              Sale: Last Chance &nbsp;&nbsp; Sale: Last Chance
-            </span>
-          ))}
-        </div>
-      </div>
+      {/* --- ĐÃ LOẠI BỎ THANH CHỮ CHẠY "SALE: LAST CHANCE" TẠI ĐÂY --- */}
 
-      {/* 3. HERO VIDEO SECTION (Đã loại bỏ tiêu đề đè lên theo yêu cầu) */}
+      {/* 2. HERO VIDEO SECTION (GIỮ NGUYÊN - KHÔNG CÓ TIÊU ĐỀ ĐÈ LÊN) */}
       <section className="relative w-full overflow-hidden bg-[#F6F6F6]">
         <video autoPlay muted loop playsInline className="hidden md:block w-full h-auto object-cover">
-          <source src="/videodaidienjpc.mp4" type="video/mp4" />
+          <source src="/images/videodaidienjpc.mp4" type="video/mp4" />
         </video>
         <video autoPlay muted loop playsInline className="block md:hidden w-full h-auto object-cover">
-          <source src="/videodt.mp4" type="video/mp4" />
+          <source src="/images/videodt.mp4" type="video/mp4" />
         </video>
         
-        {/* Chỉ giữ lại dòng text nhỏ ở góc dưới nếu cần, hoặc xóa sạch để video thoáng */}
         <div className="absolute bottom-4 right-4 text-white text-[10px] font-medium opacity-80">
           Limited time only. Selected styles marked down as shown.
         </div>
       </section>
 
-      {/* 4. HỆ THỐNG NÚT BẤM DƯỚI VIDEO */}
+      {/* 3. HỆ THỐNG NÚT BẤM DƯỚI VIDEO (GIỮ NGUYÊN) */}
       <div className="w-full bg-black py-6">
         <div className="max-w-7xl mx-auto px-4 flex flex-wrap justify-center gap-3">
           {["View all Sale", "Dresses", "Coats + jackets", "Footwear", "Tops", "Gifts"].map((item) => (
@@ -74,7 +59,7 @@ export default function WomenPage() {
         </div>
       </div>
 
-      {/* 5. GRID SẢN PHẨM (Đã loại bỏ thanh Sort/Filter theo yêu cầu) */}
+      {/* 4. GRID SẢN PHẨM (GIỮ NGUYÊN - KHÔNG CÓ SORT/FILTER) */}
       <section className="max-w-7xl mx-auto px-4 py-12">
         <h2 className="text-center text-2xl md:text-3xl font-black uppercase italic mb-12 tracking-tight">
           Sale: selling fast
