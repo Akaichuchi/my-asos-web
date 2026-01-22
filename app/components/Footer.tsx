@@ -13,7 +13,7 @@ export default function Footer() {
           {/* Nhóm Social: Snapchat to hơn (w-12), các icon khác w-9 */}
           <div className="flex items-center gap-6">
             <img 
-              src="/snapchat.webp" 
+              src="/images/snapchat.webp" 
               className="w-11 h-11 object-contain" 
               alt="Snapchat" 
             />
