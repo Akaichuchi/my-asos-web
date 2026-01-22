@@ -1,27 +1,52 @@
 'use client';
 import { useState, useEffect } from 'react';
+import Script from 'next/script'; // Import Script để chạy widget upload
 
 export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState('users');
   const [users, setUsers] = useState<any[]>([]);
-  const [products, setProducts] = useState<any[]>([]); // Danh sách sản phẩm thực tế
+  const [products, setProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [pin, setPin] = useState('');
   const [isAuthorized, setIsAuthorized] = useState(false);
   const correctPin = '1234'; 
 
-  // State cho sản phẩm
   const [editingProduct, setEditingProduct] = useState<any>(null);
   const [productForm, setProductForm] = useState({
     name: "",
     price: "",
     originalPrice: "",
-    img: "",
+    images: "", 
     category: "women",
-    tag: "SELLING FAST"
+    tag: "SELLING FAST",
+    sizeFit: "", 
+    details: ""  
   });
 
   const [amountChange, setAmountChange] = useState<{ [key: string]: string }>({});
+
+  // TÍNH NĂNG MỚI: Xử lý upload ảnh lên Cloudinary
+  const handleUpload = () => {
+    // @ts-ignore
+    const widget = window.cloudinary.createUploadWidget(
+      { 
+        cloudName: 'dmfaq7hjj', // Lấy từ Dashboard Cloudinary của bạn
+        uploadPreset: 'ml_default', // Upload preset bạn đã tạo
+        sources: ['local', 'url', 'camera'],
+        multiple: true 
+      }, 
+      (error: any, result: any) => {
+        if (!error && result && result.event === "success") {
+          const newImageUrl = result.info.secure_url;
+          setProductForm(prev => ({
+            ...prev,
+            images: prev.images ? `${prev.images}, ${newImageUrl}` : newImageUrl
+          }));
+        }
+      }
+    );
+    widget.open();
+  };
 
   const handlePinSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -40,7 +65,7 @@ export default function AdminDashboard() {
 
   const fetchProducts = async () => {
     try {
-      const res = await fetch('/api/products'); // API tổng hợp bạn vừa tạo
+      const res = await fetch('/api/products');
       const data = await res.json();
       if (Array.isArray(data)) setProducts(data);
     } catch (error) { console.error("Lỗi tải sản phẩm:", error); }
@@ -53,7 +78,6 @@ export default function AdminDashboard() {
     }
   }, [isAuthorized]);
 
-  // --- QUẢN LÝ SẢN PHẨM (MỚI) ---
   const handleProductSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const method = editingProduct ? 'PUT' : 'POST';
@@ -67,7 +91,10 @@ export default function AdminDashboard() {
       if (res.ok) {
         alert(editingProduct ? 'Cập nhật thành công!' : 'Đã đăng sản phẩm mới!');
         setEditingProduct(null);
-        setProductForm({ name: "", price: "", originalPrice: "", img: "", category: "women", tag: "SELLING FAST" });
+        setProductForm({ 
+          name: "", price: "", originalPrice: "", images: "", 
+          category: "women", tag: "SELLING FAST", sizeFit: "", details: "" 
+        });
         fetchProducts();
       }
     } catch (error) { alert('Lỗi thao tác sản phẩm!'); }
@@ -80,7 +107,6 @@ export default function AdminDashboard() {
     }
   };
 
-  // --- CÁC TÍNH NĂNG CŨ (GIỮ NGUYÊN 100%) ---
   const handleDeleteUser = async (id: string) => {
     if (confirm('XÁC NHẬN: Bạn muốn xóa khách hàng này vĩnh viễn?')) {
       try {
@@ -116,6 +142,8 @@ export default function AdminDashboard() {
 
   return (
     <div className="min-h-screen bg-[#f3f3f3] font-sans">
+      <Script src="https://upload-widget.cloudinary.com/global/all.js" strategy="afterInteractive" />
+      
       <div className="bg-black text-white p-4 flex justify-between items-center shadow-lg">
         <h1 className="text-2xl font-black uppercase tracking-tighter italic">ASOS Management Hub</h1>
         <div className="flex gap-4">
@@ -162,7 +190,6 @@ export default function AdminDashboard() {
 
         {activeTab === 'products' && (
           <div className="space-y-10">
-            {/* FORM ĐĂNG SẢN PHẨM PHÂN LOẠI NAM/NỮ */}
             <div className="bg-white border-2 border-black p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
               <h2 className="text-2xl font-black uppercase mb-6 italic underline">{editingProduct ? 'Edit Product' : 'Add New Product'}</h2>
               <form onSubmit={handleProductSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-gray-50 border border-dashed border-black">
@@ -175,12 +202,40 @@ export default function AdminDashboard() {
                   <input type="text" className="w-full border-2 border-black p-2 outline-none" value={productForm.price} onChange={(e) => setProductForm({...productForm, price: e.target.value})} required />
                 </div>
                 <div>
-                  <label className="text-[10px] font-bold uppercase">Giá Gốc ($ - Hiện gạch ngang):</label>
+                  <label className="text-[10px] font-bold uppercase">Giá Gốc ($):</label>
                   <input type="text" className="w-full border-2 border-black p-2 outline-none" value={productForm.originalPrice} onChange={(e) => setProductForm({...productForm, originalPrice: e.target.value})} />
                 </div>
-                <div>
-                  <label className="text-[10px] font-bold uppercase">Link hình ảnh (URL):*</label>
-                  <input type="text" className="w-full border-2 border-black p-2 outline-none" value={productForm.img} onChange={(e) => setProductForm({...productForm, img: e.target.value})} required />
+                
+                {/* PHẦN ĐƯỢC CẬP NHẬT: Tích hợp nút upload Cloudinary */}
+                <div className="md:col-span-2">
+                  <div className="flex justify-between items-end mb-1">
+                    <label className="text-[10px] font-bold uppercase text-blue-600">Hình ảnh sản phẩm (Nhiều ảnh):*</label>
+                    <button 
+                      type="button" 
+                      onClick={handleUpload}
+                      className="bg-blue-600 text-white text-[9px] px-2 py-1 font-bold uppercase rounded hover:bg-blue-700 transition-all"
+                    >
+                      + Tải ảnh từ máy
+                    </button>
+                  </div>
+                  <textarea 
+                    className="w-full border-2 border-black p-2 outline-none h-20 text-xs" 
+                    value={productForm.images} 
+                    onChange={(e) => setProductForm({...productForm, images: e.target.value})} 
+                    placeholder="Link ảnh sẽ tự động hiện ở đây sau khi bạn tải lên..." 
+                    required 
+                  />
+                </div>
+
+                <div className="md:col-span-2 grid grid-cols-2 gap-4">
+                    <div>
+                        <label className="text-[10px] font-bold uppercase italic">Size & Fit (Mô tả):</label>
+                        <textarea className="w-full border-2 border-gray-300 p-2 outline-none" value={productForm.sizeFit} onChange={(e) => setProductForm({...productForm, sizeFit: e.target.value})} placeholder="Model wears: UK 8..." />
+                    </div>
+                    <div>
+                        <label className="text-[10px] font-bold uppercase italic">Product Details (Vải/Mô tả):</label>
+                        <textarea className="w-full border-2 border-gray-300 p-2 outline-none" value={productForm.details} onChange={(e) => setProductForm({...productForm, details: e.target.value})} placeholder="100% Cotton..." />
+                    </div>
                 </div>
                 <div>
                   <label className="text-[10px] font-bold uppercase">Danh mục:*</label>
@@ -189,26 +244,42 @@ export default function AdminDashboard() {
                     <option value="men">Nam (Men)</option>
                   </select>
                 </div>
-                <button type="submit" className="md:col-span-2 bg-black text-white py-3 font-black uppercase hover:bg-gray-800">
+                <button type="submit" className="md:col-span-2 bg-black text-white py-3 font-black uppercase hover:bg-gray-800 transition-all">
                   {editingProduct ? 'Cập nhật sản phẩm' : 'Đăng sản phẩm ngay'}
                 </button>
               </form>
             </div>
 
-            {/* DANH SÁCH SẢN PHẨM ĐÃ ĐĂNG */}
             <div className="bg-white border-2 border-black p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
-              <h2 className="text-xl font-black uppercase mb-4">Inventory List</h2>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <h2 className="text-xl font-black uppercase mb-4 italic">Inventory & Customer Reviews</h2>
+              <div className="grid grid-cols-1 gap-6">
                 {products.map((p) => (
-                  <div key={p.id} className="border border-black p-2 relative group bg-white">
-                    <img src={p.img} className="w-full aspect-[3/4] object-cover mb-2" />
-                    <p className="text-[10px] font-bold truncate uppercase">{p.name}</p>
-                    <p className="text-[10px] text-red-600 font-bold">{p.price} <span className="text-gray-400 line-through ml-1">{p.originalPrice}</span></p>
-                    <div className="mt-2 flex gap-1">
-                       <button onClick={() => { setEditingProduct(p); setProductForm(p); }} className="bg-black text-white text-[8px] p-1 flex-1 font-bold">SỬA</button>
-                       <button onClick={() => handleDeleteProduct(p.id)} className="bg-red-600 text-white text-[8px] p-1 flex-1 font-bold">XÓA</button>
+                  <div key={p.id} className="border-2 border-black p-4 bg-white flex flex-col md:flex-row gap-4">
+                    <div className="w-full md:w-32 flex-shrink-0">
+                        <img src={p.images?.split(',')[0]} className="w-full aspect-[3/4] object-cover border border-black" alt={p.name} />
                     </div>
-                    <span className="absolute top-1 right-1 bg-black text-white text-[8px] px-1 font-bold uppercase">{p.category}</span>
+                    <div className="flex-1 space-y-1">
+                        <p className="text-sm font-black uppercase underline">{p.name}</p>
+                        <p className="text-xs font-bold text-red-600">{p.price} <span className="text-gray-400 line-through ml-2">{p.originalPrice}</span></p>
+                        <p className="text-[10px] text-gray-500 italic">Category: {p.category}</p>
+                        
+                        <div className="mt-4 pt-4 border-t border-dashed border-gray-300">
+                           <p className="text-[10px] font-black uppercase mb-2">Đánh giá gần đây:</p>
+                           {p.reviews && p.reviews.length > 0 ? (
+                               p.reviews.map((r: any) => (
+                                   <div key={r.id} className="text-[10px] bg-gray-50 p-2 mb-1 border-l-2 border-black">
+                                       <span className="font-bold">{r.userName}:</span> {r.comment} ({r.rating}★)
+                                   </div>
+                               ))
+                           ) : (
+                               <p className="text-[10px] italic text-gray-400">Chưa có bình luận nào.</p>
+                           )}
+                        </div>
+                    </div>
+                    <div className="flex md:flex-col gap-2 justify-center">
+                       <button onClick={() => { setEditingProduct(p); setProductForm(p); }} className="bg-black text-white text-[10px] px-4 py-2 font-bold uppercase hover:bg-gray-700">SỬA</button>
+                       <button onClick={() => handleDeleteProduct(p.id)} className="bg-red-600 text-white text-[10px] px-4 py-2 font-bold uppercase hover:bg-red-800">XÓA</button>
+                    </div>
                   </div>
                 ))}
               </div>
