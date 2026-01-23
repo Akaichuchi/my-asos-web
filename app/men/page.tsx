@@ -71,7 +71,7 @@ export default function MenPage() {
         ))}
       </div>
 
-      {/* 4. SHOP BY CATEGORY (KHÔNG CHỮ DƯỚI ẢNH) */}
+      {/* 4. SHOP BY CATEGORY (KHÔNG CHỮ) */}
       <section className="w-full py-16 bg-white border-t border-gray-100">
         <div className="w-full text-center mb-12">
           <h2 className="text-[24px] font-bold text-black tracking-tight uppercase">Shop by Category</h2>
@@ -105,7 +105,7 @@ export default function MenPage() {
         </div>
       </section>
 
-      {/* 6. POPULAR BRANDS (LOGO TO) */}
+      {/* 6. POPULAR BRANDS */}
       <section className="w-full py-20 bg-white border-t border-gray-100">
         <div className="w-full text-center mb-16">
           <h2 className="text-[24px] font-bold text-black tracking-tight uppercase">Popular Brands</h2>
@@ -119,39 +119,46 @@ export default function MenPage() {
         </div>
       </section>
 
-      {/* 7. TRENDING SNEAKERS (ĐIỀU CHỈNH TO, FULL VIỀN) */}
+      {/* 7. TRENDING SNEAKERS (FULL VIỀN) */}
       <section className="w-full py-12 bg-white border-t border-gray-100">
         <div className="w-full text-center mb-10 px-4">
           <h2 className="text-[28px] md:text-[36px] font-bold text-black tracking-tight uppercase">
             Trending: Most Wanted Sneakers
           </h2>
         </div>
-        {/* Grid sát viền, không có padding lớn để ảnh bung to tối đa */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-1 px-1 max-w-[100%] mx-auto">
           {trendingSneakers.map((item, index) => (
             <div key={index} className="flex flex-col group cursor-pointer">
               <div className="w-full aspect-[1/1.2] overflow-hidden bg-gray-50 mb-3">
-                <img 
-                  src={item.src} 
-                  alt={item.label} 
-                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" 
-                />
+                <img src={item.src} alt={item.label} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
               </div>
               <div className="px-4 pb-6">
-                <p className="text-[11px] text-gray-800 font-normal leading-relaxed uppercase tracking-wider">
-                  {item.label}
-                </p>
+                <p className="text-[11px] text-gray-800 font-normal leading-relaxed uppercase tracking-wider">{item.label}</p>
               </div>
             </div>
           ))}
         </div>
       </section>
 
-      {/* 8. BRAND DESCRIPTION */}
-      <section className="w-full py-20 bg-white border-t border-gray-100 flex justify-center px-4">
-        <div className="max-w-[1000px] text-center">
-          <p className="text-[14px] text-gray-700 italic">
-            Your one-stop destination for fashion-forward 'fits, **NEWEGG Men**...
+      {/* 8. MỤC MỚI: SHOP NOW & BRAND DESCRIPTION (CUỐI TRANG) */}
+      <section className="w-full py-24 bg-white border-t border-gray-100 flex flex-col items-center px-4">
+        {/* Nút SHOP NOW Đen */}
+        <button className="bg-black text-white px-12 py-4 text-[14px] font-black uppercase tracking-widest hover:bg-gray-800 transition-all mb-16">
+          SHOP NOW
+        </button>
+        
+        {/* Nội dung đoạn văn chi tiết */}
+        <div className="max-w-[900px] text-center">
+          <p className="text-[14px] text-gray-800 leading-[1.8] font-normal">
+            Level up your off-duty 'fits with **NEWEGG**, serving up on-trend menswear and accessories from your fave brands. 
+            Raise your layer game with elevated basics from Only & Sons ft. *all* those must-have closet essentials – 
+            from smart-casj polos to oversized tees and throw-on shirts in tonal hues. If you're scrolling for trousers 
+            and jeans, from on-trend cargos to classic chinos and denim, Pull&Bear delivers – while Jack & Jones’ edit 
+            of sneakers and office-ready footwear keeps your kicks on point (think Derbys, brogues and Chelsea boots 
+            to finish off the 'fit). For chill-beating styles, filter by The North Face for iconic puffers in 
+            colour-block hues and versatile monochromes. And for working up a sweat, Nike and New Balance have 
+            got athleisurewear wrapped up – with tech-focused performance wear guaranteed to wick moisture, 
+            and make those early-morning runs a breeze. Let’s scroll.
           </p>
         </div>
       </section>
