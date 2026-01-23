@@ -28,6 +28,13 @@ export default function MenPage() {
     { src: "/images/shoes.webp", label: "Shoes & Sneakers" },
   ];
 
+  const whatToWear = [
+    { src: "/images/209471272-2.webp", label: "Going out" },
+    { src: "/images/208603184-1-brown.webp", label: "The winter shop" },
+    { src: "/images/208619203-2.webp", label: "Date night, sorted" },
+    { src: "/images/209544589-1-washedsandstone.webp", label: "Cozy season" },
+  ];
+
   return (
     <main className="min-h-screen bg-white w-full overflow-x-hidden">
       {/* 1. TOP ANNOUNCEMENT BAR */}
@@ -37,7 +44,7 @@ export default function MenPage() {
         </p>
       </div>
 
-      {/* 2. HEADER: HIỂN THỊ THEO THIẾT BỊ (KHÔNG CÓ NÚT) */}
+      {/* 2. HEADER: HIỂN THỊ THEO THIẾT BỊ (KHÔNG NÚT) */}
       <section className="relative w-full">
         <div className="block md:hidden w-full">
           <img src="/images/app-hero.webp" alt="Mobile Hero" className="w-full h-auto object-cover" />
@@ -56,8 +63,8 @@ export default function MenPage() {
         ))}
       </div>
 
-      {/* 4. SHOP BY CATEGORY (DƯỚI CÙNG) */}
-      <section className="w-full py-16 bg-white border-t border-gray-100 pb-20">
+      {/* 4. SHOP BY CATEGORY (KHÔNG TIÊU ĐỀ CHỮ DƯỚI ẢNH) */}
+      <section className="w-full py-16 bg-white border-t border-gray-100">
         <div className="w-full text-center mb-12">
           <h2 className="text-[24px] font-bold text-black tracking-tight uppercase">Shop by Category</h2>
         </div>
@@ -71,13 +78,38 @@ export default function MenPage() {
                   className="w-full h-full object-contain transition-transform duration-500 group-hover:scale-105" 
                 />
               </div>
-              {/* ĐÃ LOẠI BỎ THẺ SPAN TIÊU ĐỀ TẠI ĐÂY THEO YÊU CẦU */}
             </div>
           ))}
         </div>
       </section>
 
-      {/* MÔ TẢ THƯƠNG HIỆU */}
+      {/* 5. WHAT TO WEAR (TIÊU ĐỀ NẰM TRONG HÌNH) */}
+      <section className="w-full py-10 bg-white border-t border-gray-100 pb-20">
+        <div className="w-full text-center mb-10">
+          <h2 className="text-[28px] font-bold text-black tracking-tight">What to Wear</h2>
+        </div>
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-1 px-1 max-w-[1920px] mx-auto">
+          {whatToWear.map((item, index) => (
+            <div key={index} className="relative aspect-[3/4] overflow-hidden group cursor-pointer">
+              <img 
+                src={item.src} 
+                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" 
+                alt={item.label} 
+              />
+              {/* Lớp phủ Gradient đen mờ ở dưới để nổi chữ */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-90"></div>
+              {/* Tiêu đề nằm TRONG hình */}
+              <div className="absolute bottom-6 w-full text-center">
+                <span className="text-white text-[14px] font-bold uppercase tracking-[0.15em] drop-shadow-md">
+                  {item.label}
+                </span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* 6. MÔ TẢ THƯƠNG HIỆU */}
       <section className="w-full py-20 bg-white flex justify-center px-4 md:px-20 border-t border-gray-100">
         <div className="max-w-[1000px] text-center">
           <p className="text-[14px] text-gray-700 leading-relaxed font-normal italic">
