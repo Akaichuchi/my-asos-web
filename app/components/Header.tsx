@@ -15,13 +15,19 @@ export default function Header() {
 
   const [searchQuery, setSearchQuery] = useState("");
   const [showSuggestions, setShowSuggestions] = useState(false);
+  
+  // MỚI: State lưu số lượng badge
+  const [cartCount, setCartCount] = useState(0);
+  const [wishlistCount, setWishlistCount] = useState(0);
+
   const searchRef = useRef<HTMLDivElement>(null);
   const wishlistRef = useRef<HTMLDivElement>(null);
   const bagRef = useRef<HTMLDivElement>(null);
   const accountRef = useRef<HTMLDivElement>(null);
 
-  const wishlistPath = isLoggedIn ? "/wishlist" : "/register-test";
-  const bagPath = isLoggedIn ? "/cart" : "/register-test";
+  // ĐÃ CẬP NHẬT: Không ép buộc vào register-test, dẫn trực tiếp đến trang tính năng
+  const wishlistPath = "/saved-items";
+  const bagPath = "/cart";
 
   useEffect(() => {
     const savedUser = localStorage.getItem("user");
@@ -29,6 +35,19 @@ export default function Header() {
       setUser(JSON.parse(savedUser));
       setIsLoggedIn(true);
     }
+
+    // MỚI: Hàm cập nhật số lượng badge từ localStorage
+    const updateCounts = () => {
+      const cart = JSON.parse(localStorage.getItem("cart") || "[]");
+      const wishlist = JSON.parse(localStorage.getItem("wishlist") || "[]");
+      setCartCount(cart.length);
+      setWishlistCount(wishlist.length);
+    };
+
+    updateCounts();
+    // Lắng nghe sự thay đổi storage để nhảy số badge ngay lập tức
+    window.addEventListener("storage", updateCounts);
+    return () => window.removeEventListener("storage", updateCounts);
   }, []);
 
   useEffect(() => {
@@ -93,9 +112,7 @@ export default function Header() {
           <Link href="/" className="text-3xl md:text-[34px] font-black tracking-tighter uppercase decoration-none">NEWEGG</Link>
 
           <nav className="hidden md:flex gap-0 font-bold text-[13px] tracking-widest h-full items-center ml-4">
-            {/* Đã cập nhật /women */}
             <Link href="/women" className="hover:bg-[#525252] h-full flex items-center px-6 transition-colors border-r border-gray-600">WOMEN</Link>
-            {/* Đã cập nhật /men */}
             <Link href="/men" className="hover:bg-[#525252] h-full flex items-center px-6 transition-colors border-r border-gray-600">MEN</Link>
           </nav>
 
@@ -139,19 +156,30 @@ export default function Header() {
               )}
             </div>
 
+            {/* ĐÃ CẬP NHẬT: Wishlist Link & Badge Nền Trắng */}
             <Link href={wishlistPath} className="relative h-full flex items-center p-2 hover:bg-[#525252] transition-colors rounded-full" title="My Wishlist">
                 <svg className="w-6 h-6 md:w-7 md:h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /></svg>
+                {wishlistCount > 0 && (
+                  <span className="absolute top-1.5 right-0 bg-white text-black text-[9px] w-4 h-4 rounded-full flex items-center justify-center font-bold border border-black shadow-sm">
+                    {wishlistCount}
+                  </span>
+                )}
             </Link>
 
+            {/* ĐÃ CẬP NHẬT: Bag Link & Badge Nền Đỏ */}
             <Link href={bagPath} className="relative h-full flex items-center p-2 hover:bg-[#525252] transition-colors rounded-full" title="My Shopping Bag">
                 <svg className="w-6 h-6 md:w-7 md:h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" d="M16 11V7a4 4 0 11-8 0v4M5 9h14l1 12H4L5 9z" /></svg>
-                <span className="absolute bottom-1 right-1 bg-[#d01345] text-white text-[9px] w-4 h-4 rounded-full flex items-center justify-center font-bold">0</span>
+                {cartCount > 0 && (
+                  <span className="absolute bottom-1 right-1 bg-[#d01345] text-white text-[9px] w-4 h-4 rounded-full flex items-center justify-center font-bold">
+                    {cartCount}
+                  </span>
+                )}
             </Link>
           </div>
         </div>
       </div>
 
-      {/* MOBILE SIDEBAR */}
+      {/* MOBILE SIDEBAR (Giữ nguyên giao diện) */}
       <div className={`fixed inset-0 z-[200] transition-all duration-300 ${isSideMenuOpen ? "visible" : "invisible"}`}>
         <div className={`absolute inset-0 bg-black/60 transition-opacity duration-300 ${isSideMenuOpen ? "opacity-100" : "opacity-0"}`} onClick={() => setIsSideMenuOpen(false)} />
         <div className={`absolute top-0 left-0 w-[85%] max-w-[340px] h-full bg-white transform transition-transform duration-300 flex flex-col ${isSideMenuOpen ? "translate-x-0" : "-translate-x-full"}`}>
@@ -162,7 +190,6 @@ export default function Header() {
           </div>
 
           <div className="flex-1 overflow-y-auto pb-10">
-            {/* Promo Banners */}
             <div className="p-3">
               <div className="bg-black text-white p-4 text-center mb-2">
                 <p className="text-[10px] font-bold uppercase tracking-widest">Extra 30% off 1000s of Sale styles</p>
@@ -177,7 +204,6 @@ export default function Header() {
               </Link>
             </div>
 
-            {/* List with Images */}
             <div className="px-3 space-y-1">
               {menuData.mobileNav.map((item) => (
                 <Link key={item.name} href={item.path} onClick={() => setIsSideMenuOpen(false)} className="flex items-center justify-between p-4 bg-gray-50 hover:bg-gray-100 transition-colors rounded-sm">
@@ -189,7 +215,6 @@ export default function Header() {
               ))}
             </div>
 
-            {/* Sidebar Account Section */}
             <div className="p-5 mt-6 border-t border-gray-100">
                 <h4 className="text-[20px] font-black italic mb-6 uppercase tracking-tighter">
                   {isLoggedIn ? `HI ${user.name.toUpperCase()}` : "WELCOME TO NEWEGG"}
@@ -219,7 +244,7 @@ export default function Header() {
         </div>
       </div>
 
-      {/* CATEGORY NAV - DESKTOP */}
+      {/* CATEGORY NAV - DESKTOP (Giữ nguyên giao diện) */}
       <div className="bg-[#525252] w-full hidden md:block">
         <div className="max-w-7xl mx-auto px-4 flex gap-6 text-[11px] font-bold text-white uppercase tracking-widest py-2">
           {["Sale", "Trending", "New in", "Clothing", "Dresses", "Shoes", "Accessories", "Brands", "Beauty"].map((item) => (
@@ -234,7 +259,7 @@ export default function Header() {
         </div>
       </div>
 
-      {/* MEGA MENU - DESKTOP */}
+      {/* MEGA MENU - DESKTOP (Giữ nguyên giao diện) */}
       {isMegaMenuOpen && (
         <div 
           className="absolute top-full left-0 w-full bg-white border-b border-gray-200 shadow-2xl hidden md:block"
