@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
+import Link from "next/link"; // Import Link để điều hướng
 
 export default function MenPage() {
   const [products, setProducts] = useState([]);
@@ -52,55 +53,59 @@ export default function MenPage() {
         </p>
       </div>
 
-      {/* 2. HEADER: RESPONSIVE HERO (KHÔNG NÚT) */}
-      <section className="relative w-full">
+      {/* 2. HEADER: RESPONSIVE HERO (Dẫn đến /men/all) */}
+      <Link href="/men/all" className="block relative w-full cursor-pointer">
         <div className="block md:hidden w-full">
           <img src="/images/app-hero.webp" alt="Mobile" className="w-full h-auto object-cover" />
         </div>
         <div className="hidden md:block w-full">
           <img src="/images/desktop-hero.webp" alt="Desktop" className="w-full h-auto object-cover" />
         </div>
-      </section>
+      </Link>
 
-      {/* 3. CATEGORY BUTTONS */}
+      {/* 3. CATEGORY BUTTONS (Chuyển từ button sang Link) */}
       <div className="w-full bg-black py-8 flex flex-wrap justify-center gap-3 px-4">
         {["New in", "Clothing", "Shoes", "Accessories", "Brands", "Sale"].map((item) => (
-          <button key={item} className="border border-white text-white px-8 py-3 text-[11px] font-black uppercase hover:bg-white hover:text-black transition-all">
+          <Link 
+            key={item} 
+            href="/men/all" 
+            className="border border-white text-white px-8 py-3 text-[11px] font-black uppercase hover:bg-white hover:text-black transition-all"
+          >
             {item}
-          </button>
+          </Link>
         ))}
       </div>
 
-      {/* 4. SHOP BY CATEGORY (KHÔNG CHỮ) */}
+      {/* 4. SHOP BY CATEGORY */}
       <section className="w-full py-16 bg-white border-t border-gray-100">
         <div className="w-full text-center mb-12">
           <h2 className="text-[24px] font-bold text-black tracking-tight uppercase">Shop by Category</h2>
         </div>
         <div className="flex overflow-x-auto md:grid md:grid-cols-6 gap-4 px-4 md:px-10 no-scrollbar">
           {categories.map((cat, index) => (
-            <div key={index} className="min-w-[150px] flex flex-col items-center">
+            <Link href="/men/all" key={index} className="min-w-[150px] flex flex-col items-center group">
               <div className="w-full aspect-[4/5] overflow-hidden bg-gray-50">
-                <img src={cat.src} alt={cat.label} className="w-full h-full object-contain" />
+                <img src={cat.src} alt={cat.label} className="w-full h-full object-contain transition-transform group-hover:scale-105" />
               </div>
-            </div>
+            </Link>
           ))}
         </div>
       </section>
 
-      {/* 5. WHAT TO WEAR (CHỮ TRONG ẢNH) */}
+      {/* 5. WHAT TO WEAR */}
       <section className="w-full py-10 bg-white border-t border-gray-100">
         <div className="w-full text-center mb-10">
           <h2 className="text-[28px] font-bold text-black tracking-tight">What to Wear</h2>
         </div>
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-1 px-1 max-w-[1920px] mx-auto">
           {whatToWear.map((item, index) => (
-            <div key={index} className="relative aspect-[3/4] overflow-hidden group cursor-pointer">
+            <Link href="/men/all" key={index} className="relative aspect-[3/4] overflow-hidden group cursor-pointer">
               <img src={item.src} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" alt={item.label} />
               <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent"></div>
               <div className="absolute bottom-6 w-full text-center px-2">
                 <span className="text-white text-[14px] font-bold uppercase tracking-[0.15em]">{item.label}</span>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
       </section>
@@ -112,14 +117,14 @@ export default function MenPage() {
         </div>
         <div className="max-w-[1400px] mx-auto px-6 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-12 items-center justify-items-center">
           {popularBrands.map((brand, index) => (
-            <div key={index} className="w-full flex items-center justify-center opacity-90">
+            <Link href="/men/all" key={index} className="w-full flex items-center justify-center opacity-90 hover:opacity-100 transition-opacity">
               <img src={brand.src} alt={brand.alt} className="w-full max-h-[120px] object-contain" />
-            </div>
+            </Link>
           ))}
         </div>
       </section>
 
-      {/* 7. TRENDING SNEAKERS (FULL VIỀN) */}
+      {/* 7. TRENDING SNEAKERS */}
       <section className="w-full py-12 bg-white border-t border-gray-100">
         <div className="w-full text-center mb-10 px-4">
           <h2 className="text-[28px] md:text-[36px] font-bold text-black tracking-tight uppercase">
@@ -128,26 +133,25 @@ export default function MenPage() {
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-1 px-1 max-w-[100%] mx-auto">
           {trendingSneakers.map((item, index) => (
-            <div key={index} className="flex flex-col group cursor-pointer">
+            <Link href="/men/all" key={index} className="flex flex-col group cursor-pointer">
               <div className="w-full aspect-[1/1.2] overflow-hidden bg-gray-50 mb-3">
                 <img src={item.src} alt={item.label} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
               </div>
               <div className="px-4 pb-6">
                 <p className="text-[11px] text-gray-800 font-normal leading-relaxed uppercase tracking-wider">{item.label}</p>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
       </section>
 
-      {/* 8. MỤC MỚI: SHOP NOW & BRAND DESCRIPTION (CUỐI TRANG) */}
+      {/* 8. SHOP NOW & BRAND DESCRIPTION */}
       <section className="w-full py-24 bg-white border-t border-gray-100 flex flex-col items-center px-4">
-        {/* Nút SHOP NOW Đen */}
-        <button className="bg-black text-white px-12 py-4 text-[14px] font-black uppercase tracking-widest hover:bg-gray-800 transition-all mb-16">
+        {/* Nút SHOP NOW Đã bọc Link */}
+        <Link href="/men/all" className="bg-black text-white px-12 py-4 text-[14px] font-black uppercase tracking-widest hover:bg-gray-800 transition-all mb-16">
           SHOP NOW
-        </button>
+        </Link>
         
-        {/* Nội dung đoạn văn chi tiết */}
         <div className="max-w-[900px] text-center">
           <p className="text-[14px] text-gray-800 leading-[1.8] font-normal">
             Level up your off-duty 'fits with **NEWEGG**, serving up on-trend menswear and accessories from your fave brands. 
