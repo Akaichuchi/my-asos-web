@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 
 interface Product {
@@ -67,17 +67,19 @@ export default function WomenPage() {
         <p className="text-[12px] font-black uppercase tracking-tighter">The Winter Sale: up to 70% off*</p>
       </div>
       <section className="relative w-full">
-        <video autoPlay muted loop playsInline className="w-full h-auto object-cover min-h-[350px] md:min-h-[550px]">
-          <source src="/images/videodaidienjpc.mp4" type="video/mp4" />
-        </video>
+        <Link href="/women/all" className="block cursor-pointer">
+          <video autoPlay muted loop playsInline className="w-full h-auto object-cover min-h-[350px] md:min-h-[550px]">
+            <source src="/images/videodaidienjpc.mp4" type="video/mp4" />
+          </video>
+        </Link>
       </section>
 
       {/* 2. CATEGORY BUTTONS */}
       <div className="w-full bg-black py-8 flex flex-wrap justify-center gap-3 px-4">
         {["View all Sale", "Dresses", "Coats + jackets", "Footwear", "Tops", "Gifts"].map((item) => (
-          <button key={item} className="border border-white text-white px-8 py-3 text-[11px] font-black uppercase hover:bg-white hover:text-black transition-all">
+          <Link key={item} href="/women/all" className="border border-white text-white px-8 py-3 text-[11px] font-black uppercase hover:bg-white hover:text-black transition-all">
             {item}
-          </button>
+          </Link>
         ))}
       </div>
 
@@ -89,7 +91,7 @@ export default function WomenPage() {
         </div>
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 px-4 md:px-8 max-w-[1920px] mx-auto">
           {trendingGrid.map((item, index) => (
-            <div key={index} className="flex flex-col group cursor-pointer">
+            <Link key={index} href="/women/all" className="flex flex-col group cursor-pointer">
               <div className="relative aspect-[3/4] w-full overflow-hidden">
                 <img src={item.src} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" alt={item.title} />
               </div>
@@ -97,16 +99,16 @@ export default function WomenPage() {
                 <h3 className="font-bold text-[14px] mb-1 uppercase tracking-tight">{item.title}</h3>
                 <p className="text-[12px] text-gray-600 leading-snug">{item.desc}</p>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
       </section>
 
       {/* 4. BANNER FACE + BODY */}
-      <div className="relative w-full px-4 md:px-10 max-w-[1800px] mx-auto my-20">
+      <Link href="/women/all" className="relative block w-full px-4 md:px-10 max-w-[1800px] mx-auto my-20">
         <img src="/images/fbmobile.webp" className="block md:hidden w-full border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]" alt="Beauty" />
         <img src="/images/fbdesktop.webp" className="hidden md:block w-full border-2 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]" alt="Beauty" />
-      </div>
+      </Link>
 
       {/* 5. BRANDS WE LOVE */}
       <section className="w-full py-10 bg-white">
@@ -115,13 +117,13 @@ export default function WomenPage() {
         </div>
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-1 px-1 max-w-[1920px] mx-auto">
           {brandsWeLove.map((item, index) => (
-            <div key={index} className="relative aspect-[3/4] overflow-hidden group cursor-pointer">
+            <Link key={index} href="/women/all" className="relative aspect-[3/4] overflow-hidden group cursor-pointer">
               <img src={item.src} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" alt={item.label} />
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-80"></div>
               <div className="absolute bottom-6 w-full text-center">
                 <span className="text-white text-[13px] font-bold uppercase tracking-[0.2em]">{item.label}</span>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
       </section>
@@ -133,13 +135,13 @@ export default function WomenPage() {
         </div>
         <div className="flex overflow-x-auto md:grid md:grid-cols-6 gap-1 px-1">
           {bottomGallery.map((item, index) => (
-            <div key={index} className="min-w-[160px] relative aspect-[3/4] overflow-hidden group cursor-pointer">
+            <Link key={index} href="/women/all" className="min-w-[160px] relative aspect-[3/4] overflow-hidden group cursor-pointer">
               <img src={item.src} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt={item.label} />
               <div className="absolute inset-0 bg-black/10 group-hover:bg-black/20 transition-all"></div>
               <div className="absolute bottom-4 w-full text-center px-2">
                 <span className="bg-white/90 px-3 py-2 text-[10px] font-bold uppercase text-black inline-block">{item.label}</span>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
       </section>
@@ -151,14 +153,14 @@ export default function WomenPage() {
         </div>
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 px-4 md:px-8 max-w-[1920px] mx-auto">
           {sneakersSeason.map((item, index) => (
-            <div key={index} className="flex flex-col group cursor-pointer">
+            <Link key={index} href="/women/all" className="flex flex-col group cursor-pointer">
               <div className="relative aspect-[1/1] w-full overflow-hidden bg-gray-50">
                 <img src={item.src} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" alt="Sneakers" />
               </div>
               <div className="mt-4 text-center md:text-left">
                 <p className="text-[12px] md:text-[13px] text-gray-800 leading-snug px-1">{item.desc}</p>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
       </section>
@@ -166,19 +168,19 @@ export default function WomenPage() {
       {/* 8. WINTER ACCESSORIES */}
       <section className="w-full py-20 bg-white border-t border-gray-100 pb-10">
         <div className="w-full flex flex-col items-center mb-10 gap-6">
-          <Link href="/shop" className="bg-black text-white px-16 py-3 text-[14px] font-black uppercase tracking-widest hover:bg-gray-800 transition-all">SHOP NOW</Link>
+          <Link href="/women/all" className="bg-black text-white px-16 py-3 text-[14px] font-black uppercase tracking-widest hover:bg-gray-800 transition-all">SHOP NOW</Link>
           <h2 className="text-[28px] font-bold text-black tracking-tight mt-10">Winter Accessories</h2>
         </div>
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 px-4 md:px-8 max-w-[1920px] mx-auto">
           {winterAcc.map((item, index) => (
-            <div key={index} className="flex flex-col group cursor-pointer">
+            <Link key={index} href="/women/all" className="flex flex-col group cursor-pointer">
               <div className="relative aspect-[1/1] w-full overflow-hidden bg-gray-50">
                 <img src={item.src} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" alt="Accessories" />
               </div>
               <div className="mt-4 text-center md:text-left">
                 <p className="text-[12px] md:text-[13px] text-gray-800 leading-snug px-1">{item.desc}</p>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
       </section>
