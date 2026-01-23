@@ -53,7 +53,6 @@ export default function WomenPage() {
     { src: "/images/208661279-1-white.webp", desc: "adidas Running Adizero Evo SL sneakers in black and white" }
   ];
 
-  // DỮ LIỆU MỤC WINTER ACCESSORIES MỚI
   const winterAcc = [
     { src: "/images/209126152-1-white.webp", desc: "ASOS 4505 Ski faux fur earmuffs in white" },
     { src: "/images/209220045-1-black.webp", desc: "Weekday faux shearling mittens in black suede with white fur" },
@@ -82,7 +81,7 @@ export default function WomenPage() {
         ))}
       </div>
 
-      {/* 3. STYLE YOUR NEW YEAR (8 ẢNH TO) */}
+      {/* 3. STYLE YOUR NEW YEAR */}
       <section className="w-full py-12 bg-white">
         <div className="text-center mb-10 px-4">
           <h2 className="text-[28px] md:text-[32px] font-bold tracking-tight text-black">Style your New Year, your way</h2>
@@ -156,16 +155,16 @@ export default function WomenPage() {
               <div className="relative aspect-[1/1] w-full overflow-hidden bg-gray-50">
                 <img src={item.src} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" alt="Sneakers" />
               </div>
-              <div className="mt-4">
-                <p className="text-[12px] md:text-[13px] text-gray-800 leading-snug text-left md:text-center px-1">{item.desc}</p>
+              <div className="mt-4 text-center md:text-left">
+                <p className="text-[12px] md:text-[13px] text-gray-800 leading-snug px-1">{item.desc}</p>
               </div>
             </div>
           ))}
         </div>
       </section>
 
-      {/* 8. MỤC MỚI: WINTER ACCESSORIES (DƯỚI CÙNG) */}
-      <section className="w-full py-20 bg-white border-t border-gray-100 pb-20">
+      {/* 8. WINTER ACCESSORIES */}
+      <section className="w-full py-20 bg-white border-t border-gray-100 pb-10">
         <div className="w-full flex flex-col items-center mb-10 gap-6">
           <Link href="/shop" className="bg-black text-white px-16 py-3 text-[14px] font-black uppercase tracking-widest hover:bg-gray-800 transition-all">SHOP NOW</Link>
           <h2 className="text-[28px] font-bold text-black tracking-tight mt-10">Winter Accessories</h2>
@@ -176,11 +175,20 @@ export default function WomenPage() {
               <div className="relative aspect-[1/1] w-full overflow-hidden bg-gray-50">
                 <img src={item.src} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" alt="Accessories" />
               </div>
-              <div className="mt-4">
-                <p className="text-[12px] md:text-[13px] text-gray-800 leading-snug text-left md:text-center px-1">{item.desc}</p>
+              <div className="mt-4 text-center md:text-left">
+                <p className="text-[12px] md:text-[13px] text-gray-800 leading-snug px-1">{item.desc}</p>
               </div>
             </div>
           ))}
+        </div>
+      </section>
+
+      {/* 9. MỤC MỚI: BRAND DESCRIPTION (DƯỚI CÙNG TRANG) */}
+      <section className="w-full py-20 bg-white border-t border-gray-100 flex justify-center px-4 md:px-20">
+        <div className="max-w-[1000px] text-center">
+          <p className="text-[14px] md:text-[16px] text-gray-700 leading-relaxed font-normal italic">
+            Your one-stop destination for fashion-forward 'fits, **NEWEGG** serves up the hottest womenswear and accessories – so you can feel your best, whatever you’re into. Resident style icon **NEWEGG DESIGN** drops collections for every occasion (and aesthetic), from smart-casj throw-on-and-go styles to head-turning 'fits for dialled-up drama. Scroll River Island for evening dresses perf for your next BNO (think faux feathers, sequins and satin as standard) or filter by Monki for Scandi designs with a streetwear-inspired spin. Looking for statement pieces to elevate your off-duty look szn to szn? Stradivarius brings on-trend trousers, tops, footwear and accessories in must-have cuts and colourways. And for smashing PBs, chasing endorphins and finding the motivation to hit that 6am class *shudders*, it’s gotta be sportswear OGs Nike and adidas – delivering your tech-focused athleisurewear of dreams in fun prints and bold block colours. Next stop: checkout.
+          </p>
         </div>
       </section>
 
