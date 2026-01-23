@@ -35,7 +35,6 @@ export default function MenPage() {
     { src: "/images/209544589-1-washedsandstone.webp", label: "Cozy season" },
   ];
 
-  // DỮ LIỆU LOGO THƯƠNG HIỆU MỚI
   const popularBrands = [
     { src: "/images/nike-logo.webp", alt: "Nike" },
     { src: "/images/adidas-logo.webp", alt: "Adidas" },
@@ -54,7 +53,7 @@ export default function MenPage() {
         </p>
       </div>
 
-      {/* 2. HEADER: HIỂN THỊ THEO THIẾT BỊ (KHÔNG NÚT) */}
+      {/* 2. HEADER: HIỂN THỊ THEO THIẾT BỊ */}
       <section className="relative w-full">
         <div className="block md:hidden w-full">
           <img src="/images/app-hero.webp" alt="Mobile Hero" className="w-full h-auto object-cover" />
@@ -73,7 +72,7 @@ export default function MenPage() {
         ))}
       </div>
 
-      {/* 4. SHOP BY CATEGORY (KHÔNG TIÊU ĐỀ CHỮ) */}
+      {/* 4. SHOP BY CATEGORY */}
       <section className="w-full py-16 bg-white border-t border-gray-100">
         <div className="w-full text-center mb-12">
           <h2 className="text-[24px] font-bold text-black tracking-tight uppercase">Shop by Category</h2>
@@ -82,18 +81,14 @@ export default function MenPage() {
           {categories.map((cat, index) => (
             <div key={index} className="min-w-[150px] flex flex-col items-center group cursor-pointer">
               <div className="w-full aspect-[4/5] overflow-hidden bg-gray-50">
-                <img 
-                  src={cat.src} 
-                  alt={cat.label} 
-                  className="w-full h-full object-contain transition-transform duration-500 group-hover:scale-105" 
-                />
+                <img src={cat.src} alt={cat.label} className="w-full h-full object-contain transition-transform duration-500 group-hover:scale-105" />
               </div>
             </div>
           ))}
         </div>
       </section>
 
-      {/* 5. WHAT TO WEAR (TIÊU ĐỀ TRONG HÌNH) */}
+      {/* 5. WHAT TO WEAR */}
       <section className="w-full py-10 bg-white border-t border-gray-100">
         <div className="w-full text-center mb-10">
           <h2 className="text-[28px] font-bold text-black tracking-tight">What to Wear</h2>
@@ -111,18 +106,18 @@ export default function MenPage() {
         </div>
       </section>
 
-      {/* 6. MỤC MỚI: POPULAR BRANDS (DƯỚI CÙNG) */}
-      <section className="w-full py-16 bg-white border-t border-gray-100 pb-20">
-        <div className="w-full text-center mb-12">
+      {/* 6. POPULAR BRANDS (ĐÃ ĐIỀU CHỈNH LOGO TO LÊN) */}
+      <section className="w-full py-20 bg-white border-t border-gray-100 pb-24">
+        <div className="w-full text-center mb-16">
           <h2 className="text-[24px] font-bold text-black tracking-tight uppercase">Popular Brands</h2>
         </div>
-        <div className="max-w-[1200px] mx-auto px-4 grid grid-cols-3 md:grid-cols-6 gap-8 items-center justify-items-center opacity-80">
+        <div className="max-w-[1400px] mx-auto px-6 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-x-12 gap-y-16 items-center justify-items-center">
           {popularBrands.map((brand, index) => (
-            <div key={index} className="w-full max-w-[120px] h-[60px] flex items-center justify-center grayscale hover:grayscale-0 transition-all cursor-pointer">
+            <div key={index} className="w-full flex items-center justify-center transition-all cursor-pointer hover:opacity-100 opacity-90">
               <img 
                 src={brand.src} 
                 alt={brand.alt} 
-                className="max-w-full max-h-full object-contain" 
+                className="w-full max-h-[100px] md:max-h-[120px] object-contain" 
               />
             </div>
           ))}
