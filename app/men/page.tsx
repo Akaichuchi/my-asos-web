@@ -1,16 +1,8 @@
 "use client";
 import { useEffect, useState } from "react";
-import Link from "next/link";
-
-interface Product {
-  id: string | number;
-  name: string;
-  price: string;
-  img: string;
-}
 
 export default function MenPage() {
-  const [products, setProducts] = useState<Product[]>([]);
+  const [products, setProducts] = useState([]);
 
   useEffect(() => {
     fetch("/api/products?category=men&limit=20")
@@ -44,7 +36,6 @@ export default function MenPage() {
     { src: "/images/reclaimed-vintage-logo.webp", alt: "Reclaimed Vintage" },
   ];
 
-  // DỮ LIỆU SNEAKERS MỚI THÊM
   const trendingSneakers = [
     { src: "/images/208594074-1-midblue.webp", label: "adidas Running Adizero Evo SL sneakers in white and black" },
     { src: "/images/208669736-1-lightgreen.webp", label: "adidas Running Adizero Evo SL sneakers in white and purple" },
@@ -61,13 +52,13 @@ export default function MenPage() {
         </p>
       </div>
 
-      {/* 2. HEADER: HIỂN THỊ THEO THIẾT BỊ */}
+      {/* 2. HEADER: RESPONSIVE HERO (KHÔNG NÚT) */}
       <section className="relative w-full">
         <div className="block md:hidden w-full">
-          <img src="/images/app-hero.webp" alt="Mobile Hero" className="w-full h-auto object-cover" />
+          <img src="/images/app-hero.webp" alt="Mobile" className="w-full h-auto object-cover" />
         </div>
         <div className="hidden md:block w-full">
-          <img src="/images/desktop-hero.webp" alt="Desktop Hero" className="w-full h-auto object-cover" />
+          <img src="/images/desktop-hero.webp" alt="Desktop" className="w-full h-auto object-cover" />
         </div>
       </section>
 
@@ -80,23 +71,23 @@ export default function MenPage() {
         ))}
       </div>
 
-      {/* 4. SHOP BY CATEGORY */}
+      {/* 4. SHOP BY CATEGORY (KHÔNG CHỮ DƯỚI ẢNH) */}
       <section className="w-full py-16 bg-white border-t border-gray-100">
         <div className="w-full text-center mb-12">
           <h2 className="text-[24px] font-bold text-black tracking-tight uppercase">Shop by Category</h2>
         </div>
         <div className="flex overflow-x-auto md:grid md:grid-cols-6 gap-4 px-4 md:px-10 no-scrollbar">
           {categories.map((cat, index) => (
-            <div key={index} className="min-w-[150px] flex flex-col items-center group cursor-pointer">
+            <div key={index} className="min-w-[150px] flex flex-col items-center">
               <div className="w-full aspect-[4/5] overflow-hidden bg-gray-50">
-                <img src={cat.src} alt={cat.label} className="w-full h-full object-contain transition-transform duration-500 group-hover:scale-105" />
+                <img src={cat.src} alt={cat.label} className="w-full h-full object-contain" />
               </div>
             </div>
           ))}
         </div>
       </section>
 
-      {/* 5. WHAT TO WEAR */}
+      {/* 5. WHAT TO WEAR (CHỮ TRONG ẢNH) */}
       <section className="w-full py-10 bg-white border-t border-gray-100">
         <div className="w-full text-center mb-10">
           <h2 className="text-[28px] font-bold text-black tracking-tight">What to Wear</h2>
@@ -105,8 +96,8 @@ export default function MenPage() {
           {whatToWear.map((item, index) => (
             <div key={index} className="relative aspect-[3/4] overflow-hidden group cursor-pointer">
               <img src={item.src} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" alt={item.label} />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-90"></div>
-              <div className="absolute bottom-6 w-full text-center">
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent"></div>
+              <div className="absolute bottom-6 w-full text-center px-2">
                 <span className="text-white text-[14px] font-bold uppercase tracking-[0.15em]">{item.label}</span>
               </div>
             </div>
@@ -114,46 +105,53 @@ export default function MenPage() {
         </div>
       </section>
 
-      {/* 6. POPULAR BRANDS */}
+      {/* 6. POPULAR BRANDS (LOGO TO) */}
       <section className="w-full py-20 bg-white border-t border-gray-100">
         <div className="w-full text-center mb-16">
           <h2 className="text-[24px] font-bold text-black tracking-tight uppercase">Popular Brands</h2>
         </div>
-        <div className="max-w-[1400px] mx-auto px-6 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-x-12 gap-y-16 items-center justify-items-center">
+        <div className="max-w-[1400px] mx-auto px-6 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-12 items-center justify-items-center">
           {popularBrands.map((brand, index) => (
-            <div key={index} className="w-full flex items-center justify-center transition-all cursor-pointer hover:opacity-100 opacity-90">
-              <img src={brand.src} alt={brand.alt} className="w-full max-h-[100px] md:max-h-[120px] object-contain" />
+            <div key={index} className="w-full flex items-center justify-center opacity-90">
+              <img src={brand.src} alt={brand.alt} className="w-full max-h-[120px] object-contain" />
             </div>
           ))}
         </div>
       </section>
 
-      {/* 7. MỤC MỚI: TRENDING SNEAKERS (DƯỚI CÙNG) */}
-      <section className="w-full py-16 bg-white border-t border-gray-100 pb-20">
-        <div className="w-full text-center mb-12">
-          <h2 className="text-[24px] font-bold text-black tracking-tight uppercase">Trending: Most Wanted Sneakers</h2>
+      {/* 7. TRENDING SNEAKERS (ĐIỀU CHỈNH TO, FULL VIỀN) */}
+      <section className="w-full py-12 bg-white border-t border-gray-100">
+        <div className="w-full text-center mb-10 px-4">
+          <h2 className="text-[28px] md:text-[36px] font-bold text-black tracking-tight uppercase">
+            Trending: Most Wanted Sneakers
+          </h2>
         </div>
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 px-4 max-w-[1400px] mx-auto">
+        {/* Grid sát viền, không có padding lớn để ảnh bung to tối đa */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-1 px-1 max-w-[100%] mx-auto">
           {trendingSneakers.map((item, index) => (
             <div key={index} className="flex flex-col group cursor-pointer">
-              <div className="w-full aspect-square overflow-hidden bg-gray-50 mb-4">
+              <div className="w-full aspect-[1/1.2] overflow-hidden bg-gray-50 mb-3">
                 <img 
                   src={item.src} 
                   alt={item.label} 
                   className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" 
                 />
               </div>
-              <p className="text-[12px] text-gray-800 font-normal leading-snug">{item.label}</p>
+              <div className="px-4 pb-6">
+                <p className="text-[11px] text-gray-800 font-normal leading-relaxed uppercase tracking-wider">
+                  {item.label}
+                </p>
+              </div>
             </div>
           ))}
         </div>
       </section>
 
-      {/* 8. MÔ TẢ THƯƠNG HIỆU */}
-      <section className="w-full py-20 bg-white flex justify-center px-4 md:px-20 border-t border-gray-100">
+      {/* 8. BRAND DESCRIPTION */}
+      <section className="w-full py-20 bg-white border-t border-gray-100 flex justify-center px-4">
         <div className="max-w-[1000px] text-center">
-          <p className="text-[14px] text-gray-700 leading-relaxed font-normal italic">
-            Your one-stop destination for fashion-forward 'fits, **NEWEGG Men** serves up the hottest menswear and accessories...
+          <p className="text-[14px] text-gray-700 italic">
+            Your one-stop destination for fashion-forward 'fits, **NEWEGG Men**...
           </p>
         </div>
       </section>
