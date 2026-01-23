@@ -44,6 +44,14 @@ export default function MenPage() {
     { src: "/images/reclaimed-vintage-logo.webp", alt: "Reclaimed Vintage" },
   ];
 
+  // DỮ LIỆU SNEAKERS MỚI THÊM
+  const trendingSneakers = [
+    { src: "/images/208594074-1-midblue.webp", label: "adidas Running Adizero Evo SL sneakers in white and black" },
+    { src: "/images/208669736-1-lightgreen.webp", label: "adidas Running Adizero Evo SL sneakers in white and purple" },
+    { src: "/images/208669507-1-white.webp", label: "adidas Running Adizero Evo SL sneakers in bright green" },
+    { src: "/images/208669443-1-white.webp", label: "Nike Running Vomero 18 sneakers in white and blue" },
+  ];
+
   return (
     <main className="min-h-screen bg-white w-full overflow-x-hidden">
       {/* 1. TOP ANNOUNCEMENT BAR */}
@@ -106,25 +114,42 @@ export default function MenPage() {
         </div>
       </section>
 
-      {/* 6. POPULAR BRANDS (ĐÃ ĐIỀU CHỈNH LOGO TO LÊN) */}
-      <section className="w-full py-20 bg-white border-t border-gray-100 pb-24">
+      {/* 6. POPULAR BRANDS */}
+      <section className="w-full py-20 bg-white border-t border-gray-100">
         <div className="w-full text-center mb-16">
           <h2 className="text-[24px] font-bold text-black tracking-tight uppercase">Popular Brands</h2>
         </div>
         <div className="max-w-[1400px] mx-auto px-6 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-x-12 gap-y-16 items-center justify-items-center">
           {popularBrands.map((brand, index) => (
             <div key={index} className="w-full flex items-center justify-center transition-all cursor-pointer hover:opacity-100 opacity-90">
-              <img 
-                src={brand.src} 
-                alt={brand.alt} 
-                className="w-full max-h-[100px] md:max-h-[120px] object-contain" 
-              />
+              <img src={brand.src} alt={brand.alt} className="w-full max-h-[100px] md:max-h-[120px] object-contain" />
             </div>
           ))}
         </div>
       </section>
 
-      {/* 7. MÔ TẢ THƯƠNG HIỆU */}
+      {/* 7. MỤC MỚI: TRENDING SNEAKERS (DƯỚI CÙNG) */}
+      <section className="w-full py-16 bg-white border-t border-gray-100 pb-20">
+        <div className="w-full text-center mb-12">
+          <h2 className="text-[24px] font-bold text-black tracking-tight uppercase">Trending: Most Wanted Sneakers</h2>
+        </div>
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 px-4 max-w-[1400px] mx-auto">
+          {trendingSneakers.map((item, index) => (
+            <div key={index} className="flex flex-col group cursor-pointer">
+              <div className="w-full aspect-square overflow-hidden bg-gray-50 mb-4">
+                <img 
+                  src={item.src} 
+                  alt={item.label} 
+                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" 
+                />
+              </div>
+              <p className="text-[12px] text-gray-800 font-normal leading-snug">{item.label}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* 8. MÔ TẢ THƯƠNG HIỆU */}
       <section className="w-full py-20 bg-white flex justify-center px-4 md:px-20 border-t border-gray-100">
         <div className="max-w-[1000px] text-center">
           <p className="text-[14px] text-gray-700 leading-relaxed font-normal italic">
