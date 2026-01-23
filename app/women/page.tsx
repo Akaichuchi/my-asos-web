@@ -30,7 +30,6 @@ export default function WomenPage() {
     { src: "/images/210146548-1-chocolate.webp", label: "Maxi Dresses" },
   ];
 
-  // DỮ LIỆU 8 ẢNH CHO MỤC STYLE YOUR NEW YEAR (ẢNH TO FULL)
   const trendingGrid = [
     { src: "/images/date-nightv4.webp", title: "Dinner, then drinks", desc: "Easy styles that work beyond the table." },
     { src: "/images/going-out.webp", title: "Out past 7", desc: "Made for cold nights and late finishes." },
@@ -49,9 +48,16 @@ export default function WomenPage() {
     { src: "/images/208344914-1-chocolate.webp", label: "TOPSHOP" },
   ];
 
+  const sneakersSeason = [
+    { src: "/images/209364168-1-black.webp", desc: "adidas Running Adizero Evo SL sneakers in white and black" },
+    { src: "/images/208661458-1-midblue.webp", desc: "adidas Running Adizero EVO SL sneakers in bright yellow" },
+    { src: "/images/208660751-1-yellow.webp", desc: "adidas Running Adizero EVO SL sneakers in blue and green" },
+    { src: "/images/208661279-1-white.webp", desc: "adidas Running Adizero Evo SL sneakers in black and white" }
+  ];
+
   return (
     <main className="min-h-screen bg-white w-full overflow-x-hidden">
-      {/* 1. TOP VIDEO & NAV */}
+      {/* 1. TOP VIDEO */}
       <div className="bg-black text-white py-2 w-full text-center">
         <p className="text-[12px] font-black uppercase tracking-tighter">The Winter Sale: up to 70% off*</p>
       </div>
@@ -70,23 +76,17 @@ export default function WomenPage() {
         ))}
       </div>
 
-      {/* 3. CẬP NHẬT: STYLE YOUR NEW YEAR (ẢNH TO FULL, 2 HÀNG) */}
+      {/* 3. STYLE YOUR NEW YEAR SECTION */}
       <section className="w-full py-12 bg-white">
         <div className="text-center mb-10 px-4">
           <h2 className="text-[28px] md:text-[32px] font-bold tracking-tight text-black">Style your New Year, your way</h2>
           <p className="text-[13px] md:text-[14px] text-gray-800 mt-1">Fresh plans, better outfits. Whatever you’re saying yes to this year, dress for it.</p>
         </div>
-        
-        {/* Grid sát nhau, ảnh to chuẩn mẫu */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 px-4 md:px-8 max-w-[1920px] mx-auto">
           {trendingGrid.map((item, index) => (
             <div key={index} className="flex flex-col group cursor-pointer">
               <div className="relative aspect-[3/4] w-full overflow-hidden">
-                <img 
-                  src={item.src} 
-                  alt={item.title} 
-                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                />
+                <img src={item.src} alt={item.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
               </div>
               <div className="mt-5 text-center px-2">
                 <h3 className="font-bold text-[14px] mb-1 uppercase tracking-tight">{item.title}</h3>
@@ -97,17 +97,14 @@ export default function WomenPage() {
         </div>
       </section>
 
-      {/* 4. BANNER SHOP NOW */}
-      <div className="w-full flex justify-center my-10">
-        <Link href="/shop" className="bg-black text-white px-16 py-3 text-[14px] font-black uppercase tracking-widest hover:bg-gray-900 transition-all">SHOP NOW</Link>
-      </div>
-      <div className="relative w-full px-4 md:px-10 max-w-[1800px] mx-auto">
+      {/* 4. FACE + BODY BANNER */}
+      <div className="relative w-full px-4 md:px-10 max-w-[1800px] mx-auto my-20">
         <img src="/images/fbmobile.webp" className="block md:hidden w-full border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]" alt="Beauty" />
         <img src="/images/fbdesktop.webp" className="hidden md:block w-full border-2 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]" alt="Beauty" />
       </div>
 
       {/* 5. BRANDS WE LOVE */}
-      <section className="w-full py-20 bg-white">
+      <section className="w-full py-10 bg-white">
         <div className="w-full text-center mb-10">
           <h2 className="text-[28px] font-bold text-black tracking-tight">Brands We Love</h2>
         </div>
@@ -142,9 +139,35 @@ export default function WomenPage() {
         </div>
       </section>
 
-      <div className="w-full flex justify-center pb-20">
+      {/* NÚT SHOP NOW */}
+      <div className="w-full flex justify-center py-16">
         <Link href="/shop" className="bg-black text-white px-16 py-3 text-[14px] font-black uppercase tracking-widest hover:bg-gray-800 transition-all">SHOP NOW</Link>
       </div>
+
+      {/* 7. SNEAKERS OF THE SEASON (DƯỚI CÙNG) */}
+      <section className="w-full py-20 bg-white border-t border-gray-100 pb-32">
+        <div className="w-full text-center mb-10">
+          <h2 className="text-[28px] font-bold text-black tracking-tight">Sneakers of the season</h2>
+        </div>
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 px-4 md:px-8 max-w-[1920px] mx-auto">
+          {sneakersSeason.map((item, index) => (
+            <div key={index} className="flex flex-col group cursor-pointer">
+              <div className="relative aspect-[1/1] w-full overflow-hidden bg-gray-50">
+                <img 
+                  src={item.src} 
+                  alt="Sneakers" 
+                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" 
+                />
+              </div>
+              <div className="mt-4">
+                <p className="text-[12px] md:text-[13px] text-gray-800 leading-snug text-left md:text-center px-1">
+                  {item.desc}
+                </p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
 
       <style jsx global>{`
         .no-scrollbar::-webkit-scrollbar { display: none; }
