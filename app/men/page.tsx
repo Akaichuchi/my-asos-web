@@ -37,7 +37,7 @@ export default function MenPage() {
         </p>
       </div>
 
-      {/* 2. HEADER: HIỂN THỊ THEO THIẾT BỊ (KHÔNG CÓ NÚT TRONG HÌNH) */}
+      {/* 2. HEADER: HIỂN THỊ THEO THIẾT BỊ (KHÔNG CÓ NÚT) */}
       <section className="relative w-full">
         <div className="block md:hidden w-full">
           <img src="/images/app-hero.webp" alt="Mobile Hero" className="w-full h-auto object-cover" />
@@ -56,8 +56,6 @@ export default function MenPage() {
         ))}
       </div>
 
-      {/* ĐÃ LOẠI BỎ PHẦN ELEVATED ESSENTIALS VÀ NÚT SHOP NOW TẠI ĐÂY */}
-
       {/* 4. SHOP BY CATEGORY (DƯỚI CÙNG) */}
       <section className="w-full py-16 bg-white border-t border-gray-100 pb-20">
         <div className="w-full text-center mb-12">
@@ -66,14 +64,14 @@ export default function MenPage() {
         <div className="flex overflow-x-auto md:grid md:grid-cols-6 gap-4 px-4 md:px-10 no-scrollbar">
           {categories.map((cat, index) => (
             <div key={index} className="min-w-[150px] flex flex-col items-center group cursor-pointer">
-              <div className="w-full aspect-[4/5] overflow-hidden mb-4 bg-gray-50">
+              <div className="w-full aspect-[4/5] overflow-hidden bg-gray-50">
                 <img 
                   src={cat.src} 
                   alt={cat.label} 
                   className="w-full h-full object-contain transition-transform duration-500 group-hover:scale-105" 
                 />
               </div>
-              <span className="text-[14px] font-bold text-black uppercase tracking-wide">{cat.label}</span>
+              {/* ĐÃ LOẠI BỎ THẺ SPAN TIÊU ĐỀ TẠI ĐÂY THEO YÊU CẦU */}
             </div>
           ))}
         </div>
