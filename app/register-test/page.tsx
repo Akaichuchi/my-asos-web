@@ -52,7 +52,7 @@ export default function RegisterPage() {
       {/* QR CODE MOBILE với Tính năng 3: Fade-in animation */}
       <div className="block lg:hidden w-full h-[120px] overflow-hidden animate-in fade-in duration-1000">
         <img 
-          src="/1111111.webp" 
+          src="/images/1111111.webp" 
           alt="Banner Mobile" 
           className="w-full h-full object-cover"
         />
@@ -129,7 +129,7 @@ export default function RegisterPage() {
       {/* QR CODE PC với Tính năng 3: Fade-in animation */}
       <div className="hidden lg:block lg:w-2/5 h-full min-h-screen relative overflow-hidden animate-in fade-in duration-1000">
         <img 
-          src="/Snipaste_2026-01-23_19-09-41.webp" 
+          src="/images/Snipaste_2026-01-23_19-09-41.webp" 
           alt="QR Pattern PC" 
           className="w-full h-full object-cover"
         />
