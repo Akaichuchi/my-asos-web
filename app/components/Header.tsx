@@ -93,8 +93,10 @@ export default function Header() {
           <Link href="/" className="text-3xl md:text-[34px] font-black tracking-tighter uppercase decoration-none">NEWEGG</Link>
 
           <nav className="hidden md:flex gap-0 font-bold text-[13px] tracking-widest h-full items-center ml-4">
+            {/* Đã cập nhật /women */}
             <Link href="/women" className="hover:bg-[#525252] h-full flex items-center px-6 transition-colors border-r border-gray-600">WOMEN</Link>
-            <Link href="/" className="hover:bg-[#525252] h-full flex items-center px-6 transition-colors border-r border-gray-600">MEN</Link>
+            {/* Đã cập nhật /men */}
+            <Link href="/men" className="hover:bg-[#525252] h-full flex items-center px-6 transition-colors border-r border-gray-600">MEN</Link>
           </nav>
 
           <div className="flex-1 max-w-2xl relative hidden sm:block" ref={searchRef}>
@@ -149,18 +151,18 @@ export default function Header() {
         </div>
       </div>
 
-      {/* MOBILE SIDEBAR - UPDATED TO MATCH IMAGE 100% */}
+      {/* MOBILE SIDEBAR */}
       <div className={`fixed inset-0 z-[200] transition-all duration-300 ${isSideMenuOpen ? "visible" : "invisible"}`}>
         <div className={`absolute inset-0 bg-black/60 transition-opacity duration-300 ${isSideMenuOpen ? "opacity-100" : "opacity-0"}`} onClick={() => setIsSideMenuOpen(false)} />
         <div className={`absolute top-0 left-0 w-[85%] max-w-[340px] h-full bg-white transform transition-transform duration-300 flex flex-col ${isSideMenuOpen ? "translate-x-0" : "-translate-x-full"}`}>
           <div className="flex border-b border-gray-200 sticky top-0 bg-white z-10">
-            <button className="flex-1 py-4 text-[13px] font-bold uppercase border-b-2 border-black tracking-widest">Women</button>
-            <button className="flex-1 py-4 text-[13px] font-bold uppercase text-gray-400 bg-gray-50 border-b-2 border-transparent tracking-widest">Men</button>
+            <Link href="/women" onClick={() => setIsSideMenuOpen(false)} className="flex-1 py-4 text-[13px] font-bold uppercase border-b-2 border-black tracking-widest text-center">Women</Link>
+            <Link href="/men" onClick={() => setIsSideMenuOpen(false)} className="flex-1 py-4 text-[13px] font-bold uppercase text-gray-400 bg-gray-50 border-b-2 border-transparent tracking-widest text-center">Men</Link>
             <button onClick={() => setIsSideMenuOpen(false)} className="p-4 bg-black text-white"><svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg></button>
           </div>
 
           <div className="flex-1 overflow-y-auto pb-10">
-            {/* Promo Banners (As seen in image) */}
+            {/* Promo Banners */}
             <div className="p-3">
               <div className="bg-black text-white p-4 text-center mb-2">
                 <p className="text-[10px] font-bold uppercase tracking-widest">Extra 30% off 1000s of Sale styles</p>
@@ -175,10 +177,10 @@ export default function Header() {
               </Link>
             </div>
 
-            {/* List with Images on Right (Exactly like ASOS App) */}
+            {/* List with Images */}
             <div className="px-3 space-y-1">
               {menuData.mobileNav.map((item) => (
-                <Link key={item.name} href={item.path === "/" ? "/women" : item.path} onClick={() => setIsSideMenuOpen(false)} className="flex items-center justify-between p-4 bg-gray-50 hover:bg-gray-100 transition-colors rounded-sm">
+                <Link key={item.name} href={item.path} onClick={() => setIsSideMenuOpen(false)} className="flex items-center justify-between p-4 bg-gray-50 hover:bg-gray-100 transition-colors rounded-sm">
                   <span className="text-[12px] font-bold uppercase tracking-[0.2em]">{item.name}</span>
                   <div className="w-[56px] h-[56px] overflow-hidden">
                     <img src={item.img} alt={item.name} className="w-full h-full object-cover" />
@@ -187,7 +189,7 @@ export default function Header() {
               ))}
             </div>
 
-            {/* Sidebar Account Section - DYNAMIC GREETING */}
+            {/* Sidebar Account Section */}
             <div className="p-5 mt-6 border-t border-gray-100">
                 <h4 className="text-[20px] font-black italic mb-6 uppercase tracking-tighter">
                   {isLoggedIn ? `HI ${user.name.toUpperCase()}` : "WELCOME TO NEWEGG"}
@@ -232,7 +234,7 @@ export default function Header() {
         </div>
       </div>
 
-      {/* MEGA MENU - DESKTOP 4 COLUMNS */}
+      {/* MEGA MENU - DESKTOP */}
       {isMegaMenuOpen && (
         <div 
           className="absolute top-full left-0 w-full bg-white border-b border-gray-200 shadow-2xl hidden md:block"
