@@ -19,7 +19,6 @@ export default function MenPage() {
       .catch(() => {});
   }, []);
 
-  // Dữ liệu cho mục Shop by Category
   const categories = [
     { src: "/images/shirts.webp", label: "Shirts" },
     { src: "/images/coats.webp", label: "Coats" },
@@ -57,25 +56,17 @@ export default function MenPage() {
         ))}
       </div>
 
-      {/* 4. ELEVATED ESSENTIALS SECTION */}
-      <section className="w-full py-16 text-center">
-        <h2 className="text-[28px] md:text-[40px] font-bold text-black tracking-tight mb-8">Elevated Essentials</h2>
-        <div className="w-full flex justify-center mb-10">
-           <Link href="/shop-men" className="bg-black text-white px-16 py-3 text-[14px] font-black uppercase tracking-widest hover:bg-gray-800 transition-all">
-            SHOP NOW
-          </Link>
-        </div>
-      </section>
+      {/* ĐÃ LOẠI BỎ PHẦN ELEVATED ESSENTIALS VÀ NÚT SHOP NOW TẠI ĐÂY */}
 
-      {/* 5. SHOP BY CATEGORY (MỤC MỚI THÊM Ở DƯỚI CÙNG) */}
-      <section className="w-full py-10 bg-white border-t border-gray-100 pb-20">
-        <div className="w-full text-center mb-10">
+      {/* 4. SHOP BY CATEGORY (DƯỚI CÙNG) */}
+      <section className="w-full py-16 bg-white border-t border-gray-100 pb-20">
+        <div className="w-full text-center mb-12">
           <h2 className="text-[24px] font-bold text-black tracking-tight uppercase">Shop by Category</h2>
         </div>
         <div className="flex overflow-x-auto md:grid md:grid-cols-6 gap-4 px-4 md:px-10 no-scrollbar">
           {categories.map((cat, index) => (
             <div key={index} className="min-w-[150px] flex flex-col items-center group cursor-pointer">
-              <div className="w-full aspect-[4/5] overflow-hidden mb-4">
+              <div className="w-full aspect-[4/5] overflow-hidden mb-4 bg-gray-50">
                 <img 
                   src={cat.src} 
                   alt={cat.label} 
@@ -92,7 +83,7 @@ export default function MenPage() {
       <section className="w-full py-20 bg-white flex justify-center px-4 md:px-20 border-t border-gray-100">
         <div className="max-w-[1000px] text-center">
           <p className="text-[14px] text-gray-700 leading-relaxed font-normal italic">
-            Your one-stop destination for fashion-forward 'fits, **NEWEGG Men**...
+            Your one-stop destination for fashion-forward 'fits, **NEWEGG Men** serves up the hottest menswear and accessories...
           </p>
         </div>
       </section>
