@@ -30,18 +30,18 @@ export default function WomenPage() {
     { src: "/images/210146548-1-chocolate.webp", label: "Maxi Dresses" },
   ];
 
+  // DỮ LIỆU 8 ẢNH CHO MỤC STYLE YOUR NEW YEAR (ẢNH TO FULL)
   const trendingGrid = [
     { src: "/images/date-nightv4.webp", title: "Dinner, then drinks", desc: "Easy styles that work beyond the table." },
     { src: "/images/going-out.webp", title: "Out past 7", desc: "Made for cold nights and late finishes." },
     { src: "/images/cool-girl.webp", title: "Campus, but make it chic", desc: "Elevated staples that work harder than your timetable." },
     { src: "/images/out-past-7v2 (1).webp", title: "Date nights, prioritised", desc: "Comfortable, confident and made to be noticed." },
-    { src: "/images/wellness.webp", title: "2026 is your wellness era", desc: "Feel-good fits and everyday self-care." },
-    { src: "/images/ski.webp", title: "Learning to ski?", desc: "Cold-weather layers that keep things chic, not bulky." },
-    { src: "/images/vacation.webp", title: "PTO well spent", desc: "Swim, lounge, repeat. Holiday dressing starts here." },
-    { src: "/images/winter-wedding-guestv2.webp", title: "Wedding Season, Winter Style", desc: "Chic layers and standout looks for cold-weather ceremonies." }
+    { src: "/images/wellness.webp", title: "Wedding Season, Winter Style", desc: "Chic layers and standout looks for cold-weather ceremonies." },
+    { src: "/images/ski.webp", title: "PTO well spent", desc: "Swim, lounge, repeat. Holiday dressing starts here." },
+    { src: "/images/vacation.webp", title: "Learning to ski?", desc: "Cold-weather layers that keep things chic, not bulky." },
+    { src: "/images/winter-wedding-guestv2.webp", title: "2026 is your wellness era", desc: "Feel-good fits and everyday self-care." }
   ];
 
-  // DỮ LIỆU MỤC BRANDS WE LOVE (THAY THẾ FACE + BODY)
   const brandsWeLove = [
     { src: "/images/208994956-4.webp", label: "ARRANGE" },
     { src: "/images/209206793-2.webp", label: "ASOS LUXE" },
@@ -51,7 +51,7 @@ export default function WomenPage() {
 
   return (
     <main className="min-h-screen bg-white w-full overflow-x-hidden">
-      {/* 1. TOP VIDEO */}
+      {/* 1. TOP VIDEO & NAV */}
       <div className="bg-black text-white py-2 w-full text-center">
         <p className="text-[12px] font-black uppercase tracking-tighter">The Winter Sale: up to 70% off*</p>
       </div>
@@ -70,60 +70,61 @@ export default function WomenPage() {
         ))}
       </div>
 
-      {/* 3. STYLE YOUR NEW YEAR SECTION */}
-      <section className="w-full py-16 px-4 md:px-10 max-w-[1600px] mx-auto">
-        <div className="text-center mb-12">
-          <h2 className="text-[28px] md:text-[34px] font-bold tracking-tight mb-2 text-black">Style your New Year, your way</h2>
-          <p className="text-[14px] md:text-[16px]">Fresh plans, better outfits. Whatever you’re saying yes to this year, dress for it.</p>
+      {/* 3. CẬP NHẬT: STYLE YOUR NEW YEAR (ẢNH TO FULL, 2 HÀNG) */}
+      <section className="w-full py-12 bg-white">
+        <div className="text-center mb-10 px-4">
+          <h2 className="text-[28px] md:text-[32px] font-bold tracking-tight text-black">Style your New Year, your way</h2>
+          <p className="text-[13px] md:text-[14px] text-gray-800 mt-1">Fresh plans, better outfits. Whatever you’re saying yes to this year, dress for it.</p>
         </div>
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-12">
+        
+        {/* Grid sát nhau, ảnh to chuẩn mẫu */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 px-4 md:px-8 max-w-[1920px] mx-auto">
           {trendingGrid.map((item, index) => (
-            <div key={index} className="flex flex-col items-center group cursor-pointer text-center">
-              <div className="relative aspect-[3/4] w-full mb-5 overflow-hidden">
-                <img src={item.src} alt={item.title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
+            <div key={index} className="flex flex-col group cursor-pointer">
+              <div className="relative aspect-[3/4] w-full overflow-hidden">
+                <img 
+                  src={item.src} 
+                  alt={item.title} 
+                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                />
               </div>
-              <h3 className="font-bold text-[15px] mb-1">{item.title}</h3>
-              <p className="text-[13px] text-gray-600 leading-tight max-w-[250px]">{item.desc}</p>
+              <div className="mt-5 text-center px-2">
+                <h3 className="font-bold text-[14px] mb-1 uppercase tracking-tight">{item.title}</h3>
+                <p className="text-[12px] text-gray-600 leading-snug">{item.desc}</p>
+              </div>
             </div>
           ))}
         </div>
       </section>
 
-      {/* 4. BANNER CENTERED BUTTON */}
-      <div className="w-full flex justify-center mb-8">
-        <Link href="/shop" className="bg-black text-white px-16 py-3 text-[14px] font-black uppercase tracking-widest">SHOP NOW</Link>
+      {/* 4. BANNER SHOP NOW */}
+      <div className="w-full flex justify-center my-10">
+        <Link href="/shop" className="bg-black text-white px-16 py-3 text-[14px] font-black uppercase tracking-widest hover:bg-gray-900 transition-all">SHOP NOW</Link>
       </div>
       <div className="relative w-full px-4 md:px-10 max-w-[1800px] mx-auto">
         <img src="/images/fbmobile.webp" className="block md:hidden w-full border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]" alt="Beauty" />
         <img src="/images/fbdesktop.webp" className="hidden md:block w-full border-2 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]" alt="Beauty" />
       </div>
 
-      {/* 5. CẬP NHẬT: BRANDS WE LOVE (THAY THẾ FACE + BODY) */}
+      {/* 5. BRANDS WE LOVE */}
       <section className="w-full py-20 bg-white">
         <div className="w-full text-center mb-10">
           <h2 className="text-[28px] font-bold text-black tracking-tight">Brands We Love</h2>
         </div>
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-1 px-1 max-w-[1800px] mx-auto">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-1 px-1 max-w-[1920px] mx-auto">
           {brandsWeLove.map((item, index) => (
             <div key={index} className="relative aspect-[3/4] overflow-hidden group cursor-pointer">
-              <img 
-                src={item.src} 
-                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" 
-                alt={item.label} 
-              />
-              {/* Lớp gradient tối ở dưới để hiện chữ trắng rõ hơn */}
+              <img src={item.src} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" alt={item.label} />
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-80"></div>
               <div className="absolute bottom-6 w-full text-center">
-                <span className="text-white text-[13px] font-bold uppercase tracking-[0.2em]">
-                  {item.label}
-                </span>
+                <span className="text-white text-[13px] font-bold uppercase tracking-[0.2em]">{item.label}</span>
               </div>
             </div>
           ))}
         </div>
       </section>
 
-      {/* 6. NEW IN SECTION */}
+      {/* 6. NEW IN */}
       <section className="w-full py-20 border-t border-gray-100">
         <div className="w-full text-center mb-10">
           <h2 className="text-3xl font-bold tracking-tight">New in</h2>
@@ -141,7 +142,6 @@ export default function WomenPage() {
         </div>
       </section>
 
-      {/* FINAL SHOP NOW */}
       <div className="w-full flex justify-center pb-20">
         <Link href="/shop" className="bg-black text-white px-16 py-3 text-[14px] font-black uppercase tracking-widest hover:bg-gray-800 transition-all">SHOP NOW</Link>
       </div>
