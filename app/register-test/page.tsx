@@ -4,26 +4,28 @@ import { useRouter } from 'next/navigation';
 
 export default function RegisterPage() {
   const router = useRouter();
-  const [email, setEmail] = useState('');
+  // Thay đổi state sang username và password
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
   const [message, setMessage] = useState({ text: '', type: '' });
-  const [isShaking, setIsShaking] = useState(false); // Tính năng 1: Shake
-  const emailInputRef = useRef<HTMLInputElement>(null); // Tính năng 2: Focus
+  const [isShaking, setIsShaking] = useState(false); 
+  const usernameInputRef = useRef<HTMLInputElement>(null); 
 
-  // 1. Tự động Focus vào ô Email khi trang vừa tải xong
+  // 1. Tự động Focus vào ô đầu tiên khi trang tải xong
   useEffect(() => {
-    if (emailInputRef.current) {
-      emailInputRef.current.focus();
+    if (usernameInputRef.current) {
+      usernameInputRef.current.focus();
     }
   }, []);
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Kiểm tra định dạng email cơ bản trước khi gửi
-    if (!email.includes('@')) {
+    // Kiểm tra độ dài tên người dùng thay vì kiểm tra '@'
+    if (username.length < 3) {
       setIsShaking(true);
       setTimeout(() => setIsShaking(false), 500);
-      setMessage({ text: '❌ Email không hợp lệ!', type: 'error' });
+      setMessage({ text: '❌ Tên người dùng phải có ít nhất 3 ký tự!', type: 'error' });
       return;
     }
 
@@ -32,23 +34,21 @@ export default function RegisterPage() {
     const response = await fetch('/api/register', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email: email }),
+      body: JSON.stringify({ username, password }),
     });
 
     const data = await response.json();
 
     if (response.ok) {
-      // --- LƯU TRẠNG THÁI ĐĂNG NHẬP ---
-      // Lưu email vào localStorage để Header nhận diện được khách hàng
-      localStorage.setItem('userEmail', email);
+      // Lưu thông tin vào localStorage để Header nhận diện
+      localStorage.setItem('userName', username);
 
-      setMessage({ text: '✅ Thành công! Đang chuyển hướng về trang chủ...', type: 'success' });
-      setEmail('');
+      setMessage({ text: '✅ Thành công! Đang chuyển hướng...', type: 'success' });
+      setUsername('');
+      setPassword('');
       
-      // Chuyển hướng về trang chủ sau 1.5 giây
       setTimeout(() => {
         router.push('/');
-        // Làm mới trang để các thành phần khác (Header) cập nhật giao diện mới
         window.location.reload();
       }, 1500);
     } else {
@@ -60,26 +60,20 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col lg:flex-row font-sans bg-white relative">
+    // Bố cục tập trung chính giữa (items-center justify-center)
+    <div className="min-h-screen flex items-center justify-center font-sans bg-[#F3F3F3] p-4 relative overflow-hidden">
       
-      {/* QR CODE MOBILE với Tính năng 3: Fade-in animation */}
-      <div className="block lg:hidden w-full h-[120px] overflow-hidden animate-in fade-in duration-1000">
-        <img 
-          src="/images/1111111.webp" 
-          alt="Banner Mobile" 
-          className="w-full h-full object-cover"
-        />
-      </div>
-
-      <div className="w-full lg:w-3/5 flex flex-col items-center px-4 pt-10 pb-12">
-        <div className="mb-8">
-          <h1 className="text-4xl font-black tracking-tighter uppercase">NEWEGG</h1>
+      {/* Container Form - Loại bỏ hoàn toàn 2 cột banner ảnh */}
+      <div className={`w-full max-w-[420px] bg-white p-8 md:p-12 shadow-2xl border-t-4 border-black animate-in fade-in zoom-in duration-700 ${isShaking ? 'animate-shake' : ''}`}
+           style={isShaking ? {animation: 'shake 0.5s ease-in-out'} : {}}>
+        
+        <div className="text-center mb-8">
+          <h1 className="text-4xl font-black tracking-tighter uppercase mb-2">NEWEGG</h1>
+          <h2 className="text-lg font-bold text-gray-800 uppercase tracking-widest">Đăng ký tài khoản</h2>
         </div>
 
-        <div className="w-full max-w-md">
-          <h2 className="text-center text-xl font-bold mb-2">Hi friend!</h2>
-          <p className="text-center text-gray-500 text-sm mb-8">Enter your email to sign in or join for</p>
-
+        <div className="w-full">
+          {/* CÁC ICON TÍNH NĂNG - GIỮ NGUYÊN 100% */}
           <div className="grid grid-cols-4 gap-2 mb-10">
             {[
               { icon: '🏷️', label: 'Exclusive discounts' },
@@ -88,29 +82,42 @@ export default function RegisterPage() {
               { icon: '⚡', label: 'Speedy checkout' }
             ].map((item, index) => (
               <div key={index} className="flex flex-col items-center">
-                <div className="w-10 h-10 border border-gray-300 rounded-full flex items-center justify-center mb-1 text-lg">
+                <div className="w-10 h-10 border border-gray-200 rounded-full flex items-center justify-center mb-1 text-lg shadow-sm">
                   {item.icon}
                 </div>
-                <span className="text-[10px] text-center leading-tight text-gray-600 font-bold uppercase">{item.label}</span>
+                <span className="text-[9px] text-center leading-tight text-gray-500 font-bold uppercase">{item.label}</span>
               </div>
             ))}
           </div>
 
-          <form onSubmit={handleRegister} className={`space-y-4 ${isShaking ? 'animate-bounce' : ''}`} style={isShaking ? {animation: 'shake 0.5s ease-in-out'} : {}}>
+          <form onSubmit={handleRegister} className="space-y-5">
             <div>
-              <label className="block text-xs font-bold text-gray-500 mb-1 uppercase tracking-widest">Email address:*</label>
+              <label className="block text-[10px] font-bold text-gray-400 mb-1 uppercase tracking-widest">Username:*</label>
               <input 
-                ref={emailInputRef}
-                type="email" 
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                ref={usernameInputRef}
+                type="text" 
+                placeholder="Tên người dùng"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
                 required
-                className={`w-full border-2 p-3 focus:border-black outline-none transition-all ${isShaking ? 'border-red-500' : 'border-gray-200'}`}
+                className={`w-full border-2 p-4 text-sm focus:border-black outline-none transition-all ${isShaking ? 'border-red-500' : 'border-gray-100 bg-gray-50'}`}
               />
             </div>
 
-            <button type="submit" className="w-full bg-black text-white font-bold py-4 mt-4 hover:bg-gray-800 transition-colors uppercase tracking-widest active:scale-95">
-              Continue
+            <div>
+              <label className="block text-[10px] font-bold text-gray-400 mb-1 uppercase tracking-widest">Password:*</label>
+              <input 
+                type="password" 
+                placeholder="Mật khẩu"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                className={`w-full border-2 p-4 text-sm focus:border-black outline-none transition-all ${isShaking ? 'border-red-500' : 'border-gray-100 bg-gray-50'}`}
+              />
+            </div>
+
+            <button type="submit" className="w-full bg-black text-white font-bold py-4 mt-4 hover:bg-gray-800 transition-colors uppercase tracking-widest active:scale-95 shadow-lg">
+              Đăng ký ngay
             </button>
           </form>
 
@@ -123,15 +130,15 @@ export default function RegisterPage() {
           )}
 
           <div className="mt-10 text-center border-t pt-6">
-            <p className="text-xs text-gray-400 font-bold uppercase mb-6 tracking-widest">Or continue with</p>
+            <p className="text-[10px] text-gray-400 font-bold uppercase mb-6 tracking-widest">Or continue with</p>
             <div className="flex justify-center gap-6">
-              <button type="button" className="w-12 h-12 border border-gray-200 flex items-center justify-center hover:bg-gray-50 transition-all">
+              <button type="button" className="w-12 h-12 border border-gray-200 rounded-full flex items-center justify-center hover:bg-gray-50 transition-all shadow-sm">
                 <img src="https://www.gstatic.com/images/branding/product/1x/gsa_512dp.png" className="w-6 h-6" alt="Google" />
               </button>
-              <button type="button" className="w-12 h-12 border border-gray-200 flex items-center justify-center hover:bg-gray-50 transition-all">
+              <button type="button" className="w-12 h-12 border border-gray-200 rounded-full flex items-center justify-center hover:bg-gray-50 transition-all shadow-sm">
                 <img src="https://upload.wikimedia.org/wikipedia/commons/b/b8/2021_Facebook_icon.svg" className="w-6 h-6" alt="Facebook" />
               </button>
-              <button type="button" className="w-12 h-12 border border-gray-200 flex items-center justify-center hover:bg-gray-50 transition-all">
+              <button type="button" className="w-12 h-12 border border-gray-200 rounded-full flex items-center justify-center hover:bg-gray-50 transition-all shadow-sm">
                 <img src="https://upload.wikimedia.org/wikipedia/commons/f/fa/Apple_logo_black.svg" className="w-5 h-5" alt="Apple" />
               </button>
             </div>
@@ -139,16 +146,7 @@ export default function RegisterPage() {
         </div>
       </div>
 
-      {/* QR CODE PC với Tính năng 3: Fade-in animation */}
-      <div className="hidden lg:block lg:w-2/5 h-full min-h-screen relative overflow-hidden animate-in fade-in duration-1000">
-        <img 
-          src="/images/Snipaste_2026-01-23_19-09-41.webp" 
-          alt="QR Pattern PC" 
-          className="w-full h-full object-cover"
-        />
-      </div>
-
-      {/* CSS cho hiệu ứng Shake */}
+      {/* CSS cho hiệu ứng Shake - Giữ nguyên */}
       <style jsx global>{`
         @keyframes shake {
           0%, 100% { transform: translateX(0); }

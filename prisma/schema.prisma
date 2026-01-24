@@ -9,10 +9,11 @@ datasource db {
 }
 
 model User {
-  id      Int    @id @default(autoincrement())
-  email   String @unique
-  balance Float  @default(0.0)
-  role    String @default("USER")
+  id       Int    @id @default(autoincrement())
+  username String @unique  // Đổi từ email sang username
+  password String
+  balance  Float  @default(0.0)
+  role     String @default("USER")
 }
 
 model Product {
