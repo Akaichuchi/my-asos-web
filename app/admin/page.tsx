@@ -135,12 +135,10 @@ export default function AdminDashboard() {
     }
   };
 
-  // SỬA LỖI NÚT CỘNG TRỪ TIỀN VÀ LƯU
   const handleUpdateBalance = async (userId: string) => {
     const changeAmount = parseFloat(amountChange[userId]);
     if (isNaN(changeAmount)) return alert('Vui lòng nhập số tiền hợp lệ');
     
-    // Tìm khách hàng hiện tại để lấy số dư cũ
     const user = users.find(u => u.id === userId);
     const currentBalance = user?.balance || 0;
     const newBalance = currentBalance + changeAmount;
@@ -157,7 +155,7 @@ export default function AdminDashboard() {
 
       if (res.ok) { 
         alert(`Đã cập nhật số dư thành công! Mới: $${newBalance.toFixed(2)}`); 
-        setAmountChange({ ...amountChange, [userId]: "" }); // Xóa ô nhập sau khi lưu
+        setAmountChange({ ...amountChange, [userId]: "" }); 
         fetchUsers(); 
       } else {
         alert('Không thể cập nhật số dư. Kiểm tra lại API.');
@@ -165,9 +163,10 @@ export default function AdminDashboard() {
     } catch (error) { alert('Lỗi kết nối server!'); }
   };
 
+  // GIAO DIỆN ĐĂNG NHẬP (Đã bỏ khoảng trống ở trên để nhìn gọn hơn)
   if (!isAuthorized) {
     return (
-      <div className="min-h-screen bg-black flex items-center justify-center p-6">
+      <div className="min-h-screen bg-black flex items-start justify-center p-6 pt-20">
         <form onSubmit={handlePinSubmit} className="bg-white border-4 border-black p-8 shadow-[10px_10px_0px_0px_rgba(255,255,255,1)] max-w-sm w-full">
           <h2 className="text-2xl font-black uppercase mb-4 italic text-center">Admin Access</h2>
           <input type="password" value={pin} onChange={(e) => setPin(e.target.value)} placeholder="****" className="w-full border-2 border-black p-3 text-center text-2xl mb-4 outline-none" autoFocus />
@@ -197,7 +196,7 @@ export default function AdminDashboard() {
               <table className="w-full text-left border-collapse">
                 <thead>
                   <tr className="bg-gray-100 uppercase text-[10px] font-bold border-b-2 border-black text-black">
-                    <th className="p-3">Họ Tên / Email</th>
+                    <th className="p-3">Họ Tên / Username</th>
                     <th className="p-3">Quốc Gia</th>
                     <th className="p-3">Số dư (Hiện tại)</th>
                     <th className="p-3">Nạp/Trừ ($)</th>
@@ -210,8 +209,9 @@ export default function AdminDashboard() {
                   ) : users.map((user: any) => (
                     <tr key={user.id} className="border-b hover:bg-gray-50 text-black">
                       <td className="p-3">
-                        <div className="font-bold">{user.fullName || "—"}</div>
-                        <div className="text-[10px] text-gray-500 lowercase">{user.email}</div>
+                        {/* HIỂN THỊ HỌ TÊN VÀ USERNAME MỚI NHƯ YÊU CẦU */}
+                        <div className="font-black uppercase text-blue-600">{user.fullName || "Tên chưa cập nhật"}</div>
+                        <div className="text-[11px] text-gray-500 font-bold italic">@{user.username}</div>
                       </td>
                       <td className="p-3 uppercase text-[11px]">{user.country || "VN"}</td>
                       <td className="p-3 font-black text-green-600 font-mono">${(user.balance || 0).toFixed(2)}</td>
@@ -238,7 +238,6 @@ export default function AdminDashboard() {
 
         {activeTab === 'products' && (
           <div className="space-y-10">
-            {/* Bố cục phần Sản phẩm giữ nguyên 100% như code của bạn */}
             <div className="bg-white border-2 border-black p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
               <h2 className="text-2xl font-black uppercase mb-6 italic underline">{editingProduct ? 'Edit Product' : 'Add New Product'}</h2>
               <form onSubmit={handleProductSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-gray-50 border border-dashed border-black">
