@@ -2,8 +2,8 @@ import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 
 export async function POST(req: Request) {
-  // Khai báo biến bên ngoài để dùng cho cơ chế hoàn tiền
-  let userId: number = 0;
+  // Đổi kiểu dữ liệu userId thành any để chấp nhận chuỗi UUID từ Database
+  let userId: any; 
   let totalAmount: number = 0;
   let originalBalance: number = 0;
 
@@ -18,7 +18,8 @@ export async function POST(req: Request) {
     const supabase = createClient(supabaseUrl, supabaseKey);
     const body = await req.json();
     
-    userId = Number(body.userId);
+    // Giữ nguyên giá trị gốc (Chuỗi UUID) thay vì ép về Number
+    userId = body.userId; 
     totalAmount = Number(body.totalAmount);
 
     // 1. Kiểm tra số dư và lưu lại số dư cũ để dự phòng hoàn tiền
@@ -45,10 +46,14 @@ export async function POST(req: Request) {
 
     if (updateError) throw new Error("Lỗi hệ thống khi trừ tiền, vui lòng thử lại");
 
-    // 3. Tạo bản ghi đơn hàng mới
+    // 3. Tạo bản ghi đơn hàng mới (Dữ liệu gửi đi đã khớp với kiểu UUID trong Database)
     const { data: result, error: orderError } = await supabase
       .from("Order")
-      .insert([{ userId, amount: totalAmount, status: "SUCCESS" }])
+      .insert([{ 
+        userId: userId, 
+        amount: totalAmount, 
+        status: "SUCCESS" 
+      }])
       .select()
       .single();
 
@@ -57,7 +62,8 @@ export async function POST(req: Request) {
       await supabase.from("User").update({ balance: originalBalance }).eq("id", userId);
       
       console.error("Order insertion failed, refunding...", orderError.message);
-      throw new Error("Tiền đã trừ nhưng lỗi tạo đơn. Hệ thống đã tự động hoàn tiền lại cho bạn!");
+      // Trả về lỗi chi tiết từ Supabase để biết chính xác cột nào đang sai
+      throw new Error(`Tiền đã trừ nhưng lỗi tạo đơn: ${orderError.message}. Hệ thống đã tự động hoàn tiền!`);
     }
 
     return NextResponse.json({ 
