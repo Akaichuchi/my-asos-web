@@ -16,7 +16,6 @@ export default function Header() {
   const [searchQuery, setSearchQuery] = useState("");
   const [showSuggestions, setShowSuggestions] = useState(false);
   
-  // MỚI: State lưu số lượng badge
   const [cartCount, setCartCount] = useState(0);
   const [wishlistCount, setWishlistCount] = useState(0);
 
@@ -25,18 +24,18 @@ export default function Header() {
   const bagRef = useRef<HTMLDivElement>(null);
   const accountRef = useRef<HTMLDivElement>(null);
 
-  // ĐÃ CẬP NHẬT: Không ép buộc vào register-test, dẫn trực tiếp đến trang tính năng
   const wishlistPath = "/saved-items";
   const bagPath = "/cart";
 
   useEffect(() => {
-    const savedUser = localStorage.getItem("user");
-    if (savedUser) {
-      setUser(JSON.parse(savedUser));
+    // CẬP NHẬT: Lấy email từ userEmail để hiển thị tên động theo Gmail khách
+    const storedEmail = localStorage.getItem("userEmail");
+    if (storedEmail) {
+      const nameFromEmail = storedEmail.split('@')[0]; // Lấy phần trước @
+      setUser({ name: nameFromEmail });
       setIsLoggedIn(true);
     }
 
-    // MỚI: Hàm cập nhật số lượng badge từ localStorage
     const updateCounts = () => {
       const cart = JSON.parse(localStorage.getItem("cart") || "[]");
       const wishlist = JSON.parse(localStorage.getItem("wishlist") || "[]");
@@ -45,7 +44,6 @@ export default function Header() {
     };
 
     updateCounts();
-    // Lắng nghe sự thay đổi storage để nhảy số badge ngay lập tức
     window.addEventListener("storage", updateCounts);
     return () => window.removeEventListener("storage", updateCounts);
   }, []);
@@ -85,10 +83,11 @@ export default function Header() {
   };
 
   const handleSignOut = () => {
-    localStorage.removeItem("user");
+    localStorage.removeItem("userEmail"); // Cập nhật xóa đúng key
     setIsLoggedIn(false);
     setUser({ name: "" });
     setIsSideMenuOpen(false);
+    window.location.reload(); // Ép tải lại để cập nhật giao diện ngay lập tức
   };
 
   return (
@@ -141,7 +140,7 @@ export default function Header() {
                 <div className="absolute right-0 top-full w-64 bg-white shadow-2xl border border-gray-100 z-[100] p-5 text-black">
                   {!isLoggedIn ? (
                     <div className="flex gap-3 mb-5 border-b pb-5">
-                      <Link href="/register-test" onClick={() => setIsAccountOpen(false)} className="flex-1 bg-black text-white py-2 text-[11px] font-black uppercase text-center tracking-widest">Sign In</Link>
+                      <Link href="/login" onClick={() => setIsAccountOpen(false)} className="flex-1 bg-black text-white py-2 text-[11px] font-black uppercase text-center tracking-widest">Sign In</Link>
                       <Link href="/register-test" onClick={() => setIsAccountOpen(false)} className="flex-1 border border-black py-2 text-[11px] font-bold uppercase text-center tracking-widest">Join</Link>
                     </div>
                   ) : (
@@ -156,7 +155,6 @@ export default function Header() {
               )}
             </div>
 
-            {/* ĐÃ CẬP NHẬT: Wishlist Link & Badge Nền Trắng */}
             <Link href={wishlistPath} className="relative h-full flex items-center p-2 hover:bg-[#525252] transition-colors rounded-full" title="My Wishlist">
                 <svg className="w-6 h-6 md:w-7 md:h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /></svg>
                 {wishlistCount > 0 && (
@@ -166,7 +164,6 @@ export default function Header() {
                 )}
             </Link>
 
-            {/* ĐÃ CẬP NHẬT: Bag Link & Badge Nền Đỏ */}
             <Link href={bagPath} className="relative h-full flex items-center p-2 hover:bg-[#525252] transition-colors rounded-full" title="My Shopping Bag">
                 <svg className="w-6 h-6 md:w-7 md:h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" d="M16 11V7a4 4 0 11-8 0v4M5 9h14l1 12H4L5 9z" /></svg>
                 {cartCount > 0 && (
@@ -179,7 +176,7 @@ export default function Header() {
         </div>
       </div>
 
-      {/* MOBILE SIDEBAR (Giữ nguyên giao diện) */}
+      {/* MOBILE SIDEBAR */}
       <div className={`fixed inset-0 z-[200] transition-all duration-300 ${isSideMenuOpen ? "visible" : "invisible"}`}>
         <div className={`absolute inset-0 bg-black/60 transition-opacity duration-300 ${isSideMenuOpen ? "opacity-100" : "opacity-0"}`} onClick={() => setIsSideMenuOpen(false)} />
         <div className={`absolute top-0 left-0 w-[85%] max-w-[340px] h-full bg-white transform transition-transform duration-300 flex flex-col ${isSideMenuOpen ? "translate-x-0" : "-translate-x-full"}`}>
@@ -222,7 +219,7 @@ export default function Header() {
                 
                 {!isLoggedIn && (
                   <div className="flex gap-3 mb-8">
-                    <Link href="/register-test" onClick={() => setIsSideMenuOpen(false)} className="flex-1 bg-black text-white py-3.5 text-[11px] font-black uppercase text-center tracking-widest">Sign In</Link>
+                    <Link href="/login" onClick={() => setIsSideMenuOpen(false)} className="flex-1 bg-black text-white py-3.5 text-[11px] font-black uppercase text-center tracking-widest">Sign In</Link>
                     <Link href="/register-test" onClick={() => setIsSideMenuOpen(false)} className="flex-1 border border-gray-300 py-3.5 text-[11px] font-bold uppercase text-center tracking-widest bg-white">Join</Link>
                   </div>
                 )}
@@ -236,7 +233,7 @@ export default function Header() {
                     <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 002-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /></svg>
                     <Link href={bagPath} onClick={() => setIsSideMenuOpen(false)}>My Orders</Link>
                   </li>
-                  {isLoggedIn && <li onClick={handleSignOut} className="text-gray-400 cursor-pointer pl-10">Sign Out</li>}
+                  {isLoggedIn && <li onClick={handleSignOut} className="text-gray-400 cursor-pointer pl-10 lowercase">Sign Out</li>}
                   <li className="flex justify-between items-center border-t pt-6 text-[11px] text-gray-500">Help & Information <span className="text-lg">+</span></li>
                 </ul>
             </div>
@@ -244,7 +241,7 @@ export default function Header() {
         </div>
       </div>
 
-      {/* CATEGORY NAV - DESKTOP (Giữ nguyên giao diện) */}
+      {/* CATEGORY NAV - DESKTOP */}
       <div className="bg-[#525252] w-full hidden md:block">
         <div className="max-w-7xl mx-auto px-4 flex gap-6 text-[11px] font-bold text-white uppercase tracking-widest py-2">
           {["Sale", "Trending", "New in", "Clothing", "Dresses", "Shoes", "Accessories", "Brands", "Beauty"].map((item) => (
@@ -259,7 +256,7 @@ export default function Header() {
         </div>
       </div>
 
-      {/* MEGA MENU - DESKTOP (Giữ nguyên giao diện) */}
+      {/* MEGA MENU - DESKTOP */}
       {isMegaMenuOpen && (
         <div 
           className="absolute top-full left-0 w-full bg-white border-b border-gray-200 shadow-2xl hidden md:block"
@@ -285,7 +282,7 @@ export default function Header() {
                   { name: "Leather", img: "https://images.asos-media.com/navigation/ww_gbl_leather_117075775_1x1" }
                 ].map(item => (
                   <li key={item.name} className="flex items-center gap-3 text-[12px] text-gray-500 hover:text-black cursor-pointer group">
-                    <img src={item.img} className="w-8 h-8 rounded-full border group-hover:opacity-80" />
+                    <img src={item.img} className="w-8 h-8 rounded-full border group-hover:opacity-80" alt={item.name} />
                     <span>{item.name}</span>
                   </li>
                 ))}
@@ -304,7 +301,7 @@ export default function Header() {
             <div className="border-l pl-10 text-center">
               <h4 className="font-bold text-[13px] mb-6 uppercase tracking-widest">New Edits</h4>
               <div className="relative group cursor-pointer overflow-hidden aspect-[3/4] mb-4">
-                <img src="https://images.asos-media.com/navigation/ww_gbl_new_edits_117075775_1x1" className="w-full h-full object-cover transition-transform group-hover:scale-105" />
+                <img src="https://images.asos-media.com/navigation/ww_gbl_new_edits_117075775_1x1" className="w-full h-full object-cover transition-transform group-hover:scale-105" alt="New Edits" />
                 <div className="absolute inset-0 bg-black/5 flex items-end justify-center p-4">
                   <span className="bg-white text-black text-[10px] font-bold px-6 py-2 uppercase tracking-widest shadow-lg">Arrange</span>
                 </div>
