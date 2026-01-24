@@ -60,12 +60,15 @@ export default function RegisterPage() {
   };
 
   return (
-    // Bố cục tập trung chính giữa (items-center justify-center)
-    <div className="min-h-screen flex items-center justify-center font-sans bg-[#F3F3F3] p-4 relative overflow-hidden">
+    /** * THAY ĐỔI TẠI ĐÂY: 
+     * Bỏ 'items-center' để không căn giữa dọc tuyệt đối.
+     * Thêm 'pt-10' (hoặc pt-5 nếu muốn sát hơn) để bỏ khoảng trống phía trên.
+     */
+    <div className="min-h-screen flex flex-col items-center pt-10 font-sans bg-[#F3F3F3] p-4 relative overflow-hidden">
       
       {/* Container Form - Loại bỏ hoàn toàn 2 cột banner ảnh */}
       <div className={`w-full max-w-[420px] bg-white p-8 md:p-12 shadow-2xl border-t-4 border-black animate-in fade-in zoom-in duration-700 ${isShaking ? 'animate-shake' : ''}`}
-           style={isShaking ? {animation: 'shake 0.5s ease-in-out'} : {}}>
+            style={isShaking ? {animation: 'shake 0.5s ease-in-out'} : {}}>
         
         <div className="text-center mb-8">
           <h1 className="text-4xl font-black tracking-tighter uppercase mb-2">NEWEGG</h1>
