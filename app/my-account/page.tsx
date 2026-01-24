@@ -1,32 +1,62 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 export default function MyAccount() {
   const [userName, setUserName] = useState("");
-  // Tạo state cho các trường thông tin có thể chỉnh sửa
   const [fullName, setFullName] = useState("");
   const [country, setCountry] = useState("Việt Nam");
-  const [balance, setBalance] = useState("253,498.00");
+  const [balance, setBalance] = useState("0.00");
   const [isSaved, setIsSaved] = useState(false);
+  
+  // Quản lý ảnh đại diện
+  const [avatar, setAvatar] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Danh sách quốc gia mở rộng
+  const countries = [
+    "Việt Nam", "USA", "Japan", "Korea", "China", "France", 
+    "Germany", "UK", "Canada", "Australia", "Singapore", "Thailand", "Russia", "India"
+  ];
 
   useEffect(() => {
-    // 1. Lấy Username để hiển thị tiêu đề
+    // 1. Lấy Username
     const storedName = localStorage.getItem("userName");
     if (storedName) setUserName(storedName);
 
-    // 2. Lấy Họ tên đã lưu trước đó (nếu có)
+    // 2. Lấy thông tin đã lưu (Họ tên, Quốc gia, Ảnh, Số dư)
     const savedFullName = localStorage.getItem("userFullName");
     const savedCountry = localStorage.getItem("userCountry");
+    const savedAvatar = localStorage.getItem("userAvatar");
+    const savedBalance = localStorage.getItem("userBalance") || "253,498.00"; // Số dư mặc định hoặc từ Admin
+
     if (savedFullName) setFullName(savedFullName);
     if (savedCountry) setCountry(savedCountry);
+    if (savedAvatar) setAvatar(savedAvatar);
+    setBalance(savedBalance);
   }, []);
 
-  // Hàm xử lý khi khách nhấn nút Cập nhật
+  // Hàm xử lý chọn ảnh
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (file.size > 800 * 1024) {
+        alert("Dung lượng ảnh quá lớn (Tối đa 800K)");
+        return;
+      }
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64String = reader.result as string;
+        setAvatar(base64String); // Hiển thị ảnh ngay lập tức
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const handleUpdate = () => {
     localStorage.setItem("userFullName", fullName);
     localStorage.setItem("userCountry", country);
+    if (avatar) localStorage.setItem("userAvatar", avatar);
     
-    // Hiển thị thông báo thành công tạm thời
     setIsSaved(true);
     setTimeout(() => setIsSaved(false), 3000);
     alert("Cập nhật thông tin thành công!");
@@ -40,10 +70,14 @@ export default function MyAccount() {
         {/* SECTION 1: PROFILE */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8 mb-6">
           <div className="flex flex-col items-start gap-4">
-            <div className="w-24 h-24 bg-gray-200 rounded-2xl flex items-center justify-center overflow-hidden">
-              <svg className="w-16 h-16 text-gray-400" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
-              </svg>
+            <div className="w-24 h-24 bg-gray-200 rounded-2xl flex items-center justify-center overflow-hidden border">
+              {avatar ? (
+                <img src={avatar} alt="Avatar" className="w-full h-full object-cover" />
+              ) : (
+                <svg className="w-16 h-16 text-gray-400" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+                </svg>
+              )}
             </div>
             <div className="flex items-center gap-3">
               <h2 className="text-2xl font-black uppercase">{userName || "User"}</h2>
@@ -51,10 +85,23 @@ export default function MyAccount() {
             </div>
             <p className="text-sm text-gray-400">Định dạng JPG, GIF hoặc PNG. Dung lượng tối đa 800K</p>
             <div className="flex gap-3 mt-2">
-              <button className="bg-[#1a56db] text-white px-6 py-2.5 rounded-lg text-sm font-bold hover:bg-blue-700 transition-colors">
+              <input 
+                type="file" 
+                ref={fileInputRef} 
+                onChange={handleImageChange} 
+                className="hidden" 
+                accept="image/*"
+              />
+              <button 
+                onClick={() => fileInputRef.current?.click()}
+                className="bg-[#1a56db] text-white px-6 py-2.5 rounded-lg text-sm font-bold hover:bg-blue-700 transition-colors"
+              >
                 Tải lên hình ảnh
               </button>
-              <button className="bg-white text-gray-700 px-6 py-2.5 rounded-lg text-sm font-bold border border-gray-200 hover:bg-gray-50">
+              <button 
+                onClick={() => setAvatar(null)}
+                className="bg-white text-gray-700 px-6 py-2.5 rounded-lg text-sm font-bold border border-gray-200 hover:bg-gray-50"
+              >
                 Xóa
               </button>
             </div>
@@ -67,13 +114,14 @@ export default function MyAccount() {
           
           <div className="space-y-6">
             <div>
-              <label className="block text-sm font-bold mb-2">Số dư (Balance)</label>
+              <label className="block text-sm font-bold mb-2 text-black">Số dư (Balance)</label>
               <input 
                 type="text" 
                 value={balance} 
                 disabled 
-                className="w-full bg-gray-100 border border-gray-200 rounded-lg py-3 px-4 cursor-not-allowed text-gray-500"
+                className="w-full bg-gray-100 border border-gray-200 rounded-lg py-3 px-4 cursor-not-allowed text-gray-500 font-bold"
               />
+              <p className="text-[10px] text-gray-400 mt-1">* Số dư này do Admin quản lý và cập nhật</p>
             </div>
 
             <div>
@@ -94,9 +142,9 @@ export default function MyAccount() {
                 onChange={(e) => setCountry(e.target.value)}
                 className="w-full bg-[#f9fafb] border border-gray-200 rounded-lg py-3 px-4 focus:ring-2 focus:ring-blue-500 outline-none"
               >
-                <option value="Việt Nam">Việt Nam</option>
-                <option value="USA">USA</option>
-                <option value="Japan">Japan</option>
+                {countries.map((c) => (
+                  <option key={c} value={c}>{c}</option>
+                ))}
               </select>
             </div>
 
@@ -108,7 +156,7 @@ export default function MyAccount() {
               >
                 Lưu thay đổi
               </button>
-              {isSaved && <p className="text-green-600 text-sm mt-2 font-medium">Đã lưu thông tin!</p>}
+              {isSaved && <p className="text-green-600 text-sm mt-2 font-medium">Đã lưu thông tin vào hệ thống!</p>}
             </div>
           </div>
         </div>
