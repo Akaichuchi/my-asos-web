@@ -53,23 +53,25 @@ export default function MyOrdersPage() {
   const confirmRecycle = async () => {
     if (!selectedOrderId) return;
 
+    // CẬP NHẬT: Đổi từ PENDING sang RECYCLE để Admin nhận diện được đơn tái chế
     const { error } = await supabase
       .from("Order")
-      .update({ status: "PENDING" }) 
+      .update({ status: "RECYCLE" }) 
       .eq("id", selectedOrderId);
 
     if (!error) {
       setOrders(orders.map(order => 
-        order.id === selectedOrderId ? { ...order, status: "PENDING" } : order
+        order.id === selectedOrderId ? { ...order, status: "RECYCLE" } : order
       ));
       setShowRecycleModal(false);
       setSelectedOrderId(null);
+    } else {
+      alert("Lỗi cập nhật: " + error.message);
     }
   };
 
   const filteredOrders = orders.filter(order => {
     if (filter === "all") return true;
-    // Đảm bảo so sánh không phân biệt chữ hoa chữ thường cho trạng thái
     return order.status?.toUpperCase() === filter.toUpperCase();
   });
 
@@ -118,6 +120,7 @@ export default function MyOrdersPage() {
                   </div>
                   <span className={`px-3 py-1 rounded text-[11px] uppercase font-bold border ${
                     order.status === 'SUCCESS' ? 'text-green-400 border-green-900 bg-green-900/20' : 
+                    order.status === 'RECYCLE' ? 'text-orange-400 border-orange-900 bg-orange-900/20' :
                     'text-yellow-500 border-yellow-900 bg-yellow-900/20'
                   }`}>
                     {order.status}
