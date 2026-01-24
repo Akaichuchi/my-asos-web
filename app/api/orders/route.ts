@@ -4,12 +4,14 @@ import { prisma } from "@/lib/prisma";
 export async function POST(req: Request) {
   try {
     const body = await req.json();
+    
     // Ép kiểu userId và totalAmount về số để đảm bảo tính toán chính xác
     const userId = Number(body.userId);
     const totalAmount = Number(body.totalAmount);
 
     // 1. Kiểm tra sự tồn tại của User và số dư hiện tại từ Database thực tế
-    const user = await prisma.user.findUnique({
+    // Sử dụng findFirst để đôi khi bỏ qua các lỗi cache của findUnique
+    const user = await prisma.user.findFirst({
       where: { id: userId },
     });
 
@@ -17,13 +19,13 @@ export async function POST(req: Request) {
       throw new Error("Người dùng không tồn tại trên hệ thống");
     }
 
-    // So sánh số dư: Đảm bảo số dư đủ để thực hiện giao dịch
-    if (user.balance < totalAmount) {
+    // So sánh số dư: Ép kiểu Number cho user.balance để chắc chắn không so sánh nhầm String
+    if (Number(user.balance) < totalAmount) {
       throw new Error(`Số dư không đủ. Bạn có $${user.balance} nhưng cần $${totalAmount}`);
     }
 
     // 2. Thực hiện trừ tiền trực tiếp vào cột balance trong bảng User
-    // Chúng ta thực hiện tuần tự để tránh lỗi nghẽn kết nối (08P01)
+    // Chúng ta sử dụng await đơn lẻ để đảm bảo lệnh này hoàn tất 100% trước khi tạo đơn
     await prisma.user.update({
       where: { id: userId },
       data: {
@@ -48,6 +50,9 @@ export async function POST(req: Request) {
     });
 
   } catch (error: any) {
+    // Log lỗi ra console của Vercel để dễ dàng theo dõi chi tiết nếu còn lỗi kết nối
+    console.error("Payment API Error:", error.message);
+    
     // Trả về lỗi để Frontend hiển thị Alert cảnh báo người dùng
     return NextResponse.json({ 
       success: false, 
