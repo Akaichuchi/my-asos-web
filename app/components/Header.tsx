@@ -28,11 +28,10 @@ export default function Header() {
   const bagPath = "/cart";
 
   useEffect(() => {
-    // CẬP NHẬT: Lấy email từ userEmail để hiển thị tên động theo Gmail khách
-    const storedEmail = localStorage.getItem("userEmail");
-    if (storedEmail) {
-      const nameFromEmail = storedEmail.split('@')[0]; // Lấy phần trước @
-      setUser({ name: nameFromEmail });
+    // CẬP NHẬT: Lấy trực tiếp userName từ localStorage để hiển thị tên thật
+    const storedName = localStorage.getItem("userName");
+    if (storedName) {
+      setUser({ name: storedName });
       setIsLoggedIn(true);
     }
 
@@ -83,11 +82,11 @@ export default function Header() {
   };
 
   const handleSignOut = () => {
-    localStorage.removeItem("userEmail"); // Cập nhật xóa đúng key
+    localStorage.removeItem("userName"); // Xóa đúng key userName khi đăng xuất
     setIsLoggedIn(false);
     setUser({ name: "" });
     setIsSideMenuOpen(false);
-    window.location.reload(); // Ép tải lại để cập nhật giao diện ngay lập tức
+    window.location.reload(); 
   };
 
   return (
