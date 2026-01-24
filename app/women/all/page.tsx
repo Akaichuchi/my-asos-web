@@ -3,13 +3,13 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 
 interface Product {
-  id: number; // Đổi thành number cho khớp Prisma
+  id: number;
   name: string;
   price: number;
-  originalPrice?: number; // Thêm trường này
-  images: string; // Đổi từ image -> images
+  originalPrice?: number;
+  images: string;
   category: string;
-  tag?: string; // Thêm tag từ DB
+  tag?: string;
   isSellingFast?: boolean;
   hasMoreColors?: boolean;
 }
@@ -33,20 +33,40 @@ export default function AllWomenProducts() {
     fetchAllProducts();
   }, []);
 
+  // HÀM XỬ LÝ LƯU VÀO SAVED-ITEMS (Giữ nguyên tính năng tệp hiện tại)
+  const handleToggleWishlist = (e: React.MouseEvent, product: Product) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    // Đồng bộ với tệp saved-items của bạn thông qua localStorage
+    const savedItems = JSON.parse(localStorage.getItem("saved-items") || "[]");
+    const isExisted = savedItems.find((item: Product) => item.id === product.id);
+
+    if (isExisted) {
+      const newItems = savedItems.filter((item: Product) => item.id !== product.id);
+      localStorage.setItem("saved-items", JSON.stringify(newItems));
+    } else {
+      savedItems.push(product);
+      localStorage.setItem("saved-items", JSON.stringify(savedItems));
+    }
+
+    // Gửi tín hiệu để các trang khác (như trang saved-items hoặc icon Header) cập nhật kịp thời
+    window.dispatchEvent(new Event("storage"));
+  };
+
   return (
     <div className="bg-white min-h-screen text-black">
       <main className="max-w-[1400px] mx-auto px-4 md:px-8 py-4">
-        {/* BREADCRUMBS - GIỐNG MẪU */}
+        {/* BREADCRUMBS - GIỮ NGUYÊN */}
         <nav className="text-[11px] text-gray-500 mb-4 flex items-center gap-2">
           <Link href="/" className="hover:underline">Home</Link> <span>›</span>
           <Link href="/women" className="hover:underline">Women</Link> <span>›</span>
           <span className="text-gray-400 font-medium">CTAS</span>
         </nav>
 
-        {/* TIÊU ĐỀ & CHIPS */}
+        {/* TIÊU ĐỀ & CHIPS - GIỮ NGUYÊN */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
           <h1 className="text-2xl font-black uppercase tracking-widest">CTAS</h1>
-          
           <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-2 md:pb-0">
             {["Summer rodeo", "Face + Body Bestsellers", "Trending styles", "For Love & Lemons", "Bubble"].map((tag) => (
               <button key={tag} className="px-4 py-1.5 border border-gray-300 text-[13px] font-medium whitespace-nowrap hover:border-black">
@@ -56,7 +76,7 @@ export default function AllWomenProducts() {
           </div>
         </div>
 
-        {/* THANH CÔNG CỤ */}
+        {/* THANH CÔNG CỤ - GIỮ NGUYÊN */}
         <div className="sticky top-[64px] z-30 bg-white/95 border-y border-gray-100 py-3 flex justify-between items-center mb-8">
           <div className="flex gap-4">
             <button className="flex items-center gap-2 text-[12px] font-bold uppercase tracking-wider border-r pr-4">
@@ -77,16 +97,14 @@ export default function AllWomenProducts() {
             ))
           ) : (
             products.map((item) => {
-              // Tính toán phần trăm giảm giá
               const discount = item.originalPrice 
                 ? Math.round(((item.originalPrice - item.price) / item.originalPrice) * 100) 
                 : 0;
 
               return (
                 <div key={item.id} className="group flex flex-col relative">
-                  {/* ẢNH VÀ NÚT TIM */}
-                  <div className="relative aspect-[3/4] overflow-hidden bg-[#f3f3f3]">
-                    {/* Badge giảm giá màu đỏ */}
+                  {/* Bọc toàn bộ ảnh bằng Link để dẫn tới trang chi tiết */}
+                  <Link href={`/product/${item.id}`} className="block relative aspect-[3/4] overflow-hidden bg-[#f3f3f3]">
                     {discount > 0 && (
                       <span className="absolute top-0 left-0 z-10 bg-white text-[#d01345] px-2 py-1 text-[12px] font-bold">
                         -{discount}%
@@ -94,20 +112,29 @@ export default function AllWomenProducts() {
                     )}
                     
                     <img 
-                      src={item.images} // Cập nhật sang images
+                      src={item.images} 
                       alt={item.name}
                       className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                     />
-                    <button className="absolute bottom-3 right-3 bg-white/90 p-2 rounded-full shadow-sm hover:bg-white transition-all">
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /></svg>
-                    </button>
-                  </div>
+                  </Link>
+
+                  {/* NÚT TIM - XỬ LÝ LƯU VÀO SAVED-ITEMS */}
+                  <button 
+                    onClick={(e) => handleToggleWishlist(e, item)}
+                    className="absolute bottom-[95px] right-3 z-20 bg-white/90 p-2 rounded-full shadow-sm hover:bg-white transition-all active:scale-95"
+                  >
+                    <svg className="w-5 h-5 hover:fill-red-500 hover:stroke-red-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                    </svg>
+                  </button>
 
                   {/* THÔNG TIN SẢN PHẨM */}
                   <div className="mt-3 space-y-1">
-                    <h3 className="text-[13px] text-gray-700 leading-snug group-hover:underline cursor-pointer min-h-[36px] line-clamp-2">
-                      {item.name}
-                    </h3>
+                    <Link href={`/product/${item.id}`}>
+                      <h3 className="text-[13px] text-gray-700 leading-snug group-hover:underline cursor-pointer min-h-[36px] line-clamp-2">
+                        {item.name}
+                      </h3>
+                    </Link>
                     
                     <div className="flex items-center gap-2">
                       {item.originalPrice && (
@@ -118,11 +145,8 @@ export default function AllWomenProducts() {
                       </p>
                     </div>
                     
-                    {/* BADGES */}
                     <div className="flex flex-wrap gap-2 pt-1 min-h-[22px]">
                       <span className="text-[9px] font-bold uppercase text-gray-400 border border-gray-200 px-1.5 py-0.5">More colors</span>
-                      
-                      {/* Hiển thị Tag từ Database hoặc mặc định Selling Fast */}
                       <span className="text-[9px] font-bold uppercase bg-[#eeeeee] text-[#2d2d2d] px-1.5 py-0.5">
                         {item.tag || "Selling Fast"}
                       </span>
