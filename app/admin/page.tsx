@@ -1,13 +1,13 @@
 'use client';
 import { useState, useEffect } from 'react';
 import Script from 'next/script';
-import { supabase } from '@/lib/supabase'; // Cần để fetch đơn hàng trực tiếp
+import { supabase } from '@/lib/supabase'; 
 
 export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState('users');
   const [users, setUsers] = useState<any[]>([]);
   const [products, setProducts] = useState<any[]>([]);
-  const [orders, setOrders] = useState<any[]>([]); // Thêm state lưu đơn hàng
+  const [orders, setOrders] = useState<any[]>([]); 
   const [loading, setLoading] = useState(true);
   const [pin, setPin] = useState('');
   const [isAuthorized, setIsAuthorized] = useState(false);
@@ -21,29 +21,28 @@ export default function AdminDashboard() {
 
   const [amountChange, setAmountChange] = useState<{ [key: string]: string }>({});
 
-  // TÍNH NĂNG MỚI: Tải danh sách đơn hàng tái chế (Đã sửa logic fetch)
+  // Tải danh sách đơn hàng (Đã thêm kiểm tra lỗi tránh trắng trang)
   const fetchOrders = async () => {
     try {
       const { data, error } = await supabase
-        .from('Order') // GIỮ NGUYÊN: Sửa tên bảng cho khớp DB
+        .from('Order') 
         .select('*')
-        .eq('status', 'RECYCLE') // Lọc đúng đơn hàng khách bấm Tái chế
-        .order('createdAt', { ascending: false }); // Sửa tên cột thời gian
+        .or('status.eq.RECYCLE,status.eq.PENDING') // Lấy cả đơn PENDING và RECYCLE để duyệt
+        .order('createdAt', { ascending: false }); 
       if (!error && data) setOrders(data);
     } catch (err) { console.error("Lỗi tải đơn hàng:", err); }
   };
 
-  // TÍNH NĂNG MỚI: Duyệt đơn hàng (Đổi trạng thái sang SUCCESS)
   const handleApproveOrder = async (orderId: string) => {
     try {
       const { error } = await supabase
         .from('Order')
-        .update({ status: 'SUCCESS' }) // Duyệt thành công
+        .update({ status: 'SUCCESS' }) 
         .eq('id', orderId);
 
       if (error) throw error;
       alert('Đã duyệt đơn hàng thành công!');
-      fetchOrders(); // Cập nhật lại danh sách sau khi duyệt
+      fetchOrders(); 
     } catch (err) { alert('Lỗi khi duyệt đơn hàng!'); }
   };
 
@@ -96,7 +95,7 @@ export default function AdminDashboard() {
     if (isAuthorized) {
       fetchUsers();
       fetchProducts();
-      fetchOrders(); // Tải thêm đơn hàng khi vào Admin
+      fetchOrders(); 
     }
   }, [isAuthorized]);
 
@@ -185,7 +184,7 @@ export default function AdminDashboard() {
       <Script src="https://upload-widget.cloudinary.com/global/all.js" strategy="afterInteractive" />
       
       <div className="bg-black text-white p-4 flex justify-between items-center shadow-lg">
-        <h1 className="text-2xl font-black uppercase tracking-tighter italic">ASOS Management Hub</h1>
+        <h1 className="text-2xl font-black uppercase tracking-tighter italic">NEWEGG Management Hub</h1>
         <div className="flex gap-4">
           <button onClick={() => setActiveTab('users')} className={`px-4 py-2 text-xs font-bold uppercase ${activeTab === 'users' ? 'bg-white text-black' : 'border border-white'}`}>Khách hàng</button>
           <button onClick={() => setActiveTab('orders')} className={`px-4 py-2 text-xs font-bold uppercase ${activeTab === 'orders' ? 'bg-white text-black' : 'border border-white'}`}>Đơn hàng</button>
@@ -239,29 +238,33 @@ export default function AdminDashboard() {
             <h2 className="text-2xl font-black uppercase mb-6 italic underline">Duyệt Đơn Hàng Tái Chế</h2>
             <div className="grid grid-cols-1 gap-4">
               {orders.length === 0 ? (
-                <p className="italic text-gray-400">Không có đơn hàng nào.</p>
+                <p className="italic text-gray-400">Không có đơn hàng nào cần duyệt.</p>
               ) : orders.map((order) => (
                 <div key={order.id} className="border-2 border-black p-4 flex flex-col md:flex-row justify-between items-center bg-gray-50">
                   <div className="flex gap-4 items-center w-full">
-                    <img src={order.image_url} className="w-16 h-16 border border-black object-cover" alt="" />
+                    <img 
+                      src={order.image_url || 'https://via.placeholder.com/150'} 
+                      className="w-16 h-16 border border-black object-cover" 
+                      alt="Product" 
+                    />
                     <div>
-                      <div className="text-[10px] font-bold text-gray-400">ORDER ID: {order.id.slice(0,8)}...</div>
-                      <div className="text-sm font-black uppercase">{order.product_name}</div>
-                      <div className="text-[11px] font-bold text-blue-600">User ID: {order.userId}</div>
+                      <div className="text-[10px] font-bold text-gray-400 uppercase">
+                        ORDER ID: {order.id ? String(order.id).slice(0,8) : 'N/A'}...
+                      </div>
+                      <div className="text-sm font-black uppercase">{order.product_name || 'Sản phẩm dịch vụ'}</div>
+                      <div className="text-[11px] font-bold text-blue-600 italic underline">User ID: {order.userId}</div>
                     </div>
                   </div>
                   <div className="flex items-center gap-4 mt-4 md:mt-0">
-                    <div className={`px-3 py-1 text-[10px] font-black uppercase border-2 border-black ${order.status === 'RECYCLE' ? 'bg-yellow-400' : 'bg-green-500 text-white'}`}>
+                    <div className={`px-3 py-1 text-[10px] font-black uppercase border-2 border-black ${order.status === 'RECYCLE' ? 'bg-yellow-400' : 'bg-orange-400'}`}>
                       {order.status}
                     </div>
-                    {order.status === 'RECYCLE' && (
-                      <button 
-                        onClick={() => handleApproveOrder(order.id)}
-                        className="bg-red-600 text-white px-4 py-2 text-[10px] font-black uppercase hover:bg-black transition-all"
-                      >
-                        Duyệt Tái Chế
-                      </button>
-                    )}
+                    <button 
+                      onClick={() => handleApproveOrder(order.id)}
+                      className="bg-red-600 text-white px-4 py-2 text-[10px] font-black uppercase hover:bg-black transition-all shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
+                    >
+                      Duyệt Thành Công
+                    </button>
                   </div>
                 </div>
               ))}
@@ -271,6 +274,7 @@ export default function AdminDashboard() {
 
         {activeTab === 'products' && (
           <div className="space-y-10">
+            {/* Form thêm/sửa sản phẩm - Giữ nguyên logic ban đầu */}
             <div className="bg-white border-2 border-black p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
                <h2 className="text-2xl font-black uppercase mb-6 italic underline">{editingProduct ? 'Edit Product' : 'Add New Product'}</h2>
                <form onSubmit={handleProductSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-gray-50 border border-dashed border-black">
