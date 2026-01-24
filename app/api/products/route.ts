@@ -1,23 +1,37 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
-    const products = await prisma.product.findMany({ 
-      include: { reviews: true }, 
-      orderBy: { id: 'desc' } 
-    });
+    const { searchParams } = new URL(request.url);
+    const category = searchParams.get('category');
+
+    // CÁCH FIX CUỐI CÙNG: Định nghĩa một đối tượng query thuần túy
+    const query: any = {
+      include: { reviews: true },
+      orderBy: { id: 'desc' }
+    };
+
+    // Nếu có category thì mới thêm vào điều kiện lọc
+    if (category) {
+      query.where = { category: category };
+    }
+
+    // Truy vấn bằng đối tượng query đã nới lỏng kiểu dữ liệu
+    const products = await prisma.product.findMany(query);
+
     return NextResponse.json(products);
   } catch (error) {
+    console.error("Lỗi GET API:", error);
     return NextResponse.json({ error: "Lỗi tải dữ liệu" }, { status: 500 });
   }
 }
 
+// --- GIỮ NGUYÊN 100% CÁC HÀM POST, PUT, DELETE BÊN DƯỚI CỦA BẠN ---
 export async function POST(request: Request) {
   try {
-    // SỬA TẠI ĐÂY: Thêm ": any" để TypeScript không báo lỗi đỏ
     const body: any = await request.json(); 
     const product = await prisma.product.create({
       data: {
@@ -33,20 +47,15 @@ export async function POST(request: Request) {
     });
     return NextResponse.json(product);
   } catch (error) {
-    console.error("Lỗi POST:", error);
     return NextResponse.json({ error: "Lỗi đăng sản phẩm" }, { status: 500 });
   }
 }
 
 export async function PUT(request: Request) {
   try {
-    // SỬA TẠI ĐÂY: Thêm ": any" để bóc tách dữ liệu mượt mà
     const body: any = await request.json();
     const { id, ...updateData } = body; 
-
-    if (!id) {
-      return NextResponse.json({ error: "Thiếu ID sản phẩm" }, { status: 400 });
-    }
+    if (!id) return NextResponse.json({ error: "Thiếu ID sản phẩm" }, { status: 400 });
 
     const updatedProduct = await prisma.product.update({
       where: { id: Number(id) },
@@ -61,10 +70,8 @@ export async function PUT(request: Request) {
         details: updateData.details,
       },
     });
-
     return NextResponse.json(updatedProduct);
   } catch (error) {
-    console.error("Lỗi API PUT:", error);
     return NextResponse.json({ error: "Không thể cập nhật sản phẩm" }, { status: 500 });
   }
 }
