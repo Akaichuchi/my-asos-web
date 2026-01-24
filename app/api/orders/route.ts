@@ -26,15 +26,18 @@ export async function POST(req: Request) {
       throw new Error("Người dùng không tồn tại trên hệ thống");
     }
 
-    // So sánh số dư
+    // So sánh số dư: Đảm bảo số dư đủ để thực hiện giao dịch
     if (Number(user.balance) < totalAmount) {
       throw new Error(`Số dư không đủ. Bạn có $${user.balance} nhưng cần $${totalAmount}`);
     }
 
     // 2. Thực hiện trừ tiền trực tiếp vào cột balance trong bảng User
+    // Tính toán số dư mới trước khi cập nhật
+    const newBalance = Number(user.balance) - totalAmount;
+
     const { error: updateError } = await supabase
       .from("User")
-      .update({ balance: Number(user.balance) - totalAmount })
+      .update({ balance: newBalance })
       .eq("id", userId);
 
     if (updateError) {
@@ -55,6 +58,8 @@ export async function POST(req: Request) {
       .single();
 
     if (orderError) {
+      // Lưu ý: Lúc này tiền đã bị trừ, nếu lỗi tạo đơn cần log lại để Admin kiểm tra
+      console.error("Critical: Money deducted but order not created", orderError);
       throw new Error("Tiền đã trừ nhưng không thể tạo đơn hàng, hãy báo cho Admin!");
     }
 
@@ -66,7 +71,7 @@ export async function POST(req: Request) {
     });
 
   } catch (error: any) {
-    // Log lỗi ra console để theo dõi chi tiết
+    // Log lỗi ra console để theo dõi chi tiết trên server
     console.error("Payment API Error:", error.message);
     
     // Trả về lỗi để Frontend hiển thị Alert cảnh báo người dùng
