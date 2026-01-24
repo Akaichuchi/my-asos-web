@@ -4,46 +4,43 @@ import { prisma } from "@/lib/prisma";
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    // Ép kiểu userId và totalAmount về số ngay từ đầu để tránh lỗi so sánh
+    // Ép kiểu userId và totalAmount về số để đảm bảo tính toán chính xác
     const userId = Number(body.userId);
     const totalAmount = Number(body.totalAmount);
 
-    // Sử dụng Transaction để đảm bảo tính toàn vẹn dữ liệu
-    const result = await prisma.$transaction(async (tx) => {
-      // 1. Kiểm tra sự tồn tại của User và số dư hiện tại
-      const user = await tx.user.findUnique({
-        where: { id: userId },
-      });
-
-      if (!user) {
-        throw new Error("Người dùng không tồn tại trên hệ thống");
-      }
-
-      // Kiểm tra số dư (bây giờ cả 2 đều là kiểu Number nên so sánh sẽ chuẩn)
-      if (user.balance < totalAmount) {
-        throw new Error(`Số dư không đủ. Bạn có $${user.balance} nhưng cần $${totalAmount}`);
-      }
-
-      // 2. Thực hiện trừ tiền trực tiếp vào cột balance trong bảng User
-      await tx.user.update({
-        where: { id: userId },
-        data: {
-          balance: { decrement: totalAmount }
-        },
-      });
-
-      // 3. Tạo bản ghi đơn hàng mới vào bảng Order
-      // Lưu ý: Đảm bảo bạn đã chạy lệnh SQL thêm cột createdAt trước khi chạy code này
-      return await tx.order.create({
-        data: {
-          userId: userId,
-          amount: totalAmount,
-          status: "SUCCESS",
-        },
-      });
+    // 1. Kiểm tra sự tồn tại của User và số dư hiện tại từ Database thực tế
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
     });
 
-    // Trả về phản hồi thành công để Frontend hiển thị Modal 2 nút
+    if (!user) {
+      throw new Error("Người dùng không tồn tại trên hệ thống");
+    }
+
+    // So sánh số dư: Đảm bảo số dư đủ để thực hiện giao dịch
+    if (user.balance < totalAmount) {
+      throw new Error(`Số dư không đủ. Bạn có $${user.balance} nhưng cần $${totalAmount}`);
+    }
+
+    // 2. Thực hiện trừ tiền trực tiếp vào cột balance trong bảng User
+    // Chúng ta thực hiện tuần tự để tránh lỗi nghẽn kết nối (08P01)
+    await prisma.user.update({
+      where: { id: userId },
+      data: {
+        balance: { decrement: totalAmount }
+      },
+    });
+
+    // 3. Tạo bản ghi đơn hàng mới vào bảng Order
+    const result = await prisma.order.create({
+      data: {
+        userId: userId,
+        amount: totalAmount,
+        status: "SUCCESS",
+      },
+    });
+
+    // Trả về phản hồi thành công để Frontend kích hoạt Modal thông báo 2 nút
     return NextResponse.json({ 
       success: true, 
       message: "Thanh toán thành công", 
@@ -51,7 +48,7 @@ export async function POST(req: Request) {
     });
 
   } catch (error: any) {
-    // Trả về lỗi để Frontend hiển thị Alert (ví dụ: "SỐ DƯ KHÔNG ĐỦ")
+    // Trả về lỗi để Frontend hiển thị Alert cảnh báo người dùng
     return NextResponse.json({ 
       success: false, 
       error: error.message 
