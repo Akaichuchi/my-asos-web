@@ -17,10 +17,12 @@ model User {
 model Product {
   id            Int      @id @default(autoincrement())
   name          String
-  price         String
-  originalPrice String?  // Để hiển thị giá gạch ngang như hình mẫu
-  img           String
-  category      String   // "women" hoặc "men"
-  tag           String?  // "SELLING FAST" hoặc "NEW IN"
+  price         Float    // Chuyển về Float để tính toán
+  originalPrice Float?   // Chuyển về Float
+  images        String   @db.Text // Đổi từ 'img' thành 'images' cho khớp với code
+  category      String
+  tag           String?  @default("SELLING FAST")
+  sizeFit       String?  @db.Text
+  details       String?  @db.Text
   createdAt     DateTime @default(now())
 }
