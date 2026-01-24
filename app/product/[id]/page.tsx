@@ -69,36 +69,36 @@ export default function ProductDetailPage() {
     });
   };
 
-  const handleAddToBag = () => {
-    if (!selectedSize) { alert("Vui lòng chọn kích cỡ trước khi thêm vào giỏ hàng!"); return; }
+  // Cập nhật logic: Thêm vào giỏ hàng và chuyển hướng sang trang /cart ngay lập tức
+  const handleBuyNow = () => {
+    if (!selectedSize) { 
+      alert("Vui lòng chọn kích cỡ trước khi thanh toán!"); 
+      return; 
+    }
+
     const currentCart = JSON.parse(localStorage.getItem("cart") || "[]");
-    const existingItemIndex = currentCart.findIndex((item: any) => item.id === product.id && item.size === selectedSize);
+    const existingItemIndex = currentCart.findIndex(
+      (item: any) => item.id === product.id && item.size === selectedSize
+    );
 
     if (existingItemIndex > -1) {
       currentCart[existingItemIndex].quantity += quantity;
     } else {
       currentCart.push({
-        id: product.id, name: product.name, price: product.price, image: activeImg,
-        category: product.category, quantity: quantity, size: selectedSize
+        id: product.id, 
+        name: product.name, 
+        price: product.price, 
+        image: activeImg,
+        category: product.category, 
+        quantity: quantity, 
+        size: selectedSize
       });
     }
-    localStorage.setItem("cart", JSON.stringify(currentCart));
-    router.push("/cart");
-  };
 
-  // Logic chuyển sang trang đặt hàng (Tiếng Việt)
-  const handleBuyNow = () => {
-    if (!selectedSize) { alert("Vui lòng chọn kích cỡ trước khi thanh toán!"); return; }
-    const orderData = {
-      id: product.id,
-      name: product.name,
-      price: product.price,
-      image: activeImg,
-      quantity: quantity,
-      size: selectedSize
-    };
-    localStorage.setItem("direct_checkout", JSON.stringify(orderData));
-    router.push("/checkout"); 
+    localStorage.setItem("cart", JSON.stringify(currentCart));
+    
+    // Điều hướng khách hàng đến trang giỏ hàng
+    router.push("/cart");
   };
 
   const handleAddToWishlist = () => {
@@ -173,7 +173,6 @@ export default function ProductDetailPage() {
           <div className="py-2 px-3 bg-[#ccff00] text-black text-[10px] font-black uppercase italic inline-block">Sản phẩm đang bán rất chạy! 🔥</div>
 
           <div className="space-y-4 pt-4">
-            {/* CHỌN SIZE */}
             <div className="flex justify-between items-center text-[12px] font-bold uppercase tracking-widest">
               <label>Kích cỡ:</label>
               <button className="text-[#666] underline">Hướng dẫn chọn size</button>
@@ -186,7 +185,6 @@ export default function ProductDetailPage() {
               <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-[#666]">▼</div>
             </div>
 
-            {/* CHỌN SỐ LƯỢNG */}
             <div className="pt-2">
               <label className="block text-[12px] font-bold uppercase tracking-widest mb-2">Số lượng:</label>
               <div className="flex items-center border border-[#ddd] w-max bg-white">
@@ -196,14 +194,15 @@ export default function ProductDetailPage() {
               </div>
             </div>
 
-            {/* NÚT HÀNH ĐỘNG */}
             <div className="flex flex-col gap-3 pt-2">
-              <button onClick={handleAddToBag} className="w-full bg-[#018849] text-white py-4 font-bold uppercase text-[14px] tracking-widest hover:bg-[#016d3a] transition-all shadow-md active:scale-95">
-                Thêm vào giỏ hàng
-              </button>
-              
+              {/* Đã bỏ nút "Thêm vào giỏ hàng", chỉ giữ lại "Thanh toán ngay" */}
               <button onClick={handleBuyNow} className="w-full bg-[#2d2d2d] text-white py-4 font-bold uppercase text-[14px] tracking-widest hover:bg-black transition-all shadow-md active:scale-95">
                 Thanh toán ngay
+              </button>
+              
+              <button onClick={handleAddToWishlist} className="text-[12px] uppercase font-bold text-gray-400 hover:text-black flex items-center justify-center gap-2 pt-2">
+                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /></svg>
+                 Thêm vào yêu thích
               </button>
             </div>
           </div>
@@ -215,7 +214,6 @@ export default function ProductDetailPage() {
             </details>
           </div>
 
-          {/* REVIEWS */}
           <div className="pt-6 border-t border-gray-100">
             <h3 className="text-[12px] font-bold uppercase mb-4 tracking-widest">Đánh giá từ khách hàng</h3>
             <form onSubmit={submitReview} className="space-y-3 mb-6">
@@ -241,7 +239,38 @@ export default function ProductDetailPage() {
           </div>
         </div>
       </main>
-      {/* Các phần Related Products và Recently Viewed giữ nguyên như code của bạn */}
+
+      {/* --- MỤC SẢN PHẨM LIÊN QUAN --- */}
+      <section className="max-w-[1300px] mx-auto px-4 md:px-8 mt-20 border-t border-gray-100 pt-10">
+        <h2 className="text-[16px] font-bold uppercase tracking-[2px] mb-8 text-center md:text-left">Có thể bạn sẽ thích</h2>
+        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
+          {relatedProducts.map((item: any) => (
+            <Link key={item.id} href={`/product/${item.id}`} className="group block">
+              <div className="relative aspect-[3/4] overflow-hidden bg-[#F3F3F3] mb-3">
+                <img src={item.images?.split(',')[0].trim()} alt={item.name} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
+              </div>
+              <h3 className="text-[12px] text-[#2d2d2d] line-clamp-2 mb-1 group-hover:underline">{item.name}</h3>
+              <p className="text-[13px] font-bold text-[#d01345]">${item.price}</p>
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      {/* --- MỤC SẢN PHẨM VỪA XEM --- */}
+      <section className="max-w-[1300px] mx-auto px-4 md:px-8 mt-20 border-t border-gray-100 pt-10">
+        <h2 className="text-[16px] font-bold uppercase tracking-[2px] mb-8 text-center md:text-left">Sản phẩm vừa xem</h2>
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+          {recentlyViewed.map((item: any) => (
+            <Link key={item.id} href={`/product/${item.id}`} className="group block opacity-80 hover:opacity-100 transition-opacity">
+              <div className="aspect-[3/4] overflow-hidden bg-[#F3F3F3] mb-2">
+                <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+              </div>
+              <p className="text-[11px] text-[#666] truncate">{item.name}</p>
+              <p className="text-[12px] font-bold">${item.price}</p>
+            </Link>
+          ))}
+        </div>
+      </section>
     </div>
   );
 }
