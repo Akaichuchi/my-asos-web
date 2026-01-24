@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
-import { supabase } from "@/lib/supabase"; // Đảm bảo bạn đã cấu hình tệp này
+import { supabase } from "@/lib/supabase"; 
 
 export default function MyAccount() {
   const [userName, setUserName] = useState("");
@@ -8,6 +8,9 @@ export default function MyAccount() {
   const [country, setCountry] = useState("Việt Nam");
   const [balance, setBalance] = useState("0.00");
   const [isSaved, setIsSaved] = useState(false);
+  
+  // State mới cho thông báo chuyên nghiệp
+  const [toast, setToast] = useState<{ msg: string; type: "success" | "error" } | null>(null);
   
   const [avatar, setAvatar] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -19,21 +22,26 @@ export default function MyAccount() {
     "Italy", "Spain", "Mexico", "Turkey", "Switzerland"
   ];
 
+  // Hàm hiển thị thông báo thay cho alert
+  const showToast = (msg: string, type: "success" | "error" = "success") => {
+    setToast({ msg, type });
+    setTimeout(() => setToast(null), 3000);
+  };
+
   useEffect(() => {
-    // 1. Hàm lấy dữ liệu từ Supabase thay vì LocalStorage
     const fetchUserData = async () => {
       const storedName = localStorage.getItem("userName");
       if (!storedName) return;
 
       const { data, error } = await supabase
-        .from('User') // Tên bảng viết hoa theo database của bạn
+        .from('User') 
         .select('*')
         .eq('username', storedName)
         .single();
 
       if (data) {
         setUserName(data.username || "");
-        setFullName(data.username || ""); // Bạn có thể thêm cột full_name vào DB nếu cần
+        setFullName(data.fullName || ""); 
         setCountry(data.country || "Việt Nam");
         setBalance(Number(data.balance || 0).toFixed(2));
       }
@@ -41,7 +49,6 @@ export default function MyAccount() {
 
     fetchUserData();
 
-    // 2. THIẾT LẬP REALTIME: Tự động cập nhật khi Admin sửa trên Supabase
     const userChannel = supabase
       .channel('public:User')
       .on('postgres_changes', 
@@ -49,7 +56,9 @@ export default function MyAccount() {
         (payload) => {
           if (payload.new.username === localStorage.getItem("userName")) {
             setBalance(Number(payload.new.balance || 0).toFixed(2));
+            setFullName(payload.new.fullName || "");
             setCountry(payload.new.country || "Việt Nam");
+            showToast("Số dư tài khoản đã được cập nhật!");
           }
         }
       )
@@ -64,7 +73,7 @@ export default function MyAccount() {
     const file = e.target.files?.[0];
     if (file) {
       if (file.size > 800 * 1024) {
-        alert("Dung lượng ảnh quá lớn (Tối đa 800K)");
+        showToast("Dung lượng ảnh quá lớn (Tối đa 800K)", "error");
         return;
       }
       const reader = new FileReader();
@@ -80,23 +89,43 @@ export default function MyAccount() {
     const storedName = localStorage.getItem("userName");
     if (!storedName) return;
 
-    // Cập nhật thông tin lên Supabase
     const { error } = await supabase
       .from('User')
-      .update({ country: country })
+      .update({ 
+        fullName: fullName,
+        country: country 
+      })
       .eq('username', storedName);
 
     if (error) {
-      alert("Lỗi cập nhật Database: " + error.message);
+      showToast("Lỗi cập nhật: " + error.message, "error");
     } else {
       setIsSaved(true);
       setTimeout(() => setIsSaved(false), 3000);
-      alert("Cập nhật thông tin lên Supabase thành công!");
+      showToast("Cập nhật thông tin thành công!");
     }
   };
 
   return (
-    <div className="min-h-screen bg-[#f4f7f6] py-10 px-4 font-sans text-gray-800">
+    <div className="min-h-screen bg-[#f4f7f6] py-10 px-4 font-sans text-gray-800 relative">
+      
+      {/* GIAO DIỆN THÔNG BÁO (TOAST) CHUYÊN NGHIỆP */}
+      {toast && (
+        <div className={`fixed top-5 right-5 z-[100] flex items-center gap-3 p-4 rounded-xl shadow-2xl border-l-4 animate-slide-in ${
+          toast.type === "success" ? "bg-white border-green-500" : "bg-white border-red-500"
+        }`}>
+          <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold ${
+            toast.type === "success" ? "bg-green-100 text-green-600" : "bg-red-100 text-red-600"
+          }`}>
+            {toast.type === "success" ? "✓" : "✕"}
+          </div>
+          <div>
+            <p className="font-bold text-sm text-gray-900">Thông báo</p>
+            <p className="text-xs text-gray-500">{toast.msg}</p>
+          </div>
+        </div>
+      )}
+
       <div className="max-w-2xl mx-auto">
         <h1 className="text-2xl font-bold mb-6">Cài đặt Người dùng</h1>
 
@@ -180,11 +209,10 @@ export default function MyAccount() {
               </select>
             </div>
 
-            {/* NÚT CẬP NHẬT */}
             <div className="pt-4 border-t">
               <button 
                 onClick={handleUpdate}
-                className="w-full md:w-auto bg-black text-white px-10 py-3 rounded-lg font-bold uppercase tracking-widest hover:bg-gray-800 transition-all"
+                className="w-full md:w-auto bg-black text-white px-10 py-3 rounded-lg font-bold uppercase tracking-widest hover:bg-gray-800 transition-all active:scale-95"
               >
                 Lưu thay đổi
               </button>
@@ -193,6 +221,16 @@ export default function MyAccount() {
           </div>
         </div>
       </div>
+
+      <style jsx>{`
+        @keyframes slide-in {
+          from { transform: translateX(100%); opacity: 0; }
+          to { transform: translateX(0); opacity: 1; }
+        }
+        .animate-slide-in { 
+          animation: slide-in 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; 
+        }
+      `}</style>
     </div>
   );
 }
