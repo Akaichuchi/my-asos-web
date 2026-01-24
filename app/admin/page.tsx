@@ -81,11 +81,20 @@ export default function AdminDashboard() {
   const handleProductSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const method = editingProduct ? 'PUT' : 'POST';
+    
+    // CẬP NHẬT TẠI ĐÂY: Ép kiểu dữ liệu để khớp với Prisma Float
+    const payload = {
+      ...productForm,
+      price: parseFloat(productForm.price) || 0,
+      originalPrice: productForm.originalPrice ? parseFloat(productForm.originalPrice) : null,
+      id: editingProduct?.id
+    };
+
     try {
       const res = await fetch('/api/products', {
         method: method,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(editingProduct ? { ...productForm, id: editingProduct.id } : productForm),
+        body: JSON.stringify(payload),
       });
 
       if (res.ok) {
@@ -96,6 +105,9 @@ export default function AdminDashboard() {
           category: "women", tag: "SELLING FAST", sizeFit: "", details: "" 
         });
         fetchProducts();
+      } else {
+        const errorData = await res.json();
+        alert(`Lỗi: ${errorData.error || 'Không thể thực hiện'}`);
       }
     } catch (error) { alert('Lỗi thao tác sản phẩm!'); }
   };
@@ -206,7 +218,6 @@ export default function AdminDashboard() {
                   <input type="text" className="w-full border-2 border-black p-2 outline-none" value={productForm.originalPrice} onChange={(e) => setProductForm({...productForm, originalPrice: e.target.value})} />
                 </div>
                 
-                {/* PHẦN ĐƯỢC CẬP NHẬT: Tích hợp nút upload Cloudinary */}
                 <div className="md:col-span-2">
                   <div className="flex justify-between items-end mb-1">
                     <label className="text-[10px] font-bold uppercase text-blue-600">Hình ảnh sản phẩm (Nhiều ảnh):*</label>
