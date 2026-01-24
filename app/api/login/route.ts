@@ -3,23 +3,44 @@ import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
+// API ĐĂNG NHẬP: Đã cập nhật theo cấu trúc Username/Password mới
 export async function POST(request: Request) {
   try {
-    const { email } = await request.json();
+    // 1. Nhận username và password từ LoginPage gửi lên
+    const { username, password } = await request.json();
 
-    // Tìm kiếm người dùng trong Database dựa trên email
+    // 2. Tìm kiếm người dùng trong Database dựa trên username
     const user = await prisma.user.findUnique({
-      where: { email: email },
+      where: { username: username },
     });
 
     if (user) {
-      // Nếu tìm thấy, trả về thành công để LoginPage cho phép đăng nhập
-      return NextResponse.json({ message: 'User found', user }, { status: 200 });
+      // 3. Kiểm tra mật khẩu (So sánh trực tiếp để khớp với logic hiện tại của bạn)
+      if (user.password === password) {
+        // Nếu khớp cả username và password, trả về thành công
+        return NextResponse.json(
+          { message: 'Đăng nhập thành công', user: { username: user.username, role: user.role } }, 
+          { status: 200 }
+        );
+      } else {
+        // Nếu sai mật khẩu
+        return NextResponse.json(
+          { error: 'Mật khẩu không chính xác!' }, 
+          { status: 401 }
+        );
+      }
     } else {
-      // Nếu không thấy, trả về lỗi để LoginPage báo khách hàng cần Đăng ký
-      return NextResponse.json({ error: 'Tài khoản không tồn tại!' }, { status: 404 });
+      // Nếu không tìm thấy tên người dùng
+      return NextResponse.json(
+        { error: 'Tài khoản không tồn tại!' }, 
+        { status: 404 }
+      );
     }
   } catch (error) {
-    return NextResponse.json({ error: 'Lỗi kết nối máy chủ' }, { status: 500 });
+    console.error("Lỗi API Login:", error);
+    return NextResponse.json(
+      { error: 'Lỗi kết nối máy chủ' }, 
+      { status: 500 }
+    );
   }
 }
