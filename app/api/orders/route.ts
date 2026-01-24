@@ -11,7 +11,8 @@ export async function POST(req: Request) {
     // Kiểm tra cấu hình để báo lỗi chính xác trên giao diện
     if (!supabaseUrl || !supabaseKey) {
       console.error("Thiếu cấu hình Supabase URL hoặc Key trên Vercel");
-      throw new Error("Cấu hình hệ thống chưa hoàn tất trên Vercel");
+      // Trả về lỗi chi tiết để bạn biết chính xác biến nào đang bị undefined
+      throw new Error(`Cấu hình chưa hoàn tất: ${!supabaseUrl ? 'Thiếu URL' : ''} ${!supabaseKey ? 'Thiếu Key' : ''}`);
     }
 
     const supabase = createClient(supabaseUrl, supabaseKey);
