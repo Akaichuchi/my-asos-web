@@ -21,23 +21,24 @@ export default function AdminDashboard() {
 
   const [amountChange, setAmountChange] = useState<{ [key: string]: string }>({});
 
-  // TÍNH NĂNG MỚI: Tải danh sách đơn hàng tái chế
+  // TÍNH NĂNG MỚI: Tải danh sách đơn hàng tái chế (Đã sửa logic fetch)
   const fetchOrders = async () => {
     try {
       const { data, error } = await supabase
-        .from('orders')
+        .from('Order') // GIỮ NGUYÊN: Sửa tên bảng cho khớp DB
         .select('*')
-        .order('created_at', { ascending: false });
+        .eq('status', 'RECYCLE') // Lọc đúng đơn hàng khách bấm Tái chế
+        .order('createdAt', { ascending: false }); // Sửa tên cột thời gian
       if (!error && data) setOrders(data);
     } catch (err) { console.error("Lỗi tải đơn hàng:", err); }
   };
 
-  // TÍNH NĂNG MỚI: Duyệt đơn hàng (Đổi trạng thái sang success)
+  // TÍNH NĂNG MỚI: Duyệt đơn hàng (Đổi trạng thái sang SUCCESS)
   const handleApproveOrder = async (orderId: string) => {
     try {
       const { error } = await supabase
-        .from('orders')
-        .update({ status: 'success' })
+        .from('Order')
+        .update({ status: 'SUCCESS' }) // Duyệt thành công
         .eq('id', orderId);
 
       if (error) throw error;
@@ -233,7 +234,6 @@ export default function AdminDashboard() {
           </div>
         )}
 
-        {/* TAB MỚI: QUẢN LÝ ĐƠN HÀNG (DUYỆT TÁI CHẾ) */}
         {activeTab === 'orders' && (
           <div className="bg-white border-2 border-black p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] text-black">
             <h2 className="text-2xl font-black uppercase mb-6 italic underline">Duyệt Đơn Hàng Tái Chế</h2>
@@ -247,14 +247,14 @@ export default function AdminDashboard() {
                     <div>
                       <div className="text-[10px] font-bold text-gray-400">ORDER ID: {order.id.slice(0,8)}...</div>
                       <div className="text-sm font-black uppercase">{order.product_name}</div>
-                      <div className="text-[11px] font-bold text-blue-600">User ID: {order.user_id}</div>
+                      <div className="text-[11px] font-bold text-blue-600">User ID: {order.userId}</div>
                     </div>
                   </div>
                   <div className="flex items-center gap-4 mt-4 md:mt-0">
-                    <div className={`px-3 py-1 text-[10px] font-black uppercase border-2 border-black ${order.status === 'pending' ? 'bg-yellow-400' : 'bg-green-500 text-white'}`}>
+                    <div className={`px-3 py-1 text-[10px] font-black uppercase border-2 border-black ${order.status === 'RECYCLE' ? 'bg-yellow-400' : 'bg-green-500 text-white'}`}>
                       {order.status}
                     </div>
-                    {order.status === 'pending' && (
+                    {order.status === 'RECYCLE' && (
                       <button 
                         onClick={() => handleApproveOrder(order.id)}
                         className="bg-red-600 text-white px-4 py-2 text-[10px] font-black uppercase hover:bg-black transition-all"
@@ -271,7 +271,6 @@ export default function AdminDashboard() {
 
         {activeTab === 'products' && (
           <div className="space-y-10">
-            {/* GIỮ NGUYÊN FORM ĐĂNG SẢN PHẨM VÀ DANH SÁCH SẢN PHẨM CŨ CỦA BẠN 100% */}
             <div className="bg-white border-2 border-black p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
                <h2 className="text-2xl font-black uppercase mb-6 italic underline">{editingProduct ? 'Edit Product' : 'Add New Product'}</h2>
                <form onSubmit={handleProductSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-gray-50 border border-dashed border-black">
