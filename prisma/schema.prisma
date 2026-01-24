@@ -26,3 +26,13 @@ model Product {
   details       String?  @db.Text
   createdAt     DateTime @default(now())
 }
+
+model Review {
+  id        Int      @id @default(autoincrement())
+  rating    Int      // Số sao (ví dụ: 1 đến 5)
+  comment   String   @db.Text
+  author    String   // Tên người đánh giá
+  productId Int      // ID của sản phẩm được đánh giá
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+}

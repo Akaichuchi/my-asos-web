@@ -82,13 +82,22 @@ export default function AdminDashboard() {
     e.preventDefault();
     const method = editingProduct ? 'PUT' : 'POST';
     
-    // CẬP NHẬT TẠI ĐÂY: Ép kiểu dữ liệu để khớp với Prisma Float
-    const payload = {
-      ...productForm,
+    // Tách dữ liệu: price/originalPrice ép kiểu số, id tách riêng để tránh xung đột Prisma
+    const productData = {
+      name: productForm.name,
       price: parseFloat(productForm.price) || 0,
       originalPrice: productForm.originalPrice ? parseFloat(productForm.originalPrice) : null,
-      id: editingProduct?.id
+      images: productForm.images,
+      category: productForm.category,
+      tag: productForm.tag,
+      sizeFit: productForm.sizeFit,
+      details: productForm.details,
     };
+
+    // Nếu là PUT, đính kèm id vào body nhưng ở cấp độ ngoài cùng để API xử lý tách biệt
+    const payload = editingProduct 
+      ? { ...productData, id: editingProduct.id } 
+      : productData;
 
     try {
       const res = await fetch('/api/products', {
@@ -275,21 +284,21 @@ export default function AdminDashboard() {
                         <p className="text-[10px] text-gray-500 italic">Category: {p.category}</p>
                         
                         <div className="mt-4 pt-4 border-t border-dashed border-gray-300">
-                           <p className="text-[10px] font-black uppercase mb-2">Đánh giá gần đây:</p>
-                           {p.reviews && p.reviews.length > 0 ? (
-                               p.reviews.map((r: any) => (
-                                   <div key={r.id} className="text-[10px] bg-gray-50 p-2 mb-1 border-l-2 border-black">
-                                       <span className="font-bold">{r.userName}:</span> {r.comment} ({r.rating}★)
-                                   </div>
-                               ))
-                           ) : (
-                               <p className="text-[10px] italic text-gray-400">Chưa có bình luận nào.</p>
-                           )}
+                            <p className="text-[10px] font-black uppercase mb-2">Đánh giá gần đây:</p>
+                            {p.reviews && p.reviews.length > 0 ? (
+                                p.reviews.map((r: any) => (
+                                    <div key={r.id} className="text-[10px] bg-gray-50 p-2 mb-1 border-l-2 border-black">
+                                        <span className="font-bold">{r.userName}:</span> {r.comment} ({r.rating}★)
+                                    </div>
+                                ))
+                            ) : (
+                                <p className="text-[10px] italic text-gray-400">Chưa có bình luận nào.</p>
+                            )}
                         </div>
                     </div>
                     <div className="flex md:flex-col gap-2 justify-center">
-                       <button onClick={() => { setEditingProduct(p); setProductForm(p); }} className="bg-black text-white text-[10px] px-4 py-2 font-bold uppercase hover:bg-gray-700">SỬA</button>
-                       <button onClick={() => handleDeleteProduct(p.id)} className="bg-red-600 text-white text-[10px] px-4 py-2 font-bold uppercase hover:bg-red-800">XÓA</button>
+                        <button onClick={() => { setEditingProduct(p); setProductForm(p); }} className="bg-black text-white text-[10px] px-4 py-2 font-bold uppercase hover:bg-gray-700">SỬA</button>
+                        <button onClick={() => handleDeleteProduct(p.id)} className="bg-red-600 text-white text-[10px] px-4 py-2 font-bold uppercase hover:bg-red-800">XÓA</button>
                     </div>
                   </div>
                 ))}
