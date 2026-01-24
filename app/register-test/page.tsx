@@ -4,14 +4,12 @@ import { useRouter } from 'next/navigation';
 
 export default function RegisterPage() {
   const router = useRouter();
-  // Thay đổi state sang username và password
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState({ text: '', type: '' });
   const [isShaking, setIsShaking] = useState(false); 
   const usernameInputRef = useRef<HTMLInputElement>(null); 
 
-  // 1. Tự động Focus vào ô đầu tiên khi trang tải xong
   useEffect(() => {
     if (usernameInputRef.current) {
       usernameInputRef.current.focus();
@@ -21,7 +19,6 @@ export default function RegisterPage() {
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Kiểm tra độ dài tên người dùng thay vì kiểm tra '@'
     if (username.length < 3) {
       setIsShaking(true);
       setTimeout(() => setIsShaking(false), 500);
@@ -40,19 +37,18 @@ export default function RegisterPage() {
     const data = await response.json();
 
     if (response.ok) {
-      // Lưu thông tin vào localStorage để Header nhận diện
+      // 1. Lưu thông tin vào localStorage để Header nhận diện
       localStorage.setItem('userName', username);
 
       setMessage({ text: '✅ Thành công! Đang chuyển hướng...', type: 'success' });
       setUsername('');
       setPassword('');
       
+      // 2. CẬP NHẬT ĐIỀU HƯỚNG: Sử dụng window.location.href để ép tải lại tại trang chủ
       setTimeout(() => {
-        router.push('/');
-        window.location.reload();
+        window.location.href = '/'; 
       }, 1500);
     } else {
-      // 2. Hiệu ứng rung khi có lỗi từ server
       setIsShaking(true);
       setTimeout(() => setIsShaking(false), 500);
       setMessage({ text: `❌ Lỗi: ${data.error}`, type: 'error' });
@@ -60,13 +56,8 @@ export default function RegisterPage() {
   };
 
   return (
-    /** * THAY ĐỔI TẠI ĐÂY: 
-     * Bỏ 'items-center' để không căn giữa dọc tuyệt đối.
-     * Thêm 'pt-10' (hoặc pt-5 nếu muốn sát hơn) để bỏ khoảng trống phía trên.
-     */
     <div className="min-h-screen flex flex-col items-center pt-10 font-sans bg-[#F3F3F3] p-4 relative overflow-hidden">
       
-      {/* Container Form - Loại bỏ hoàn toàn 2 cột banner ảnh */}
       <div className={`w-full max-w-[420px] bg-white p-8 md:p-12 shadow-2xl border-t-4 border-black animate-in fade-in zoom-in duration-700 ${isShaking ? 'animate-shake' : ''}`}
             style={isShaking ? {animation: 'shake 0.5s ease-in-out'} : {}}>
         
@@ -76,7 +67,6 @@ export default function RegisterPage() {
         </div>
 
         <div className="w-full">
-          {/* CÁC ICON TÍNH NĂNG - GIỮ NGUYÊN 100% */}
           <div className="grid grid-cols-4 gap-2 mb-10">
             {[
               { icon: '🏷️', label: 'Exclusive discounts' },
@@ -149,7 +139,6 @@ export default function RegisterPage() {
         </div>
       </div>
 
-      {/* CSS cho hiệu ứng Shake - Giữ nguyên */}
       <style jsx global>{`
         @keyframes shake {
           0%, 100% { transform: translateX(0); }
