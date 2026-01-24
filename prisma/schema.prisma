@@ -14,25 +14,29 @@ model User {
   balance Float  @default(0.0)
   role    String @default("USER")
 }
+
 model Product {
   id            Int      @id @default(autoincrement())
   name          String
-  price         Float    // Chuyển về Float để tính toán
-  originalPrice Float?   // Chuyển về Float
-  images        String   @db.Text // Đổi từ 'img' thành 'images' cho khớp với code
+  price         Float
+  originalPrice Float?
+  images        String   @db.Text
   category      String
   tag           String?  @default("SELLING FAST")
   sizeFit       String?  @db.Text
   details       String?  @db.Text
   createdAt     DateTime @default(now())
+  
+  // DÒNG NÀY PHẢI CÓ ĐỂ FIX LỖI BUILD VERCEL
+  reviews       Review[] 
 }
 
 model Review {
   id        Int      @id @default(autoincrement())
-  rating    Int      // Số sao (ví dụ: 1 đến 5)
+  rating    Int
   comment   String   @db.Text
-  author    String   // Tên người đánh giá
-  productId Int      // ID của sản phẩm được đánh giá
+  userName  String
+  productId Int
   product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
 }
