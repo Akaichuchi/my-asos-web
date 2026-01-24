@@ -5,17 +5,19 @@ export default function MyAccount() {
   const [userName, setUserName] = useState("");
   const [fullName, setFullName] = useState("");
   const [country, setCountry] = useState("Việt Nam");
-  const [balance, setBalance] = useState("0.00");
+  const [balance, setBalance] = useState("0.00"); // Mặc định bắt đầu từ 0
   const [isSaved, setIsSaved] = useState(false);
   
   // Quản lý ảnh đại diện
   const [avatar, setAvatar] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Danh sách quốc gia mở rộng
+  // Danh sách quốc gia mở rộng đầy đủ
   const countries = [
-    "Việt Nam", "USA", "Japan", "Korea", "China", "France", 
-    "Germany", "UK", "Canada", "Australia", "Singapore", "Thailand", "Russia", "India"
+    "Việt Nam", "USA", "Japan", "Korea", "China", "France", "Germany", "UK", 
+    "Canada", "Australia", "Singapore", "Thailand", "Russia", "India", 
+    "Lào", "Campuchia", "Malaysia", "Indonesia", "Philippines", "Brazil", 
+    "Italy", "Spain", "Mexico", "Turkey", "Switzerland"
   ];
 
   useEffect(() => {
@@ -23,11 +25,13 @@ export default function MyAccount() {
     const storedName = localStorage.getItem("userName");
     if (storedName) setUserName(storedName);
 
-    // 2. Lấy thông tin đã lưu (Họ tên, Quốc gia, Ảnh, Số dư)
+    // 2. Lấy thông tin đã lưu từ hệ thống
     const savedFullName = localStorage.getItem("userFullName");
     const savedCountry = localStorage.getItem("userCountry");
     const savedAvatar = localStorage.getItem("userAvatar");
-    const savedBalance = localStorage.getItem("userBalance") || "253,498.00"; // Số dư mặc định hoặc từ Admin
+    
+    // Lấy số dư thực tế từ LocalStorage, nếu không có thì hiện 0.00
+    const savedBalance = localStorage.getItem("userBalance") || "0.00";
 
     if (savedFullName) setFullName(savedFullName);
     if (savedCountry) setCountry(savedCountry);
@@ -46,7 +50,7 @@ export default function MyAccount() {
       const reader = new FileReader();
       reader.onloadend = () => {
         const base64String = reader.result as string;
-        setAvatar(base64String); // Hiển thị ảnh ngay lập tức
+        setAvatar(base64String);
       };
       reader.readAsDataURL(file);
     }
@@ -121,7 +125,7 @@ export default function MyAccount() {
                 disabled 
                 className="w-full bg-gray-100 border border-gray-200 rounded-lg py-3 px-4 cursor-not-allowed text-gray-500 font-bold"
               />
-              <p className="text-[10px] text-gray-400 mt-1">* Số dư này do Admin quản lý và cập nhật</p>
+              {/* Đã xóa dòng chữ nhỏ ở đây */}
             </div>
 
             <div>
