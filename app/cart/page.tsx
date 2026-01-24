@@ -8,19 +8,36 @@ export default function CartPage() {
   const [cartItems, setCartItems] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [paymentMethod, setPaymentMethod] = useState("balance");
-  const [userBalance, setUserBalance] = useState(1001.00); 
+  const [userBalance, setUserBalance] = useState(0); 
   // Trạng thái hiển thị thông báo thành công (Hình 3)
   const [isOrdered, setIsOrdered] = useState(false);
 
   useEffect(() => {
+    // 1. Lấy dữ liệu giỏ hàng từ LocalStorage
     const data = localStorage.getItem("cart");
     if (data) {
       setCartItems(JSON.parse(data));
     }
     
-    const savedBalance = localStorage.getItem("user_balance");
-    if (savedBalance) setUserBalance(parseFloat(savedBalance));
-    
+    // 2. LẤY SỐ DƯ THỰC TẾ TỪ DATABASE (Thay vì dùng số ảo 1001$)
+    const fetchBalance = async () => {
+      try {
+        // Giả sử ID của bạn là 10 như đã trao đổi
+        const response = await fetch('/api/user/10'); 
+        const userData = await response.json();
+        if (userData && userData.balance !== undefined) {
+          setUserBalance(userData.balance);
+          localStorage.setItem("user_balance", userData.balance.toString());
+        }
+      } catch (error) {
+        console.error("Không thể lấy số dư thực tế");
+        // Fallback về localStorage nếu lỗi mạng
+        const savedBalance = localStorage.getItem("user_balance");
+        if (savedBalance) setUserBalance(parseFloat(savedBalance));
+      }
+    };
+
+    fetchBalance();
     setLoading(false);
   }, []);
 
@@ -40,31 +57,54 @@ export default function CartPage() {
     localStorage.setItem("cart", JSON.stringify(updatedCart));
   };
 
-  const handlePlaceOrder = () => {
+  // CẬP NHẬT: GỌI API TRỪ TIỀN THẬT
+  const handlePlaceOrder = async () => {
     if (paymentMethod === "balance") {
+      // Kiểm tra nhanh ở Frontend
       if (userBalance < totalPrice) {
         alert("SỐ DƯ KHÔNG ĐỦ!");
         return;
       }
 
-      // Giả lập xác nhận thanh toán
       const confirmOrder = confirm(`XÁC NHẬN THANH TOÁN $${totalPrice.toFixed(2)}?`);
       if (confirmOrder) {
-        const newBalance = userBalance - totalPrice;
-        setUserBalance(newBalance);
-        localStorage.setItem("user_balance", newBalance.toString());
-        localStorage.removeItem("cart");
-        setCartItems([]);
-        
-        // Thay vì alert, ta hiển thị giao diện thông báo (Hình 3)
-        setIsOrdered(true);
+        try {
+          // GỌI API ĐỂ TRỪ TIỀN TRONG SUPABASE VÀ TẠO ĐƠN HÀNG
+          const response = await fetch('/api/orders', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              userId: 10, // ID người dùng (đã khớp với Admin)
+              totalAmount: totalPrice,
+            }),
+          });
+
+          const result = await response.json();
+
+          if (response.ok) {
+            // Cập nhật số dư hiển thị và xóa giỏ hàng
+            const newBalance = userBalance - totalPrice;
+            setUserBalance(newBalance);
+            localStorage.setItem("user_balance", newBalance.toString());
+            localStorage.removeItem("cart");
+            setCartItems([]);
+            
+            // Hiển thị giao diện thông báo thành công
+            setIsOrdered(true);
+          } else {
+            // Hiển thị lỗi từ Database (ví dụ: "Tài khoản không đủ tiền")
+            alert("LỖI: " + result.error);
+          }
+        } catch (error) {
+          alert("Lỗi kết nối hệ thống. Vui lòng thử lại!");
+        }
       }
     }
   };
 
   if (loading) return <div className="py-20 text-center font-black italic animate-pulse">LOADING...</div>;
 
-  // GIAO DIỆN THÔNG BÁO THÀNH CÔNG (Modal 2 nút bấm như hình 3)
+  // GIAO DIỆN THÔNG BÁO THÀNH CÔNG (Giữ nguyên 100%)
   if (isOrdered) {
     return (
       <div className="fixed inset-0 bg-white z-50 flex items-center justify-center p-4">
@@ -74,7 +114,6 @@ export default function CartPage() {
           </h2>
           
           <div className="space-y-4">
-            {/* Nút 1: Quay về trang chủ */}
             <Link 
               href="/" 
               className="block w-full bg-[#8e7c74] text-white py-4 text-[11px] font-bold uppercase tracking-[2px] hover:brightness-90 transition-all"
@@ -82,7 +121,6 @@ export default function CartPage() {
               TIẾP TỤC MUA SẮM
             </Link>
 
-            {/* Nút 2: Chuyển hướng theo dõi đơn hàng (trang khác) */}
             <button 
               onClick={() => router.push("/my-account/orders")} 
               className="block w-full bg-[#8e7c74] text-white py-4 text-[11px] font-bold uppercase tracking-[2px] hover:brightness-90 transition-all"
@@ -95,7 +133,7 @@ export default function CartPage() {
     );
   }
 
-  // GIAO DIỆN KHI GIỎ HÀNG TRỐNG
+  // GIAO DIỆN KHI GIỎ HÀNG TRỐNG (Giữ nguyên 100%)
   if (cartItems.length === 0) {
     return (
       <div className="max-w-[600px] mx-auto py-24 px-4 text-center">
@@ -107,7 +145,7 @@ export default function CartPage() {
     );
   }
 
-  // GIAO DIỆN GIỎ HÀNG CHÍNH (Hình 1 & 2)
+  // GIAO DIỆN GIỎ HÀNG CHÍNH (Giữ nguyên 100% bố cục của bạn)
   return (
     <div className="bg-white min-h-screen font-sans text-black pb-20">
       <div className="max-w-[600px] mx-auto px-4 pt-10">
