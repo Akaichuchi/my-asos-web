@@ -3,12 +3,12 @@ import { createClient } from "@supabase/supabase-js";
 
 export async function POST(req: Request) {
   try {
-    // Gọi biến môi trường TRỰC TIẾP bên trong hàm POST 
-    // Điều này ép Vercel phải lấy giá trị mới nhất từ hệ thống
+    // 1. Gọi biến môi trường trực tiếp bên trong hàm POST 
+    // Điều này ép Vercel lấy giá trị mới nhất bạn vừa dán vào Settings
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
     const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-    // Kiểm tra cấu hình để báo lỗi chính xác
+    // Kiểm tra cấu hình để báo lỗi chính xác trên giao diện
     if (!supabaseUrl || !supabaseKey) {
       console.error("Thiếu cấu hình Supabase URL hoặc Key trên Vercel");
       throw new Error("Cấu hình hệ thống chưa hoàn tất trên Vercel");
