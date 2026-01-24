@@ -33,39 +33,46 @@ export default function AllWomenProducts() {
     fetchAllProducts();
   }, []);
 
-  // HÀM XỬ LÝ LƯU VÀO SAVED-ITEMS - GIỮ NGUYÊN LOGIC CỦA BẠN
+  // HÀM XỬ LÝ LƯU - ĐÃ ĐỒNG BỘ 100% VỚI LOGIC TRANG CHI TIẾT CỦA BẠN
   const handleToggleWishlist = (e: React.MouseEvent, product: Product) => {
     e.preventDefault();
     e.stopPropagation();
 
-    const storageKey = "saved-items";
-    const savedItems = JSON.parse(localStorage.getItem(storageKey) || "[]");
-    const existingIndex = savedItems.findIndex((item: Product) => item.id === product.id);
+    // Sử dụng Key "wishlist" và cấu trúc Object giống hệt trang chi tiết
+    const currentWishlist = JSON.parse(localStorage.getItem("wishlist") || "[]");
+    const isExisted = currentWishlist.find((item: any) => item.id === product.id);
 
-    let newItems;
-    if (existingIndex > -1) {
-      newItems = savedItems.filter((item: Product) => item.id !== product.id);
+    if (!isExisted) {
+      currentWishlist.push({
+        id: product.id,
+        name: product.name,
+        price: product.price,
+        image: product.images // Đồng bộ ảnh
+      });
+      localStorage.setItem("wishlist", JSON.stringify(currentWishlist));
+      alert("Đã thêm vào mục yêu thích! ❤️");
     } else {
-      newItems = [product, ...savedItems];
+      // Nếu đã có thì xóa (Logic Toggle chuyên nghiệp)
+      const newWishlist = currentWishlist.filter((item: any) => item.id !== product.id);
+      localStorage.setItem("wishlist", JSON.stringify(newWishlist));
+      alert("Đã xóa khỏi mục yêu thích.");
     }
 
-    localStorage.setItem(storageKey, JSON.stringify(newItems));
+    // Kích hoạt sự kiện để Header cập nhật số lượng ngay lập tức
     window.dispatchEvent(new Event("storage"));
-    
-    console.log(existingIndex > -1 ? "Đã xóa khỏi mục đã lưu" : "Đã thêm vào mục đã lưu");
   };
 
   return (
     <div className="bg-white min-h-screen text-black">
       <main className="max-w-[1400px] mx-auto px-4 md:px-8 py-4">
-        {/* BREADCRUMBS - GIỮ NGUYÊN 100% */}
+        {/* BREADCRUMBS - GIỮ NGUYÊN */}
         <nav className="text-[11px] text-gray-500 mb-4 flex items-center gap-2">
           <Link href="/" className="hover:underline">Home</Link> <span>›</span>
           <Link href="/women" className="hover:underline">Women</Link> <span>›</span>
           <span className="text-gray-400 font-medium">CTAS</span>
         </nav>
 
-        {/* TIÊU ĐỀ & CHIPS - GIỮ NGUYÊN 100% */}
+        {/* TIÊU ĐỀ & CHIPS - GIỮ NGUYÊN */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
           <h1 className="text-2xl font-black uppercase tracking-widest">CTAS</h1>
           <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-2 md:pb-0">
@@ -77,7 +84,7 @@ export default function AllWomenProducts() {
           </div>
         </div>
 
-        {/* THANH CÔNG CỤ - GIỮ NGUYÊN 100% */}
+        {/* THANH CÔNG CỤ - GIỮ NGUYÊN */}
         <div className="sticky top-[64px] z-30 bg-white/95 border-y border-gray-100 py-3 flex justify-between items-center mb-8">
           <div className="flex gap-4">
             <button className="flex items-center gap-2 text-[12px] font-bold uppercase tracking-wider border-r pr-4">
@@ -104,7 +111,7 @@ export default function AllWomenProducts() {
 
               return (
                 <div key={item.id} className="group flex flex-col relative">
-                  {/* PHẦN HÌNH ẢNH */}
+                  {/* Bọc phần hình ảnh - Nhấn vào để xem chi tiết */}
                   <div className="relative aspect-[3/4] overflow-hidden bg-[#f3f3f3]">
                     <Link href={`/product/${item.id}`} className="block w-full h-full">
                       {discount > 0 && (
@@ -112,6 +119,7 @@ export default function AllWomenProducts() {
                           -{discount}%
                         </span>
                       )}
+                      
                       <img 
                         src={item.images} 
                         alt={item.name}
@@ -119,11 +127,10 @@ export default function AllWomenProducts() {
                       />
                     </Link>
 
-                    {/* NÚT TIM - TÁCH BIỆT ĐỂ KHÔNG BỊ LINK ĐÈ LÊN */}
+                    {/* NÚT TIM - ĐÃ ĐỒNG BỘ LOGIC CHI TIẾT */}
                     <button 
-                      type="button"
                       onClick={(e) => handleToggleWishlist(e, item)}
-                      className="absolute bottom-3 right-3 z-30 bg-white/90 p-2 rounded-full shadow-sm hover:bg-white transition-all active:scale-75 group/heart"
+                      className="absolute bottom-3 right-3 z-20 bg-white/90 p-2 rounded-full shadow-sm hover:bg-white transition-all active:scale-95 group/heart"
                       title="Save for later"
                     >
                       <svg className="w-5 h-5 group-hover/heart:fill-red-500 group-hover/heart:stroke-red-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -132,7 +139,7 @@ export default function AllWomenProducts() {
                     </button>
                   </div>
 
-                  {/* THÔNG TIN SẢN PHẨM - GIỮ NGUYÊN 100% */}
+                  {/* THÔNG TIN SẢN PHẨM */}
                   <div className="mt-3 space-y-1">
                     <Link href={`/product/${item.id}`}>
                       <h3 className="text-[13px] text-gray-700 leading-snug group-hover:underline cursor-pointer min-h-[36px] line-clamp-2">
