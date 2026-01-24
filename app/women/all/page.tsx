@@ -33,25 +33,33 @@ export default function AllWomenProducts() {
     fetchAllProducts();
   }, []);
 
-  // HÀM XỬ LÝ LƯU VÀO SAVED-ITEMS (Giữ nguyên tính năng tệp hiện tại)
+  // HÀM XỬ LÝ LƯU VÀO SAVED-ITEMS - ĐÃ TỐI ƯU
   const handleToggleWishlist = (e: React.MouseEvent, product: Product) => {
     e.preventDefault();
     e.stopPropagation();
 
-    // Đồng bộ với tệp saved-items của bạn thông qua localStorage
+    // Đồng bộ chính xác với tệp saved-items thông qua localStorage
     const savedItems = JSON.parse(localStorage.getItem("saved-items") || "[]");
-    const isExisted = savedItems.find((item: Product) => item.id === product.id);
+    
+    // Sử dụng findIndex để kiểm tra chính xác vị trí
+    const existingIndex = savedItems.findIndex((item: Product) => item.id === product.id);
 
-    if (isExisted) {
-      const newItems = savedItems.filter((item: Product) => item.id !== product.id);
-      localStorage.setItem("saved-items", JSON.stringify(newItems));
+    let newItems;
+    if (existingIndex > -1) {
+      // Nếu đã tồn tại thì lọc bỏ (xóa)
+      newItems = savedItems.filter((item: Product) => item.id !== product.id);
     } else {
-      savedItems.push(product);
-      localStorage.setItem("saved-items", JSON.stringify(savedItems));
+      // Nếu chưa có thì thêm vào đầu danh sách
+      newItems = [product, ...savedItems];
     }
 
-    // Gửi tín hiệu để các trang khác (như trang saved-items hoặc icon Header) cập nhật kịp thời
+    localStorage.setItem("saved-items", JSON.stringify(newItems));
+
+    // Kích hoạt sự kiện storage để các component khác (như Icon trên Header) nhận biết
     window.dispatchEvent(new Event("storage"));
+    
+    // Alert để bạn biết nút đã ăn lệnh (có thể xóa sau khi test xong)
+    console.log(existingIndex > -1 ? "Đã xóa khỏi mục đã lưu" : "Đã thêm vào mục đã lưu");
   };
 
   return (
@@ -103,7 +111,7 @@ export default function AllWomenProducts() {
 
               return (
                 <div key={item.id} className="group flex flex-col relative">
-                  {/* Bọc toàn bộ ảnh bằng Link để dẫn tới trang chi tiết */}
+                  {/* Bọc phần hình ảnh - Nhấn vào để xem chi tiết */}
                   <Link href={`/product/${item.id}`} className="block relative aspect-[3/4] overflow-hidden bg-[#f3f3f3]">
                     {discount > 0 && (
                       <span className="absolute top-0 left-0 z-10 bg-white text-[#d01345] px-2 py-1 text-[12px] font-bold">
@@ -118,12 +126,13 @@ export default function AllWomenProducts() {
                     />
                   </Link>
 
-                  {/* NÚT TIM - XỬ LÝ LƯU VÀO SAVED-ITEMS */}
+                  {/* NÚT TIM - Nằm ĐỘC LẬP để đảm bảo sự kiện Click không bị lỗi */}
                   <button 
                     onClick={(e) => handleToggleWishlist(e, item)}
-                    className="absolute bottom-[95px] right-3 z-20 bg-white/90 p-2 rounded-full shadow-sm hover:bg-white transition-all active:scale-95"
+                    className="absolute bottom-[95px] right-3 z-20 bg-white/90 p-2 rounded-full shadow-sm hover:bg-white transition-all active:scale-90 group/heart"
+                    title="Save for later"
                   >
-                    <svg className="w-5 h-5 hover:fill-red-500 hover:stroke-red-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-5 h-5 group-hover/heart:fill-red-500 group-hover/heart:stroke-red-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                     </svg>
                   </button>
