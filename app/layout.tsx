@@ -12,9 +12,9 @@ const inter = Inter({ subsets: ["latin"] });
  * Giúp Google nhận diện thương hiệu ASOS 2026 của bạn tốt hơn
  */
 export const metadata: Metadata = {
-  title: "ASOS Online Shopping | Trang Sức, Quần Áo & Xu Hướng Thời Trang 2026",
-  description: "Khám phá những xu hướng thời trang mới nhất tại ASOS. Miễn phí vận chuyển toàn thế giới cho đơn hàng từ $50. Cập nhật phong cách Cool Girl Staples ngay hôm nay.",
-  keywords: "thời trang nữ, thời trang nam, ASOS 2026, mua sắm trực tuyến, cool girl staples",
+  title: "NEWEGG Online Shopping | Jewelry, Clothing & Fashion Trends 2026",
+  description: "Discover the latest fashion trends at ASOS. Free worldwide shipping on orders over $50. Get your Cool Girl Staples style update today.",
+  keywords: "Women's fashion, men's fashion, ASOS 2026, online shopping, cool girl staples",
 };
 
 export default function RootLayout({
