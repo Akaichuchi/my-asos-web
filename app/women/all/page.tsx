@@ -3,11 +3,13 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 
 interface Product {
-  id: string;
+  id: number; // Đổi thành number cho khớp Prisma
   name: string;
   price: number;
-  image: string;
-  brand: string;
+  originalPrice?: number; // Thêm trường này
+  images: string; // Đổi từ image -> images
+  category: string;
+  tag?: string; // Thêm tag từ DB
   isSellingFast?: boolean;
   hasMoreColors?: boolean;
 }
@@ -64,49 +66,71 @@ export default function AllWomenProducts() {
               Filter <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M3 4h18M6 12h12m-9 8h6" strokeWidth="2" strokeLinecap="round"/></svg>
             </button>
           </div>
-          <p className="text-[12px] text-gray-400 font-medium">54,183 styles found</p>
+          <p className="text-[12px] text-gray-400 font-medium">{products.length.toLocaleString()} styles found</p>
         </div>
 
-        {/* GRID SẢN PHẨM - ĐÃ SỬA LỖI ĐÓNG NGOẶC */}
+        {/* GRID SẢN PHẨM */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-12">
           {loading ? (
             [...Array(8)].map((_, i) => (
               <div key={i} className="animate-pulse bg-gray-100 aspect-[3/4] w-full rounded-sm" />
             ))
           ) : (
-            products.map((item) => (
-              <div key={item.id} className="group flex flex-col relative">
-                {/* ẢNH VÀ NÚT TIM */}
-                <div className="relative aspect-[3/4] overflow-hidden bg-[#f3f3f3]">
-                  <img 
-                    src={item.image} 
-                    alt={item.name}
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                  />
-                  <button className="absolute bottom-3 right-3 bg-white/90 p-2 rounded-full shadow-sm hover:bg-white transition-all">
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /></svg>
-                  </button>
-                </div>
+            products.map((item) => {
+              // Tính toán phần trăm giảm giá
+              const discount = item.originalPrice 
+                ? Math.round(((item.originalPrice - item.price) / item.originalPrice) * 100) 
+                : 0;
 
-                {/* THÔNG TIN SẢN PHẨM */}
-                <div className="mt-3 space-y-1">
-                  <h3 className="text-[13px] text-gray-700 leading-snug group-hover:underline cursor-pointer min-h-[36px] line-clamp-2">
-                    {item.name}
-                  </h3>
-                  <p className="text-[14px] font-black tracking-tight">${item.price.toFixed(2)}</p>
-                  
-                  {/* BADGES */}
-                  <div className="flex flex-wrap gap-2 pt-1 min-h-[22px]">
-                    {item.hasMoreColors && (
+              return (
+                <div key={item.id} className="group flex flex-col relative">
+                  {/* ẢNH VÀ NÚT TIM */}
+                  <div className="relative aspect-[3/4] overflow-hidden bg-[#f3f3f3]">
+                    {/* Badge giảm giá màu đỏ */}
+                    {discount > 0 && (
+                      <span className="absolute top-0 left-0 z-10 bg-white text-[#d01345] px-2 py-1 text-[12px] font-bold">
+                        -{discount}%
+                      </span>
+                    )}
+                    
+                    <img 
+                      src={item.images} // Cập nhật sang images
+                      alt={item.name}
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    />
+                    <button className="absolute bottom-3 right-3 bg-white/90 p-2 rounded-full shadow-sm hover:bg-white transition-all">
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /></svg>
+                    </button>
+                  </div>
+
+                  {/* THÔNG TIN SẢN PHẨM */}
+                  <div className="mt-3 space-y-1">
+                    <h3 className="text-[13px] text-gray-700 leading-snug group-hover:underline cursor-pointer min-h-[36px] line-clamp-2">
+                      {item.name}
+                    </h3>
+                    
+                    <div className="flex items-center gap-2">
+                      {item.originalPrice && (
+                        <p className="text-[14px] text-gray-500 line-through">${item.originalPrice.toFixed(2)}</p>
+                      )}
+                      <p className={`text-[14px] font-black tracking-tight ${item.originalPrice ? 'text-[#d01345]' : 'text-black'}`}>
+                        ${item.price.toFixed(2)}
+                      </p>
+                    </div>
+                    
+                    {/* BADGES */}
+                    <div className="flex flex-wrap gap-2 pt-1 min-h-[22px]">
                       <span className="text-[9px] font-bold uppercase text-gray-400 border border-gray-200 px-1.5 py-0.5">More colors</span>
-                    )}
-                    {item.isSellingFast && (
-                      <span className="text-[9px] font-bold uppercase bg-[#eeeeee] text-[#2d2d2d] px-1.5 py-0.5">Selling Fast</span>
-                    )}
+                      
+                      {/* Hiển thị Tag từ Database hoặc mặc định Selling Fast */}
+                      <span className="text-[9px] font-bold uppercase bg-[#eeeeee] text-[#2d2d2d] px-1.5 py-0.5">
+                        {item.tag || "Selling Fast"}
+                      </span>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))
+              );
+            })
           )}
         </div>
       </main>
