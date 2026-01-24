@@ -18,8 +18,8 @@ export async function POST(req: Request) {
     const supabase = createClient(supabaseUrl, supabaseKey);
     const body = await req.json();
     
-    // Đảm bảo lấy giá trị userId dưới dạng chuỗi để khớp với UUID trong Database
-    userId = body.userId?.toString(); 
+    // Đã chuyển sang ép kiểu Number để khớp với kiểu int8 trong Database (sửa lỗi uuid)
+    userId = Number(body.userId); 
     totalAmount = Number(body.totalAmount);
 
     // 1. Kiểm tra số dư và lưu lại số dư cũ để dự phòng hoàn tiền
@@ -46,7 +46,7 @@ export async function POST(req: Request) {
 
     if (updateError) throw new Error("Lỗi hệ thống khi trừ tiền, vui lòng thử lại");
 
-    // 3. Tạo bản ghi đơn hàng mới
+    // 3. Tạo bản ghi đơn hàng mới (Dữ liệu gửi đi đã khớp với kiểu int8/số trong Database)
     const { data: result, error: orderError } = await supabase
       .from("Order")
       .insert([{ 
@@ -62,7 +62,7 @@ export async function POST(req: Request) {
       await supabase.from("User").update({ balance: originalBalance }).eq("id", userId);
       
       console.error("Order insertion failed, refunding...", orderError.message);
-      // Trả về lỗi chi tiết từ Supabase (khắc phục lỗi invalid input syntax for type uuid)
+      // Trả về lỗi chi tiết từ Supabase
       throw new Error(`Tiền đã trừ nhưng lỗi tạo đơn: ${orderError.message}. Hệ thống đã tự động hoàn tiền!`);
     }
 
