@@ -1,21 +1,27 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 
-// Khởi tạo Supabase Client để thay thế Prisma nhằm tránh lỗi kết nối 08P01
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+// Khởi tạo các hằng số từ biến môi trường
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
+const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || "";
 
 export async function POST(req: Request) {
   try {
+    // Khởi tạo Client bên trong hàm POST để tránh lỗi "supabaseKey is required" khi Build trên Vercel
+    if (!supabaseUrl || !supabaseKey) {
+      console.error("Thiếu cấu hình Supabase URL hoặc Key");
+      throw new Error("Cấu hình hệ thống chưa hoàn tất trên Vercel");
+    }
+
+    const supabase = createClient(supabaseUrl, supabaseKey);
+
     const body = await req.json();
     
-    // Ép kiểu userId và totalAmount về số để đảm bảo tính toán chính xác
+    // Ép kiểu để tính toán chính xác
     const userId = Number(body.userId);
     const totalAmount = Number(body.totalAmount);
 
-    // 1. Kiểm tra sự tồn tại của User và số dư hiện tại từ Database thực tế
+    // 1. Kiểm tra số dư hiện tại của người dùng
     const { data: user, error: userError } = await supabase
       .from("User")
       .select("balance")
@@ -26,15 +32,13 @@ export async function POST(req: Request) {
       throw new Error("Người dùng không tồn tại trên hệ thống");
     }
 
-    // So sánh số dư: Đảm bảo số dư đủ để thực hiện giao dịch
+    // So sánh số dư thực tế
     if (Number(user.balance) < totalAmount) {
       throw new Error(`Số dư không đủ. Bạn có $${user.balance} nhưng cần $${totalAmount}`);
     }
 
-    // 2. Thực hiện trừ tiền trực tiếp vào cột balance trong bảng User
-    // Tính toán số dư mới trước khi cập nhật
+    // 2. Thực hiện trừ tiền
     const newBalance = Number(user.balance) - totalAmount;
-
     const { error: updateError } = await supabase
       .from("User")
       .update({ balance: newBalance })
@@ -58,12 +62,12 @@ export async function POST(req: Request) {
       .single();
 
     if (orderError) {
-      // Lưu ý: Lúc này tiền đã bị trừ, nếu lỗi tạo đơn cần log lại để Admin kiểm tra
-      console.error("Critical: Money deducted but order not created", orderError);
+      // Nếu lỗi tạo đơn sau khi đã trừ tiền, cần log lại để Admin kiểm tra
+      console.error("Critical error: Money deducted but order failed", orderError);
       throw new Error("Tiền đã trừ nhưng không thể tạo đơn hàng, hãy báo cho Admin!");
     }
 
-    // Trả về phản hồi thành công để Frontend kích hoạt Modal thông báo 2 nút
+    // Trả về phản hồi thành công để Frontend hiện Modal 2 nút
     return NextResponse.json({ 
       success: true, 
       message: "Thanh toán thành công", 
@@ -71,10 +75,7 @@ export async function POST(req: Request) {
     });
 
   } catch (error: any) {
-    // Log lỗi ra console để theo dõi chi tiết trên server
     console.error("Payment API Error:", error.message);
-    
-    // Trả về lỗi để Frontend hiển thị Alert cảnh báo người dùng
     return NextResponse.json({ 
       success: false, 
       error: error.message 
