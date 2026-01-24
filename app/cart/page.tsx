@@ -9,20 +9,16 @@ export default function CartPage() {
   const [loading, setLoading] = useState(true);
   const [paymentMethod, setPaymentMethod] = useState("balance");
   const [userBalance, setUserBalance] = useState(0); 
-  // Trạng thái hiển thị thông báo thành công (Hình 3)
   const [isOrdered, setIsOrdered] = useState(false);
 
   useEffect(() => {
-    // 1. Lấy dữ liệu giỏ hàng từ LocalStorage
     const data = localStorage.getItem("cart");
     if (data) {
       setCartItems(JSON.parse(data));
     }
     
-    // 2. LẤY SỐ DƯ THỰC TẾ TỪ DATABASE (Thay vì dùng số ảo 1001$)
     const fetchBalance = async () => {
       try {
-        // Giả sử ID của bạn là 10 như đã trao đổi
         const response = await fetch('/api/user/10'); 
         const userData = await response.json();
         if (userData && userData.balance !== undefined) {
@@ -31,7 +27,6 @@ export default function CartPage() {
         }
       } catch (error) {
         console.error("Không thể lấy số dư thực tế");
-        // Fallback về localStorage nếu lỗi mạng
         const savedBalance = localStorage.getItem("user_balance");
         if (savedBalance) setUserBalance(parseFloat(savedBalance));
       }
@@ -57,10 +52,8 @@ export default function CartPage() {
     localStorage.setItem("cart", JSON.stringify(updatedCart));
   };
 
-  // CẬP NHẬT: GỌI API TRỪ TIỀN THẬT
   const handlePlaceOrder = async () => {
     if (paymentMethod === "balance") {
-      // Kiểm tra nhanh ở Frontend
       if (userBalance < totalPrice) {
         alert("SỐ DƯ KHÔNG ĐỦ!");
         return;
@@ -69,30 +62,33 @@ export default function CartPage() {
       const confirmOrder = confirm(`XÁC NHẬN THANH TOÁN $${totalPrice.toFixed(2)}?`);
       if (confirmOrder) {
         try {
-          // GỌI API ĐỂ TRỪ TIỀN TRONG SUPABASE VÀ TẠO ĐƠN HÀNG
+          // LẤY DỮ LIỆU ĐỂ HIỆN HÌNH ẢNH
+          const firstItem = cartItems[0]; 
+
           const response = await fetch('/api/orders', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-              userId: 10, // ID người dùng (đã khớp với Admin)
+              userId: 10,
               totalAmount: totalPrice,
+              // Gửi thêm productName và imageUrl để Database ghi nhận
+              productName: cartItems.length > 1 
+                ? `${firstItem.name} và ${cartItems.length - 1} món khác` 
+                : firstItem.name,
+              imageUrl: firstItem.image // Key này phải khớp với cột image_url trong DB
             }),
           });
 
           const result = await response.json();
 
           if (response.ok) {
-            // Cập nhật số dư hiển thị và xóa giỏ hàng
             const newBalance = userBalance - totalPrice;
             setUserBalance(newBalance);
             localStorage.setItem("user_balance", newBalance.toString());
             localStorage.removeItem("cart");
             setCartItems([]);
-            
-            // Hiển thị giao diện thông báo thành công
             setIsOrdered(true);
           } else {
-            // Hiển thị lỗi từ Database (ví dụ: "Tài khoản không đủ tiền")
             alert("LỖI: " + result.error);
           }
         } catch (error) {
@@ -104,7 +100,6 @@ export default function CartPage() {
 
   if (loading) return <div className="py-20 text-center font-black italic animate-pulse">LOADING...</div>;
 
-  // GIAO DIỆN THÔNG BÁO THÀNH CÔNG (Giữ nguyên 100%)
   if (isOrdered) {
     return (
       <div className="fixed inset-0 bg-white z-50 flex items-center justify-center p-4">
@@ -112,7 +107,6 @@ export default function CartPage() {
           <h2 className="text-[14px] font-medium uppercase tracking-[4px] mb-12 text-zinc-500">
             CẢM ƠN BẠN ĐÃ ĐẶT HÀNG!
           </h2>
-          
           <div className="space-y-4">
             <Link 
               href="/" 
@@ -120,7 +114,6 @@ export default function CartPage() {
             >
               TIẾP TỤC MUA SẮM
             </Link>
-
             <button 
               onClick={() => router.push("/my-account/orders")} 
               className="block w-full bg-[#8e7c74] text-white py-4 text-[11px] font-bold uppercase tracking-[2px] hover:brightness-90 transition-all"
@@ -133,7 +126,6 @@ export default function CartPage() {
     );
   }
 
-  // GIAO DIỆN KHI GIỎ HÀNG TRỐNG (Giữ nguyên 100%)
   if (cartItems.length === 0) {
     return (
       <div className="max-w-[600px] mx-auto py-24 px-4 text-center">
@@ -145,7 +137,6 @@ export default function CartPage() {
     );
   }
 
-  // GIAO DIỆN GIỎ HÀNG CHÍNH (Giữ nguyên 100% bố cục của bạn)
   return (
     <div className="bg-white min-h-screen font-sans text-black pb-20">
       <div className="max-w-[600px] mx-auto px-4 pt-10">

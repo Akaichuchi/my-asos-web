@@ -1,18 +1,17 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
+import { supabase } from "@/lib/supabase"; // Đảm bảo bạn đã cấu hình tệp này
 
 export default function MyAccount() {
   const [userName, setUserName] = useState("");
   const [fullName, setFullName] = useState("");
   const [country, setCountry] = useState("Việt Nam");
-  const [balance, setBalance] = useState("0.00"); // Mặc định bắt đầu từ 0
+  const [balance, setBalance] = useState("0.00");
   const [isSaved, setIsSaved] = useState(false);
   
-  // Quản lý ảnh đại diện
   const [avatar, setAvatar] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Danh sách quốc gia mở rộng đầy đủ
   const countries = [
     "Việt Nam", "USA", "Japan", "Korea", "China", "France", "Germany", "UK", 
     "Canada", "Australia", "Singapore", "Thailand", "Russia", "India", 
@@ -21,25 +20,46 @@ export default function MyAccount() {
   ];
 
   useEffect(() => {
-    // 1. Lấy Username
-    const storedName = localStorage.getItem("userName");
-    if (storedName) setUserName(storedName);
+    // 1. Hàm lấy dữ liệu từ Supabase thay vì LocalStorage
+    const fetchUserData = async () => {
+      const storedName = localStorage.getItem("userName");
+      if (!storedName) return;
 
-    // 2. Lấy thông tin đã lưu từ hệ thống
-    const savedFullName = localStorage.getItem("userFullName");
-    const savedCountry = localStorage.getItem("userCountry");
-    const savedAvatar = localStorage.getItem("userAvatar");
-    
-    // Lấy số dư thực tế từ LocalStorage, nếu không có thì hiện 0.00
-    const savedBalance = localStorage.getItem("userBalance") || "0.00";
+      const { data, error } = await supabase
+        .from('User') // Tên bảng viết hoa theo database của bạn
+        .select('*')
+        .eq('username', storedName)
+        .single();
 
-    if (savedFullName) setFullName(savedFullName);
-    if (savedCountry) setCountry(savedCountry);
-    if (savedAvatar) setAvatar(savedAvatar);
-    setBalance(savedBalance);
+      if (data) {
+        setUserName(data.username || "");
+        setFullName(data.username || ""); // Bạn có thể thêm cột full_name vào DB nếu cần
+        setCountry(data.country || "Việt Nam");
+        setBalance(Number(data.balance || 0).toFixed(2));
+      }
+    };
+
+    fetchUserData();
+
+    // 2. THIẾT LẬP REALTIME: Tự động cập nhật khi Admin sửa trên Supabase
+    const userChannel = supabase
+      .channel('public:User')
+      .on('postgres_changes', 
+        { event: 'UPDATE', schema: 'public', table: 'User' }, 
+        (payload) => {
+          if (payload.new.username === localStorage.getItem("userName")) {
+            setBalance(Number(payload.new.balance || 0).toFixed(2));
+            setCountry(payload.new.country || "Việt Nam");
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(userChannel);
+    };
   }, []);
 
-  // Hàm xử lý chọn ảnh
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -56,14 +76,23 @@ export default function MyAccount() {
     }
   };
 
-  const handleUpdate = () => {
-    localStorage.setItem("userFullName", fullName);
-    localStorage.setItem("userCountry", country);
-    if (avatar) localStorage.setItem("userAvatar", avatar);
-    
-    setIsSaved(true);
-    setTimeout(() => setIsSaved(false), 3000);
-    alert("Cập nhật thông tin thành công!");
+  const handleUpdate = async () => {
+    const storedName = localStorage.getItem("userName");
+    if (!storedName) return;
+
+    // Cập nhật thông tin lên Supabase
+    const { error } = await supabase
+      .from('User')
+      .update({ country: country })
+      .eq('username', storedName);
+
+    if (error) {
+      alert("Lỗi cập nhật Database: " + error.message);
+    } else {
+      setIsSaved(true);
+      setTimeout(() => setIsSaved(false), 3000);
+      alert("Cập nhật thông tin lên Supabase thành công!");
+    }
   };
 
   return (
@@ -123,9 +152,8 @@ export default function MyAccount() {
                 type="text" 
                 value={balance} 
                 disabled 
-                className="w-full bg-gray-100 border border-gray-200 rounded-lg py-3 px-4 cursor-not-allowed text-gray-500 font-bold"
+                className="w-full bg-gray-100 border border-gray-200 rounded-lg py-3 px-4 cursor-not-allowed text-blue-600 font-bold text-lg"
               />
-              {/* Đã xóa dòng chữ nhỏ ở đây */}
             </div>
 
             <div>
@@ -160,7 +188,7 @@ export default function MyAccount() {
               >
                 Lưu thay đổi
               </button>
-              {isSaved && <p className="text-green-600 text-sm mt-2 font-medium">Đã lưu thông tin vào hệ thống!</p>}
+              {isSaved && <p className="text-green-600 text-sm mt-2 font-medium">Đã đồng bộ với Supabase!</p>}
             </div>
           </div>
         </div>

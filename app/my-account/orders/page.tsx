@@ -13,14 +13,13 @@ export default function MyOrdersPage() {
   useEffect(() => {
     const fetchOrders = async () => {
       setLoading(true);
-      // Lấy userId hiện tại từ bộ nhớ (Sửa lỗi hiển thị Orders: 0)
       const storedUserId = localStorage.getItem("userId");
       const userId = storedUserId ? Number(storedUserId) : 10; 
 
       const { data, error } = await supabase
-        .from("Order") // Cập nhật đúng tên bảng "Order"
+        .from("Order") 
         .select("*")
-        .eq("userId", userId) // Chỉ lấy đơn của mình
+        .eq("userId", userId) 
         .order("createdAt", { ascending: false });
 
       if (!error && data) {
@@ -56,7 +55,7 @@ export default function MyOrdersPage() {
 
     const { error } = await supabase
       .from("Order")
-      .update({ status: "PENDING" }) // Cập nhật trạng thái in hoa khớp DB
+      .update({ status: "PENDING" }) 
       .eq("id", selectedOrderId);
 
     if (!error) {
@@ -70,19 +69,17 @@ export default function MyOrdersPage() {
 
   const filteredOrders = orders.filter(order => {
     if (filter === "all") return true;
-    return order.status?.toLowerCase() === filter.toLowerCase();
+    // Đảm bảo so sánh không phân biệt chữ hoa chữ thường cho trạng thái
+    return order.status?.toUpperCase() === filter.toUpperCase();
   });
 
   if (loading) return <div className="min-h-screen bg-[#1a1f2e] text-zinc-500 p-10 italic text-center">Đang tải danh sách đơn hàng...</div>;
 
   return (
     <div className="min-h-screen bg-[#1a1f2e] text-white font-sans">
-      {/* Đã xóa phần Breadcrumb (Trang chủ > Danh sách đơn hàng) theo yêu cầu */}
-
       <div className="p-4 max-w-2xl mx-auto">
         <h1 className="text-xl font-bold mb-6 mt-4">Danh sách đơn hàng</h1>
 
-        {/* Search Bar - Giữ nguyên 100% */}
         <div className="relative mb-6">
           <input 
             type="text" 
@@ -91,7 +88,6 @@ export default function MyOrdersPage() {
           />
         </div>
 
-        {/* Tabs Filter - Đã cập nhật logic đếm số lượng khớp thực tế */}
         <div className="flex gap-4 mb-8">
           <button onClick={() => setFilter("all")} className={`flex-1 p-3 rounded-lg border ${filter === 'all' ? 'border-zinc-500 bg-[#2a303f]' : 'border-zinc-800 bg-[#242936]'} text-left`}>
             <div className="text-[12px] font-bold">All</div>
@@ -107,7 +103,6 @@ export default function MyOrdersPage() {
           </button>
         </div>
 
-        {/* Order List - Ánh xạ chuẩn từ bảng Order (product_name, amount) */}
         <div className="space-y-4">
           {filteredOrders.length === 0 ? (
              <div className="text-center py-10 text-zinc-500 italic">Không tìm thấy đơn hàng nào.</div>
@@ -130,7 +125,13 @@ export default function MyOrdersPage() {
                 </div>
 
                 <div className="flex gap-4 mb-4">
-                  <img src={order.image_url || "https://via.placeholder.com/150"} className="w-16 h-16 rounded-lg object-cover bg-[#2a303f]" alt="" />
+                  <div className="w-16 h-16 rounded-lg overflow-hidden bg-[#2a303f] flex-shrink-0">
+                    <img 
+                      src={order.image_url && order.image_url !== "NULL" ? order.image_url : "https://placehold.co/150x150/2a303f/white?text=No+Image"} 
+                      className="w-full h-full object-cover" 
+                      alt="Product" 
+                    />
+                  </div>
                   <p className="text-[13px] leading-tight text-zinc-300">{order.product_name || "Sản phẩm không xác định"}</p>
                 </div>
 
@@ -157,7 +158,6 @@ export default function MyOrdersPage() {
         </div>
       </div>
 
-      {/* MODAL TÁI CHẾ - Giữ nguyên thiết kế */}
       {showRecycleModal && (
         <div className="fixed inset-0 bg-black/80 z-[100] flex items-center justify-center p-6 backdrop-blur-sm">
           <div className="w-full max-w-[320px] bg-[#242936] rounded-xl overflow-hidden border border-zinc-800">

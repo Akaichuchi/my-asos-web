@@ -18,17 +18,17 @@ export async function POST(req: Request) {
     const supabase = createClient(supabaseUrl, supabaseKey);
     const body = await req.json();
     
-    // Đã chuyển sang ép kiểu Number để khớp với kiểu int8 trong Database (sửa lỗi uuid)
+    // Ép kiểu Number để khớp với kiểu int8 trong Database (Tránh lỗi UUID)
     userId = Number(body.userId); 
     totalAmount = Number(body.totalAmount);
 
-    // Lấy thêm thông tin từ body để hiển thị lên danh sách đơn hàng
+    // Lấy thông tin từ body gửi từ CartPage
     const productName = body.productName || "Đơn hàng dịch vụ";
     const imageUrl = body.imageUrl || "";
 
-    // 1. Kiểm tra số dư và lưu lại số dư cũ để dự phòng hoàn tiền
+    // 1. Kiểm tra số dư từ bảng User (Khớp với tab public.User trong ảnh của bạn)
     const { data: user, error: userError } = await supabase
-      .from("User")
+      .from("User") 
       .select("balance")
       .eq("id", userId)
       .single();
@@ -41,7 +41,7 @@ export async function POST(req: Request) {
       throw new Error(`Số dư không đủ. Bạn có $${originalBalance} nhưng cần $${totalAmount}`);
     }
 
-    // 2. Thực hiện trừ tiền
+    // 2. Thực hiện trừ tiền trong bảng User
     const newBalance = originalBalance - totalAmount;
     const { error: updateError } = await supabase
       .from("User")
@@ -50,15 +50,16 @@ export async function POST(req: Request) {
 
     if (updateError) throw new Error("Lỗi hệ thống khi trừ tiền, vui lòng thử lại");
 
-    // 3. Tạo bản ghi đơn hàng mới (Bổ sung thêm thông tin sản phẩm để hiện trên List)
+    // 3. Tạo bản ghi đơn hàng mới vào bảng Order
+    // ĐÃ CẬP NHẬT: product_name và image_url để khớp 100% với ảnh Supabase bạn gửi
     const { data: result, error: orderError } = await supabase
       .from("Order")
       .insert([{ 
         userId: userId, 
         amount: totalAmount, 
         status: "SUCCESS",
-        product_name: productName, // Thêm để hiện trong danh sách Admin/User
-        image_url: imageUrl        // Thêm để hiện trong danh sách Admin/User
+        product_name: productName, // Sửa từ productName thành product_name
+        image_url: imageUrl         // Sửa từ imageUrl thành image_url
       }])
       .select()
       .single();
@@ -68,7 +69,6 @@ export async function POST(req: Request) {
       await supabase.from("User").update({ balance: originalBalance }).eq("id", userId);
       
       console.error("Order insertion failed, refunding...", orderError.message);
-      // Trả về lỗi chi tiết từ Supabase
       throw new Error(`Tiền đã trừ nhưng lỗi tạo đơn: ${orderError.message}. Hệ thống đã tự động hoàn tiền!`);
     }
 

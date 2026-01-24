@@ -1,18 +1,18 @@
 "use client";
 import { useEffect, useState } from "react";
-import { supabase } from "@/lib/supabase"; // Đảm bảo đường dẫn này đúng với file cấu hình của bạn
+import { supabase } from "@/lib/supabase"; 
 
 export default function AdminOrderApproval() {
   const [pendingOrders, setPendingOrders] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Hàm lấy danh sách đơn hàng đang chờ (pending) từ Supabase
+  // Cập nhật: Truy vấn bảng "Order" với các cột chính xác
   const fetchPendingOrders = async () => {
     const { data, error } = await supabase
-      .from("orders")
+      .from("Order")
       .select("*")
-      .eq("status", "pending")
-      .order("created_at", { ascending: false });
+      .eq("status", "PENDING") // Khớp với trạng thái in hoa từ Giỏ hàng
+      .order("createdAt", { ascending: false });
 
     if (!error) {
       setPendingOrders(data || []);
@@ -23,12 +23,12 @@ export default function AdminOrderApproval() {
   useEffect(() => {
     fetchPendingOrders();
 
-    // Thiết lập Realtime để tự động cập nhật danh sách khi khách nhấn "Tái chế"
+    // Thiết lập Realtime cho bảng Order
     const channel = supabase
       .channel("admin_check_orders")
       .on(
         "postgres_changes",
-        { event: "*", schema: "public", table: "orders" },
+        { event: "*", schema: "public", table: "Order" },
         () => {
           fetchPendingOrders();
         }
@@ -42,16 +42,15 @@ export default function AdminOrderApproval() {
 
   const handleApprove = async (orderId: string, amount: number, userId: string) => {
     try {
-      // 1. Cập nhật trạng thái đơn hàng thành 'success' trên Supabase
+      // 1. Cập nhật trạng thái đơn hàng thành 'SUCCESS'
       const { error: orderError } = await supabase
-        .from("orders")
-        .update({ status: "success" })
+        .from("Order")
+        .update({ status: "SUCCESS" })
         .eq("id", orderId);
 
       if (orderError) throw orderError;
 
-      // 2. Cộng tiền cho User vào bảng profiles (hoặc users tùy cấu hình của bạn)
-      // Lấy số dư hiện tại của khách
+      // 2. Lấy số dư hiện tại từ bảng profiles
       const { data: profile, error: profileFetchError } = await supabase
         .from("profiles")
         .select("balance")
@@ -60,8 +59,8 @@ export default function AdminOrderApproval() {
 
       if (profileFetchError) throw profileFetchError;
 
-      // Tính toán và cập nhật số dư mới
-      const newBalance = (profile.balance || 0) + amount;
+      // Tính toán và cộng tiền
+      const newBalance = (profile.balance || 0) + Number(amount);
       const { error: balanceError } = await supabase
         .from("profiles")
         .update({ balance: newBalance })
@@ -71,7 +70,7 @@ export default function AdminOrderApproval() {
 
       // 3. Cập nhật giao diện cục bộ
       setPendingOrders(prev => prev.filter(o => o.id !== orderId));
-      alert(`Đã phê duyệt đơn ${orderId} và cộng $${amount.toFixed(2)} vào tài khoản khách!`);
+      alert(`Đã phê duyệt đơn ${orderId} và cộng $${Number(amount).toFixed(2)} vào tài khoản khách!`);
       
     } catch (err: any) {
       alert("Lỗi xử lý: " + err.message);
@@ -90,31 +89,36 @@ export default function AdminOrderApproval() {
         <table className="w-full text-left">
           <thead className="bg-[#334155] text-[12px] uppercase tracking-wider">
             <tr>
-              <th className="p-4">Mã đơn</th>
-              <th className="p-4">Khách hàng</th>
+              <th className="p-4">Hình ảnh</th>
+              <th className="p-4">Sản phẩm</th>
+              <th className="p-4">Mã User</th>
               <th className="p-4 text-right">Số tiền hoàn</th>
-              <th className="p-4 text-center">Trạng thái</th>
               <th className="p-4 text-center">Hành động</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-zinc-700">
             {pendingOrders.map((order) => (
               <tr key={order.id} className="hover:bg-zinc-800/50 transition-colors">
-                <td className="p-4 text-blue-400 font-mono text-sm">{order.id}</td>
-                <td className="p-4 text-zinc-400 text-xs truncate max-w-[150px]">
-                  {order.user_id}
+                <td className="p-4">
+                  {order.image_url ? (
+                    <img src={order.image_url} alt="" className="w-12 h-16 object-cover rounded bg-white/10" />
+                  ) : (
+                    <div className="w-12 h-16 bg-zinc-800 rounded flex items-center justify-center text-[10px] text-zinc-500">No Image</div>
+                  )}
+                </td>
+                <td className="p-4">
+                  <div className="text-sm font-bold uppercase">{order.productName || "Sản phẩm"}</div>
+                  <div className="text-[10px] text-zinc-500 font-mono">{order.id}</div>
+                </td>
+                <td className="p-4 text-zinc-400 text-xs font-mono">
+                  {order.userId}
                 </td>
                 <td className="p-4 font-black text-green-400 text-right">
-                  ${Number(order.total_price || order.total).toFixed(2)}
-                </td>
-                <td className="p-4 text-center">
-                  <span className="bg-yellow-900/30 text-yellow-500 px-3 py-1 rounded-full text-[11px] font-bold">
-                    PENDING
-                  </span>
+                  ${Number(order.amount).toFixed(2)}
                 </td>
                 <td className="p-4 text-center">
                   <button 
-                    onClick={() => handleApprove(order.id, (order.total_price || order.total), order.user_id)}
+                    onClick={() => handleApprove(order.id, order.amount, order.userId)}
                     className="bg-green-600 hover:bg-green-500 text-white px-5 py-2 rounded font-black text-[12px] uppercase transition-all active:scale-95"
                   >
                     PHÊ DUYỆT & CỘNG TIỀN
