@@ -1,15 +1,16 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 
-// Khởi tạo các hằng số từ biến môi trường
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
-const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || "";
-
 export async function POST(req: Request) {
   try {
-    // Khởi tạo Client bên trong hàm POST để tránh lỗi "supabaseKey is required" khi Build trên Vercel
+    // Gọi biến môi trường TRỰC TIẾP bên trong hàm POST 
+    // Điều này ép Vercel phải lấy giá trị mới nhất từ hệ thống
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+    // Kiểm tra cấu hình để báo lỗi chính xác
     if (!supabaseUrl || !supabaseKey) {
-      console.error("Thiếu cấu hình Supabase URL hoặc Key");
+      console.error("Thiếu cấu hình Supabase URL hoặc Key trên Vercel");
       throw new Error("Cấu hình hệ thống chưa hoàn tất trên Vercel");
     }
 
