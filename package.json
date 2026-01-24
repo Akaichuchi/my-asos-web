@@ -2,7 +2,7 @@
   "name": "my-asos-new",
   "version": "0.1.0",
   "private": true,
-"scripts": {
+  "scripts": {
     "dev": "next dev",
     "build": "prisma generate && prisma db push --accept-data-loss && next build",
     "start": "next start",
@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@prisma/client": "^5.22.0",
+    "@supabase/supabase-js": "^2.91.1",
     "next": "14.2.3",
     "prisma": "^5.22.0",
     "react": "^18",

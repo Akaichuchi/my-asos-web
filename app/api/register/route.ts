@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import { supabase } from '@/lib/supabase';
 
 /**
  * API Endpoint: Quản lý thông tin người dùng (User Management)
@@ -9,9 +9,14 @@ import { prisma } from '@/lib/prisma';
 // LỆNH LẤY DỮ LIỆU (GET): Phục vụ trang quản trị Admin
 export async function GET() {
   try {
-    const users = await prisma.user.findMany({
-      orderBy: { id: 'desc' } // Đưa người dùng mới nhất lên đầu danh sách
-    });
+    // Chuyển đổi prisma.user.findMany sang supabase.from().select()
+    const { data: users, error } = await supabase
+      .from('User') // Tên bảng trong Supabase (đảm bảo khớp với DB của bạn)
+      .select('*')
+      .order('id', { ascending: false });
+
+    if (error) throw error;
+
     return NextResponse.json(users);
   } catch (error) {
     return NextResponse.json(
@@ -27,15 +32,21 @@ export async function POST(req: Request) {
     // 1. Giải nén dữ liệu từ Request (Khớp với form Đăng ký của bạn)
     const { username, password } = await req.json();
 
-    // 2. Thực thi tạo mới người dùng trong Database qua Prisma
-    const newUser = await prisma.user.create({
-      data: { 
-        username: username, // Thay thế email bằng username
-        password: password, // Thêm trường password đã khai báo trong Schema
-        balance: 0.0,       // GIỮ NGUYÊN: Khởi tạo số dư 0đ
-        role: 'USER'        // GIỮ NGUYÊN: Phân quyền mặc định là khách hàng
-      },
-    });
+    // 2. Thực thi tạo mới người dùng trong Database qua Supabase
+    const { data: newUser, error } = await supabase
+      .from('User')
+      .insert([
+        { 
+          username: username, 
+          password: password, 
+          balance: 0.0,      // GIỮ NGUYÊN: Khởi tạo số dư 0đ
+          role: 'USER'       // GIỮ NGUYÊN: Phân quyền mặc định là khách hàng
+        }
+      ])
+      .select()
+      .single();
+
+    if (error) throw error;
 
     return NextResponse.json(newUser);
   } catch (error) {
@@ -58,12 +69,17 @@ export async function PUT(req: Request) {
       return NextResponse.json({ error: 'Thiếu ID người dùng' }, { status: 400 });
     }
 
-    const updatedUser = await prisma.user.update({
-      where: { id: id },
-      data: {
+    // Chuyển đổi prisma.user.update sang supabase.from().update()
+    const { data: updatedUser, error } = await supabase
+      .from('User')
+      .update({
         balance: parseFloat(balance), // Cập nhật số dư mới từ Admin
-      },
-    });
+      })
+      .eq('id', id)
+      .select()
+      .single();
+
+    if (error) throw error;
 
     return NextResponse.json(updatedUser);
   } catch (error) {
@@ -85,9 +101,13 @@ export async function DELETE(req: Request) {
       return NextResponse.json({ error: 'Thiếu ID người dùng' }, { status: 400 });
     }
 
-    await prisma.user.delete({
-      where: { id: id },
-    });
+    // Chuyển đổi prisma.user.delete sang supabase.from().delete()
+    const { error } = await supabase
+      .from('User')
+      .delete()
+      .eq('id', id);
+
+    if (error) throw error;
 
     return NextResponse.json({ message: 'Đã xóa người dùng thành công' });
   } catch (error) {
