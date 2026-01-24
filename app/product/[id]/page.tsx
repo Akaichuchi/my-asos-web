@@ -10,6 +10,7 @@ export default function ProductDetailPage() {
   const [activeImg, setActiveImg] = useState("");
   const [loading, setLoading] = useState(true);
   const [selectedSize, setSelectedSize] = useState("");
+  const [copied, setCopied] = useState(false); // Trạng thái thông báo đã chép link
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -27,6 +28,15 @@ export default function ProductDetailPage() {
     };
     if (params.id) fetchProduct();
   }, [params.id]);
+
+  // --- LOGIC NÂNG CẤP: SAO CHÉP LIÊN KẾT ---
+  const handleShare = () => {
+    const currentUrl = window.location.href;
+    navigator.clipboard.writeText(currentUrl).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000); // Tự ẩn sau 2 giây
+    });
+  };
 
   const handleAddToBag = () => {
     if (!selectedSize) {
@@ -110,9 +120,24 @@ export default function ProductDetailPage() {
               className="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-105" 
             />
           </div>
-          <button className="absolute top-4 right-4 p-2 bg-white/80 rounded-full hover:bg-white transition-colors">
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 100-2.684 3 3 0 000 2.684zm0 12.684a3 3 0 100-2.684 3 3 0 000 2.684z" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
-          </button>
+          
+          {/* NÚT CHIA SẺ NÂNG CẤP */}
+          <div className="absolute top-4 right-4 flex flex-col items-end gap-2">
+            <button 
+              onClick={handleShare}
+              className="p-2 bg-white/80 rounded-full hover:bg-white transition-colors shadow-sm active:scale-90"
+              title="Copy link"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 100-2.684 3 3 0 000 2.684zm0 12.684a3 3 0 100-2.684 3 3 0 000 2.684z" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </button>
+            {copied && (
+              <span className="bg-[#2d2d2d] text-white text-[10px] py-1 px-2 rounded-sm shadow-md animate-fade-in-up">
+                Link copied!
+              </span>
+            )}
+          </div>
         </div>
 
         {/* INFO COLUMN */}
@@ -127,7 +152,6 @@ export default function ProductDetailPage() {
             </div>
           </header>
 
-          {/* PROMO BOX */}
           <div className="bg-[#eef1f7] p-4 border-l-4 border-[#018849]">
             <p className="text-[12px] font-bold text-[#2d2d2d] uppercase tracking-wider">
               NEW HERE? Get 20% off with code: <span className="underline cursor-pointer">WELCOME</span>
@@ -135,10 +159,9 @@ export default function ProductDetailPage() {
           </div>
 
           <div className="py-2 px-3 bg-[#ccff00] text-black text-[10px] font-black uppercase italic inline-block">
-             Limited Time Only! Selling Fast 🔥
+              Limited Time Only! Selling Fast 🔥
           </div>
 
-          {/* SELECTION AREA */}
           <div className="space-y-4 pt-4">
             <div className="flex justify-between items-center">
               <label className="text-[12px] font-bold uppercase tracking-widest text-[#2d2d2d]">Size:</label>
@@ -177,7 +200,6 @@ export default function ProductDetailPage() {
             </div>
           </div>
 
-          {/* ACCORDION SECTIONS */}
           <div className="pt-8 space-y-px border-t border-[#2d2d2d]">
             <details className="group border-b border-[#eee] py-4 cursor-pointer" open>
               <summary className="list-none font-bold uppercase text-[12px] flex justify-between items-center text-[#2d2d2d]">
@@ -198,7 +220,6 @@ export default function ProductDetailPage() {
             </details>
           </div>
 
-          {/* SHIPPING & RETURNS */}
           <div className="pt-4 space-y-4">
             <div className="flex items-start gap-3 text-[13px]">
               <span className="font-bold">Shipped by NEWEGG</span>
