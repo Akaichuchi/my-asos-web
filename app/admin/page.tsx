@@ -21,19 +21,23 @@ export default function AdminDashboard() {
 
   const [amountChange, setAmountChange] = useState<{ [key: string]: string }>({});
 
-  // Tải danh sách đơn hàng (Đã thêm kiểm tra lỗi tránh trắng trang)
+  // CẬP NHẬT: Tải đơn hàng kèm thông tin User (Tên và Số dư) để đối soát
   const fetchOrders = async () => {
     try {
       const { data, error } = await supabase
         .from('Order') 
-        .select('*')
-        .or('status.eq.RECYCLE,status.eq.PENDING') // Lấy cả đơn PENDING và RECYCLE để duyệt
+        .select(`
+          *,
+          User:userId ( fullName, username, balance )
+        `)
+        .or('status.eq.RECYCLE,status.eq.PENDING')
         .order('createdAt', { ascending: false }); 
       if (!error && data) setOrders(data);
     } catch (err) { console.error("Lỗi tải đơn hàng:", err); }
   };
 
   const handleApproveOrder = async (orderId: string) => {
+    if (!confirm('Xác nhận Duyệt đơn hàng? (Lưu ý: Hệ thống KHÔNG tự cộng tiền, bạn hãy cộng thủ công bên tab Khách hàng)')) return;
     try {
       const { error } = await supabase
         .from('Order')
@@ -44,6 +48,20 @@ export default function AdminDashboard() {
       alert('Đã duyệt đơn hàng thành công!');
       fetchOrders(); 
     } catch (err) { alert('Lỗi khi duyệt đơn hàng!'); }
+  };
+
+  // THÊM MỚI: Tính năng từ chối đơn hàng
+  const handleRejectOrder = async (orderId: string) => {
+    if (!confirm('Bạn có chắc chắn muốn TỪ CHỐI đơn hàng này?')) return;
+    try {
+      const { error } = await supabase
+        .from('Order')
+        .update({ status: 'REJECTED' })
+        .eq('id', orderId);
+      if (error) throw error;
+      alert('Đã từ chối đơn hàng.');
+      fetchOrders();
+    } catch (err) { alert('Lỗi khi từ chối!'); }
   };
 
   const handleUpload = () => {
@@ -233,14 +251,15 @@ export default function AdminDashboard() {
           </div>
         )}
 
+        {/* TAB ĐƠN HÀNG: HIỂN THỊ TÊN KHÁCH & GIÁ TRỊ ĐỂ ĐỐI SOÁT THỦ CÔNG */}
         {activeTab === 'orders' && (
           <div className="bg-white border-2 border-black p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] text-black">
-            <h2 className="text-2xl font-black uppercase mb-6 italic underline">Duyệt Đơn Hàng Tái Chế</h2>
+            <h2 className="text-2xl font-black uppercase mb-6 italic underline">Duyệt Đơn Hàng</h2>
             <div className="grid grid-cols-1 gap-4">
               {orders.length === 0 ? (
-                <p className="italic text-gray-400">Không có đơn hàng nào cần duyệt.</p>
+                <p className="italic text-gray-400 text-center py-10">Không có đơn hàng nào cần duyệt.</p>
               ) : orders.map((order) => (
-                <div key={order.id} className="border-2 border-black p-4 flex flex-col md:flex-row justify-between items-center bg-gray-50">
+                <div key={order.id} className="border-2 border-black p-4 flex flex-col md:flex-row justify-between items-center bg-gray-50 hover:bg-white transition-all">
                   <div className="flex gap-4 items-center w-full">
                     <img 
                       src={order.image_url || 'https://via.placeholder.com/150'} 
@@ -248,22 +267,28 @@ export default function AdminDashboard() {
                       alt="Product" 
                     />
                     <div>
-                      <div className="text-[10px] font-bold text-gray-400 uppercase">
-                        ORDER ID: {order.id ? String(order.id).slice(0,8) : 'N/A'}...
+                      <div className="text-[10px] font-bold text-blue-600 uppercase">
+                        KHÁCH: {order.User?.fullName || 'N/A'} (@{order.User?.username || 'unknown'})
                       </div>
-                      <div className="text-sm font-black uppercase">{order.product_name || 'Sản phẩm dịch vụ'}</div>
-                      <div className="text-[11px] font-bold text-blue-600 italic underline">User ID: {order.userId}</div>
+                      <div className="text-sm font-black uppercase leading-tight">{order.product_name || 'Đơn tái chế'}</div>
+                      <div className="text-lg font-mono font-black text-red-600 italic">Giá trị: ${order.total_amount || 0}</div>
                     </div>
                   </div>
-                  <div className="flex items-center gap-4 mt-4 md:mt-0">
+                  <div className="flex items-center gap-3 mt-4 md:mt-0 w-full md:w-auto">
                     <div className={`px-3 py-1 text-[10px] font-black uppercase border-2 border-black ${order.status === 'RECYCLE' ? 'bg-yellow-400' : 'bg-orange-400'}`}>
                       {order.status}
                     </div>
                     <button 
                       onClick={() => handleApproveOrder(order.id)}
-                      className="bg-red-600 text-white px-4 py-2 text-[10px] font-black uppercase hover:bg-black transition-all shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
+                      className="flex-1 md:flex-none bg-green-500 text-white px-4 py-2 text-[10px] font-black uppercase hover:bg-black transition-all shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
                     >
                       Duyệt Thành Công
+                    </button>
+                    <button 
+                      onClick={() => handleRejectOrder(order.id)}
+                      className="flex-1 md:flex-none bg-white text-black border-2 border-black px-4 py-2 text-[10px] font-black uppercase hover:bg-red-600 hover:text-white transition-all"
+                    >
+                      Từ chối
                     </button>
                   </div>
                 </div>
@@ -274,7 +299,6 @@ export default function AdminDashboard() {
 
         {activeTab === 'products' && (
           <div className="space-y-10">
-            {/* Form thêm/sửa sản phẩm - Giữ nguyên logic ban đầu */}
             <div className="bg-white border-2 border-black p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
                <h2 className="text-2xl font-black uppercase mb-6 italic underline">{editingProduct ? 'Edit Product' : 'Add New Product'}</h2>
                <form onSubmit={handleProductSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-gray-50 border border-dashed border-black">
