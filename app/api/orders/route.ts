@@ -4,35 +4,39 @@ import { prisma } from "@/lib/prisma";
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { userId, totalAmount } = body;
+    // Ép kiểu userId và totalAmount về số ngay từ đầu để tránh lỗi so sánh
+    const userId = Number(body.userId);
+    const totalAmount = Number(body.totalAmount);
 
     // Sử dụng Transaction để đảm bảo tính toàn vẹn dữ liệu
     const result = await prisma.$transaction(async (tx) => {
       // 1. Kiểm tra sự tồn tại của User và số dư hiện tại
       const user = await tx.user.findUnique({
-        where: { id: Number(userId) },
+        where: { id: userId },
       });
 
       if (!user) {
         throw new Error("Người dùng không tồn tại trên hệ thống");
       }
 
+      // Kiểm tra số dư (bây giờ cả 2 đều là kiểu Number nên so sánh sẽ chuẩn)
       if (user.balance < totalAmount) {
-        throw new Error("Số dư tài khoản không đủ để thực hiện thanh toán");
+        throw new Error(`Số dư không đủ. Bạn có $${user.balance} nhưng cần $${totalAmount}`);
       }
 
       // 2. Thực hiện trừ tiền trực tiếp vào cột balance trong bảng User
       await tx.user.update({
-        where: { id: Number(userId) },
+        where: { id: userId },
         data: {
           balance: { decrement: totalAmount }
         },
       });
 
-      // 3. Tạo bản ghi đơn hàng mới vào bảng Order (đã khớp tên bảng bạn vừa đổi)
+      // 3. Tạo bản ghi đơn hàng mới vào bảng Order
+      // Lưu ý: Đảm bảo bạn đã chạy lệnh SQL thêm cột createdAt trước khi chạy code này
       return await tx.order.create({
         data: {
-          userId: Number(userId),
+          userId: userId,
           amount: totalAmount,
           status: "SUCCESS",
         },
