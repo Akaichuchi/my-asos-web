@@ -28,29 +28,36 @@ export default function LoginPage() {
 
     setMessage({ text: 'Đang kiểm tra tài khoản...', type: 'info' });
 
-    // Gọi API login để kiểm tra email đã có trong database chưa
-    const response = await fetch('/api/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email: email }),
-    });
+    try {
+      // Gọi API login đã được dời ra ngoài cùng hàng với register
+      const response = await fetch('/api/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: email }),
+      });
 
-    const data = await response.json();
+      const data = await response.json();
 
-    if (response.ok) {
-      // ĐĂNG NHẬP THÀNH CÔNG
-      localStorage.setItem('userEmail', email); // Lưu email để Header hiện "Hi, Akai"
-      setMessage({ text: '✅ Đăng nhập thành công! Đang quay lại...', type: 'success' });
-      
-      setTimeout(() => {
-        router.push('/');
-        window.location.reload(); 
-      }, 1500);
-    } else {
-      // THẤT BẠI: Nếu tài khoản chưa tồn tại hoặc lỗi khác
-      setIsShaking(true);
-      setTimeout(() => setIsShaking(false), 500);
-      setMessage({ text: `❌ Lỗi: ${data.error || 'Tài khoản không tồn tại!'}`, type: 'error' });
+      if (response.ok) {
+        // ĐĂNG NHẬP THÀNH CÔNG
+        localStorage.setItem('userEmail', email); // Lưu email để Header hiện tên người dùng
+        setMessage({ text: '✅ Đăng nhập thành công! Đang quay lại...', type: 'success' });
+        
+        // Điều hướng mượt mà: Push router trước, sau đó reload tại trang chủ để Header cập nhật
+        setTimeout(() => {
+          router.push('/');
+          setTimeout(() => {
+            window.location.href = "/";
+          }, 100);
+        }, 1000);
+      } else {
+        // THẤT BẠI: Nếu tài khoản chưa tồn tại hoặc lỗi khác
+        setIsShaking(true);
+        setTimeout(() => setIsShaking(false), 500);
+        setMessage({ text: `❌ Lỗi: ${data.error || 'Tài khoản không tồn tại!'}`, type: 'error' });
+      }
+    } catch (error) {
+      setMessage({ text: '❌ Lỗi kết nối máy chủ!', type: 'error' });
     }
   };
 
