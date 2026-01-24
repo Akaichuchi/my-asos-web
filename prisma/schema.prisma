@@ -42,3 +42,15 @@ model Review {
   product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
 }
+
+model Order {
+  id        Int      @id @default(autoincrement())
+  amount    Float
+  status    String   @default("SUCCESS")
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
+}
+
+// Cần cập nhật thêm quan hệ vào model User để Prisma hiểu
+// Bạn tìm đến model User và thêm dòng: orders Order[] vào cuối
