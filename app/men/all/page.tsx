@@ -6,7 +6,8 @@ interface Product {
   id: string;
   name: string;
   price: number;
-  image: string; // Tên biến image đồng bộ với dữ liệu Men của bạn
+  image: string; 
+  images?: string | string[]; // Thêm images để khớp với Database mới
   brand: string;
   isSellingFast?: boolean;
   hasMoreColors?: boolean;
@@ -19,7 +20,6 @@ export default function AllMenProducts() {
   useEffect(() => {
     const fetchAllProducts = async () => {
       try {
-        // Gọi API lấy toàn bộ sản phẩm category là men
         const response = await fetch("/api/products?category=men");
         const data = await response.json();
         setProducts(data);
@@ -32,21 +32,24 @@ export default function AllMenProducts() {
     fetchAllProducts();
   }, []);
 
-  // LOGIC XỬ LÝ YÊU THÍCH - ĐỒNG BỘ 100% VỚI TRANG CHI TIẾT
   const handleToggleWishlist = (e: React.MouseEvent, product: Product) => {
     e.preventDefault();
     e.stopPropagation();
 
-    // Sử dụng KEY "wishlist" để đồng bộ dữ liệu toàn trang
     const currentWishlist = JSON.parse(localStorage.getItem("wishlist") || "[]");
     const isExisted = currentWishlist.find((item: any) => item.id === product.id);
+
+    // Lấy URL ảnh an toàn để lưu vào wishlist
+    const displayImage = Array.isArray(product.images) 
+      ? product.images[0] 
+      : (product.images || product.image);
 
     if (!isExisted) {
       currentWishlist.push({
         id: product.id,
         name: product.name,
         price: product.price,
-        image: product.image // Lưu đúng ảnh của sản phẩm nam
+        image: displayImage
       });
       localStorage.setItem("wishlist", JSON.stringify(currentWishlist));
       alert("Đã thêm vào mục yêu thích! ❤️");
@@ -56,7 +59,6 @@ export default function AllMenProducts() {
       alert("Đã xóa khỏi mục yêu thích.");
     }
 
-    // Bắn sự kiện cập nhật Header
     window.dispatchEvent(new Event("storage"));
   };
 
@@ -109,17 +111,17 @@ export default function AllMenProducts() {
           ) : (
             products.map((item) => (
               <div key={item.id} className="group flex flex-col relative">
-                {/* ẢNH VÀ NÚT TIM - ĐÃ TÁCH BIỆT NÚT BẤM */}
+                {/* ẢNH VÀ NÚT TIM */}
                 <div className="relative aspect-[3/4] overflow-hidden bg-[#f3f3f3]">
                   <Link href={`/product/${item.id}`} className="block w-full h-full">
                     <img 
-                      src={item.image} 
+                      // Sửa tại đây: Ưu tiên lấy images (có s) để hiện ảnh Nam
+                      src={(Array.isArray(item.images) ? item.images[0] : item.images) || item.image} 
                       alt={item.name}
                       className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                     />
                   </Link>
                   
-                  {/* NÚT TIM TÁCH BIỆT KHỎI LINK */}
                   <button 
                     onClick={(e) => handleToggleWishlist(e, item)}
                     className="absolute bottom-3 right-3 z-20 bg-white/90 p-2 rounded-full shadow-sm hover:bg-white transition-all active:scale-90 group/heart"
@@ -131,7 +133,6 @@ export default function AllMenProducts() {
                   </button>
                 </div>
 
-                {/* THÔNG TIN SẢN PHẨM - GIỮ NGUYÊN */}
                 <div className="mt-3 space-y-1">
                   <Link href={`/product/${item.id}`}>
                     <h3 className="text-[13px] text-gray-700 leading-snug group-hover:underline cursor-pointer min-h-[36px] line-clamp-2">
@@ -140,7 +141,6 @@ export default function AllMenProducts() {
                   </Link>
                   <p className="text-[14px] font-black tracking-tight">${item.price.toFixed(2)}</p>
                   
-                  {/* BADGES */}
                   <div className="flex flex-wrap gap-2 pt-1 min-h-[22px]">
                     {item.isSellingFast && (
                       <span className="text-[9px] font-bold uppercase bg-[#eeeeee] text-[#2d2d2d] px-1.5 py-0.5">Selling Fast</span>
