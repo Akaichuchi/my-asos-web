@@ -6,17 +6,22 @@ export async function POST(req: Request) {
     const body = await req.json();
     const { userId, totalAmount } = body;
 
+    // Sử dụng Transaction để đảm bảo tính toàn vẹn dữ liệu
     const result = await prisma.$transaction(async (tx) => {
-      // 1. Kiểm tra tiền
+      // 1. Kiểm tra sự tồn tại của User và số dư hiện tại
       const user = await tx.user.findUnique({
         where: { id: Number(userId) },
       });
 
-      if (!user || user.balance < totalAmount) {
-        throw new Error("Số dư không đủ hoặc User không tồn tại");
+      if (!user) {
+        throw new Error("Người dùng không tồn tại trên hệ thống");
       }
 
-      // 2. Lệnh trừ tiền trong bảng User
+      if (user.balance < totalAmount) {
+        throw new Error("Số dư tài khoản không đủ để thực hiện thanh toán");
+      }
+
+      // 2. Thực hiện trừ tiền trực tiếp vào cột balance trong bảng User
       await tx.user.update({
         where: { id: Number(userId) },
         data: {
@@ -24,7 +29,7 @@ export async function POST(req: Request) {
         },
       });
 
-      // 3. Tạo đơn hàng (Bây giờ sẽ không còn đỏ nữa)
+      // 3. Tạo bản ghi đơn hàng mới vào bảng Order (đã khớp tên bảng bạn vừa đổi)
       return await tx.order.create({
         data: {
           userId: Number(userId),
@@ -34,8 +39,18 @@ export async function POST(req: Request) {
       });
     });
 
-    return NextResponse.json({ message: "Thanh toán thành công", data: result });
+    // Trả về phản hồi thành công để Frontend hiển thị Modal 2 nút
+    return NextResponse.json({ 
+      success: true, 
+      message: "Thanh toán thành công", 
+      data: result 
+    });
+
   } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 400 });
+    // Trả về lỗi để Frontend hiển thị Alert (ví dụ: "SỐ DƯ KHÔNG ĐỦ")
+    return NextResponse.json({ 
+      success: false, 
+      error: error.message 
+    }, { status: 400 });
   }
 }
