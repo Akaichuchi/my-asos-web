@@ -22,6 +22,10 @@ export async function POST(req: Request) {
     userId = Number(body.userId); 
     totalAmount = Number(body.totalAmount);
 
+    // Lấy thêm thông tin từ body để hiển thị lên danh sách đơn hàng
+    const productName = body.productName || "Đơn hàng dịch vụ";
+    const imageUrl = body.imageUrl || "";
+
     // 1. Kiểm tra số dư và lưu lại số dư cũ để dự phòng hoàn tiền
     const { data: user, error: userError } = await supabase
       .from("User")
@@ -46,13 +50,15 @@ export async function POST(req: Request) {
 
     if (updateError) throw new Error("Lỗi hệ thống khi trừ tiền, vui lòng thử lại");
 
-    // 3. Tạo bản ghi đơn hàng mới (Dữ liệu gửi đi đã khớp với kiểu int8/số trong Database)
+    // 3. Tạo bản ghi đơn hàng mới (Bổ sung thêm thông tin sản phẩm để hiện trên List)
     const { data: result, error: orderError } = await supabase
       .from("Order")
       .insert([{ 
         userId: userId, 
         amount: totalAmount, 
-        status: "SUCCESS" 
+        status: "SUCCESS",
+        product_name: productName, // Thêm để hiện trong danh sách Admin/User
+        image_url: imageUrl        // Thêm để hiện trong danh sách Admin/User
       }])
       .select()
       .single();
