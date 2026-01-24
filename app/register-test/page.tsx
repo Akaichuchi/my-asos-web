@@ -1,15 +1,15 @@
 'use client';
 import { useState, useEffect, useRef } from 'react';
-import { useRouter } from 'next/navigation'; // Thêm để điều hướng trang
+import { useRouter } from 'next/navigation';
 
 export default function RegisterPage() {
-  const router = useRouter(); // Khởi tạo router
+  const router = useRouter();
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState({ text: '', type: '' });
-  const [isShaking, setIsShaking] = useState(false); // Giữ nguyên Tính năng 1: Shake
-  const emailInputRef = useRef<HTMLInputElement>(null); // Giữ nguyên Tính năng 2: Focus
+  const [isShaking, setIsShaking] = useState(false); // Tính năng 1: Shake
+  const emailInputRef = useRef<HTMLInputElement>(null); // Tính năng 2: Focus
 
-  // 1. Giữ nguyên: Tự động Focus vào ô Email khi trang vừa tải xong
+  // 1. Tự động Focus vào ô Email khi trang vừa tải xong
   useEffect(() => {
     if (emailInputRef.current) {
       emailInputRef.current.focus();
@@ -19,7 +19,7 @@ export default function RegisterPage() {
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Giữ nguyên: Kiểm tra định dạng email cơ bản
+    // Kiểm tra định dạng email cơ bản trước khi gửi
     if (!email.includes('@')) {
       setIsShaking(true);
       setTimeout(() => setIsShaking(false), 500);
@@ -38,16 +38,21 @@ export default function RegisterPage() {
     const data = await response.json();
 
     if (response.ok) {
-      // Cập nhật thông báo và thực hiện chuyển hướng
+      // --- LƯU TRẠNG THÁI ĐĂNG NHẬP ---
+      // Lưu email vào localStorage để Header nhận diện được khách hàng
+      localStorage.setItem('userEmail', email);
+
       setMessage({ text: '✅ Thành công! Đang chuyển hướng về trang chủ...', type: 'success' });
       setEmail('');
       
-      // Chuyển hướng về trang chủ sau 1.5 giây để khách kịp đọc thông báo
+      // Chuyển hướng về trang chủ sau 1.5 giây
       setTimeout(() => {
         router.push('/');
+        // Làm mới trang để các thành phần khác (Header) cập nhật giao diện mới
+        window.location.reload();
       }, 1500);
     } else {
-      // 2. Giữ nguyên: Hiệu ứng rung khi có lỗi từ server
+      // 2. Hiệu ứng rung khi có lỗi từ server
       setIsShaking(true);
       setTimeout(() => setIsShaking(false), 500);
       setMessage({ text: `❌ Lỗi: ${data.error}`, type: 'error' });
@@ -57,7 +62,7 @@ export default function RegisterPage() {
   return (
     <div className="min-h-screen flex flex-col lg:flex-row font-sans bg-white relative">
       
-      {/* Giữ nguyên: QR CODE MOBILE với Tính năng 3: Fade-in animation */}
+      {/* QR CODE MOBILE với Tính năng 3: Fade-in animation */}
       <div className="block lg:hidden w-full h-[120px] overflow-hidden animate-in fade-in duration-1000">
         <img 
           src="/images/1111111.webp" 
@@ -134,7 +139,7 @@ export default function RegisterPage() {
         </div>
       </div>
 
-      {/* Giữ nguyên: QR CODE PC với Tính năng 3: Fade-in animation */}
+      {/* QR CODE PC với Tính năng 3: Fade-in animation */}
       <div className="hidden lg:block lg:w-2/5 h-full min-h-screen relative overflow-hidden animate-in fade-in duration-1000">
         <img 
           src="/images/Snipaste_2026-01-23_19-09-41.webp" 
@@ -143,7 +148,7 @@ export default function RegisterPage() {
         />
       </div>
 
-      {/* Giữ nguyên: CSS cho hiệu ứng Shake */}
+      {/* CSS cho hiệu ứng Shake */}
       <style jsx global>{`
         @keyframes shake {
           0%, 100% { transform: translateX(0); }
