@@ -1,13 +1,15 @@
 'use client';
 import { useState, useEffect, useRef } from 'react';
+import { useRouter } from 'next/navigation'; // Thêm để điều hướng trang
 
 export default function RegisterPage() {
+  const router = useRouter(); // Khởi tạo router
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState({ text: '', type: '' });
-  const [isShaking, setIsShaking] = useState(false); // Tính năng 1: Shake
-  const emailInputRef = useRef<HTMLInputElement>(null); // Tính năng 2: Focus
+  const [isShaking, setIsShaking] = useState(false); // Giữ nguyên Tính năng 1: Shake
+  const emailInputRef = useRef<HTMLInputElement>(null); // Giữ nguyên Tính năng 2: Focus
 
-  // 1. Tự động Focus vào ô Email khi trang vừa tải xong
+  // 1. Giữ nguyên: Tự động Focus vào ô Email khi trang vừa tải xong
   useEffect(() => {
     if (emailInputRef.current) {
       emailInputRef.current.focus();
@@ -17,7 +19,7 @@ export default function RegisterPage() {
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Kiểm tra định dạng email cơ bản trước khi gửi
+    // Giữ nguyên: Kiểm tra định dạng email cơ bản
     if (!email.includes('@')) {
       setIsShaking(true);
       setTimeout(() => setIsShaking(false), 500);
@@ -36,10 +38,16 @@ export default function RegisterPage() {
     const data = await response.json();
 
     if (response.ok) {
-      setMessage({ text: '✅ Thành công! Hãy mở Prisma Studio để cộng tiền.', type: 'success' });
+      // Cập nhật thông báo và thực hiện chuyển hướng
+      setMessage({ text: '✅ Thành công! Đang chuyển hướng về trang chủ...', type: 'success' });
       setEmail('');
+      
+      // Chuyển hướng về trang chủ sau 1.5 giây để khách kịp đọc thông báo
+      setTimeout(() => {
+        router.push('/');
+      }, 1500);
     } else {
-      // 2. Hiệu ứng rung khi có lỗi từ server
+      // 2. Giữ nguyên: Hiệu ứng rung khi có lỗi từ server
       setIsShaking(true);
       setTimeout(() => setIsShaking(false), 500);
       setMessage({ text: `❌ Lỗi: ${data.error}`, type: 'error' });
@@ -49,7 +57,7 @@ export default function RegisterPage() {
   return (
     <div className="min-h-screen flex flex-col lg:flex-row font-sans bg-white relative">
       
-      {/* QR CODE MOBILE với Tính năng 3: Fade-in animation */}
+      {/* Giữ nguyên: QR CODE MOBILE với Tính năng 3: Fade-in animation */}
       <div className="block lg:hidden w-full h-[120px] overflow-hidden animate-in fade-in duration-1000">
         <img 
           src="/images/1111111.webp" 
@@ -112,13 +120,13 @@ export default function RegisterPage() {
           <div className="mt-10 text-center border-t pt-6">
             <p className="text-xs text-gray-400 font-bold uppercase mb-6 tracking-widest">Or continue with</p>
             <div className="flex justify-center gap-6">
-              <button className="w-12 h-12 border border-gray-200 flex items-center justify-center hover:bg-gray-50 transition-all">
+              <button type="button" className="w-12 h-12 border border-gray-200 flex items-center justify-center hover:bg-gray-50 transition-all">
                 <img src="https://www.gstatic.com/images/branding/product/1x/gsa_512dp.png" className="w-6 h-6" alt="Google" />
               </button>
-              <button className="w-12 h-12 border border-gray-200 flex items-center justify-center hover:bg-gray-50 transition-all">
+              <button type="button" className="w-12 h-12 border border-gray-200 flex items-center justify-center hover:bg-gray-50 transition-all">
                 <img src="https://upload.wikimedia.org/wikipedia/commons/b/b8/2021_Facebook_icon.svg" className="w-6 h-6" alt="Facebook" />
               </button>
-              <button className="w-12 h-12 border border-gray-200 flex items-center justify-center hover:bg-gray-50 transition-all">
+              <button type="button" className="w-12 h-12 border border-gray-200 flex items-center justify-center hover:bg-gray-50 transition-all">
                 <img src="https://upload.wikimedia.org/wikipedia/commons/f/fa/Apple_logo_black.svg" className="w-5 h-5" alt="Apple" />
               </button>
             </div>
@@ -126,7 +134,7 @@ export default function RegisterPage() {
         </div>
       </div>
 
-      {/* QR CODE PC với Tính năng 3: Fade-in animation */}
+      {/* Giữ nguyên: QR CODE PC với Tính năng 3: Fade-in animation */}
       <div className="hidden lg:block lg:w-2/5 h-full min-h-screen relative overflow-hidden animate-in fade-in duration-1000">
         <img 
           src="/images/Snipaste_2026-01-23_19-09-41.webp" 
@@ -135,7 +143,7 @@ export default function RegisterPage() {
         />
       </div>
 
-      {/* CSS cho hiệu ứng Shake */}
+      {/* Giữ nguyên: CSS cho hiệu ứng Shake */}
       <style jsx global>{`
         @keyframes shake {
           0%, 100% { transform: translateX(0); }
