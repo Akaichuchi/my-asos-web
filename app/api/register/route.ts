@@ -48,3 +48,53 @@ export async function POST(req: Request) {
     );
   }
 }
+
+// LỆNH CẬP NHẬT (PUT): Xử lý cộng/trừ tiền từ Admin Dashboard
+export async function PUT(req: Request) {
+  try {
+    const { id, balance } = await req.json();
+
+    if (!id) {
+      return NextResponse.json({ error: 'Thiếu ID người dùng' }, { status: 400 });
+    }
+
+    const updatedUser = await prisma.user.update({
+      where: { id: id },
+      data: {
+        balance: parseFloat(balance), // Cập nhật số dư mới từ Admin
+      },
+    });
+
+    return NextResponse.json(updatedUser);
+  } catch (error) {
+    console.error("Lỗi cập nhật số dư:", error);
+    return NextResponse.json(
+      { error: 'Không thể cập nhật số dư khách hàng' }, 
+      { status: 500 }
+    );
+  }
+}
+
+// LỆNH XÓA (DELETE): Xóa vĩnh viễn khách hàng
+export async function DELETE(req: Request) {
+  try {
+    const { searchParams } = new URL(req.url);
+    const id = searchParams.get('id');
+
+    if (!id) {
+      return NextResponse.json({ error: 'Thiếu ID người dùng' }, { status: 400 });
+    }
+
+    await prisma.user.delete({
+      where: { id: id },
+    });
+
+    return NextResponse.json({ message: 'Đã xóa người dùng thành công' });
+  } catch (error) {
+    console.error("Lỗi khi xóa người dùng:", error);
+    return NextResponse.json(
+      { error: 'Lỗi hệ thống khi xóa' }, 
+      { status: 500 }
+    );
+  }
+}

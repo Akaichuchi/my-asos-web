@@ -30,8 +30,8 @@ export default function AdminDashboard() {
     // @ts-ignore
     const widget = window.cloudinary.createUploadWidget(
       { 
-        cloudName: 'dmfaq7hjj', // Lấy từ Dashboard Cloudinary của bạn
-        uploadPreset: 'ml_default', // Upload preset bạn đã tạo
+        cloudName: 'dmfaq7hjj', 
+        uploadPreset: 'ml_default', 
         sources: ['local', 'url', 'camera'],
         multiple: true 
       }, 
@@ -82,7 +82,6 @@ export default function AdminDashboard() {
     e.preventDefault();
     const method = editingProduct ? 'PUT' : 'POST';
     
-    // Tách dữ liệu: price/originalPrice ép kiểu số, id tách riêng để tránh xung đột Prisma
     const productData = {
       name: productForm.name,
       price: parseFloat(productForm.price) || 0,
@@ -94,7 +93,6 @@ export default function AdminDashboard() {
       details: productForm.details,
     };
 
-    // Nếu là PUT, đính kèm id vào body nhưng ở cấp độ ngoài cùng để API xử lý tách biệt
     const payload = editingProduct 
       ? { ...productData, id: editingProduct.id } 
       : productData;
@@ -137,16 +135,34 @@ export default function AdminDashboard() {
     }
   };
 
+  // SỬA LỖI NÚT CỘNG TRỪ TIỀN VÀ LƯU
   const handleUpdateBalance = async (userId: string) => {
-    const change = parseFloat(amountChange[userId]);
-    if (isNaN(change)) return alert('Vui lòng nhập số tiền hợp lệ');
+    const changeAmount = parseFloat(amountChange[userId]);
+    if (isNaN(changeAmount)) return alert('Vui lòng nhập số tiền hợp lệ');
+    
+    // Tìm khách hàng hiện tại để lấy số dư cũ
+    const user = users.find(u => u.id === userId);
+    const currentBalance = user?.balance || 0;
+    const newBalance = currentBalance + changeAmount;
+
     try {
       const res = await fetch('/api/register', {
         method: 'PUT',
-        body: JSON.stringify({ userId, change }),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ 
+          id: userId, 
+          balance: newBalance 
+        }),
       });
-      if (res.ok) { alert('Đã cập nhật số dư!'); fetchUsers(); }
-    } catch (error) { alert('Lỗi cập nhật!'); }
+
+      if (res.ok) { 
+        alert(`Đã cập nhật số dư thành công! Mới: $${newBalance.toFixed(2)}`); 
+        setAmountChange({ ...amountChange, [userId]: "" }); // Xóa ô nhập sau khi lưu
+        fetchUsers(); 
+      } else {
+        alert('Không thể cập nhật số dư. Kiểm tra lại API.');
+      }
+    } catch (error) { alert('Lỗi kết nối server!'); }
   };
 
   if (!isAuthorized) {
@@ -181,25 +197,36 @@ export default function AdminDashboard() {
               <table className="w-full text-left border-collapse">
                 <thead>
                   <tr className="bg-gray-100 uppercase text-[10px] font-bold border-b-2 border-black text-black">
-                    <th className="p-3">Email</th>
-                    <th className="p-3">Số dư</th>
-                    <th className="p-3">Cộng/Trừ</th>
+                    <th className="p-3">Họ Tên / Email</th>
+                    <th className="p-3">Quốc Gia</th>
+                    <th className="p-3">Số dư (Hiện tại)</th>
+                    <th className="p-3">Nạp/Trừ ($)</th>
                     <th className="p-3 text-right">Thao tác</th>
                   </tr>
                 </thead>
                 <tbody className="text-sm font-medium">
                   {loading ? (
-                    <tr><td colSpan={4} className="p-3 text-center italic">Đang tải...</td></tr>
+                    <tr><td colSpan={5} className="p-3 text-center italic">Đang tải...</td></tr>
                   ) : users.map((user: any) => (
-                    <tr key={user.id} className="border-b hover:bg-gray-50">
-                      <td className="p-3 font-bold">{user.email}</td>
-                      <td className="p-3 font-bold text-green-600">${user.balance?.toFixed(2)}</td>
+                    <tr key={user.id} className="border-b hover:bg-gray-50 text-black">
                       <td className="p-3">
-                        <input type="number" className="border-2 border-black p-1 w-20 outline-none" placeholder="+/-" onChange={(e) => setAmountChange({...amountChange, [user.id]: e.target.value})} />
+                        <div className="font-bold">{user.fullName || "—"}</div>
+                        <div className="text-[10px] text-gray-500 lowercase">{user.email}</div>
+                      </td>
+                      <td className="p-3 uppercase text-[11px]">{user.country || "VN"}</td>
+                      <td className="p-3 font-black text-green-600 font-mono">${(user.balance || 0).toFixed(2)}</td>
+                      <td className="p-3">
+                        <input 
+                          type="number" 
+                          className="border-2 border-black p-1 w-24 outline-none font-bold" 
+                          placeholder="+/-" 
+                          value={amountChange[user.id] || ""}
+                          onChange={(e) => setAmountChange({...amountChange, [user.id]: e.target.value})} 
+                        />
                       </td>
                       <td className="p-3 text-right flex justify-end gap-2">
-                        <button onClick={() => handleUpdateBalance(user.id)} className="bg-black text-white px-3 py-1 text-[10px] font-bold uppercase">Lưu $</button>
-                        <button onClick={() => handleDeleteUser(user.id)} className="bg-red-600 text-white px-3 py-1 text-[10px] font-bold uppercase">Xóa</button>
+                        <button onClick={() => handleUpdateBalance(user.id)} className="bg-black text-white px-3 py-1 text-[10px] font-bold uppercase hover:bg-blue-600 transition-colors">Lưu $</button>
+                        <button onClick={() => handleDeleteUser(user.id)} className="bg-red-600 text-white px-3 py-1 text-[10px] font-bold uppercase hover:bg-black transition-colors">Xóa</button>
                       </td>
                     </tr>
                   ))}
@@ -211,6 +238,7 @@ export default function AdminDashboard() {
 
         {activeTab === 'products' && (
           <div className="space-y-10">
+            {/* Bố cục phần Sản phẩm giữ nguyên 100% như code của bạn */}
             <div className="bg-white border-2 border-black p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
               <h2 className="text-2xl font-black uppercase mb-6 italic underline">{editingProduct ? 'Edit Product' : 'Add New Product'}</h2>
               <form onSubmit={handleProductSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-gray-50 border border-dashed border-black">

@@ -9,11 +9,13 @@ datasource db {
 }
 
 model User {
-  id       Int    @id @default(autoincrement())
-  username String @unique  // Đổi từ email sang username
+  id       Int     @id @default(autoincrement())
+  username String  @unique // Đổi từ email sang username
   password String
-  balance  Float  @default(0.0)
-  role     String @default("USER")
+  fullName String? // TÍNH NĂNG MỚI: Lưu họ tên khách hàng
+  country  String? // TÍNH NĂNG MỚI: Lưu quốc gia khách hàng
+  balance  Float   @default(0.0)
+  role     String  @default("USER")
 }
 
 model Product {
@@ -27,9 +29,9 @@ model Product {
   sizeFit       String?  @db.Text
   details       String?  @db.Text
   createdAt     DateTime @default(now())
-  
+
   // DÒNG NÀY PHẢI CÓ ĐỂ FIX LỖI BUILD VERCEL
-  reviews       Review[] 
+  reviews       Review[]
 }
 
 model Review {
@@ -40,4 +42,3 @@ model Review {
   product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
 }
-
