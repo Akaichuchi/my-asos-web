@@ -53,15 +53,18 @@ export default function MyOrdersPage() {
   const confirmRecycle = async () => {
     if (!selectedOrderId) return;
 
-    // Khi khách ấn "Vâng, chắc chắn", trạng thái chuyển sang RECYCLE (Chờ admin duyệt)
+    // CẬP NHẬT: Thêm is_recycled: true để hệ thống ghi nhận
     const { error } = await supabase
       .from("Order")
-      .update({ status: "RECYCLE" }) 
+      .update({ 
+        status: "RECYCLE",
+        is_recycled: true 
+      }) 
       .eq("id", selectedOrderId);
 
     if (!error) {
       setOrders(orders.map(order => 
-        order.id === selectedOrderId ? { ...order, status: "RECYCLE" } : order
+        order.id === selectedOrderId ? { ...order, status: "RECYCLE", is_recycled: true } : order
       ));
       setShowRecycleModal(false);
       setSelectedOrderId(null);
@@ -110,9 +113,7 @@ export default function MyOrdersPage() {
              <div className="text-center py-10 text-zinc-500 italic">Không tìm thấy đơn hàng nào.</div>
           ) : (
             filteredOrders.map((order) => {
-              // Logic nhận diện đơn đã tái chế thành công:
-              // Nếu status là SUCCESS nhưng trước đó khách đã gửi yêu cầu (hoặc dựa trên logic nghiệp vụ của bạn)
-              // Ở đây ta giả định nếu đơn đã qua trạng thái RECYCLE và được Admin duyệt về SUCCESS
+              // Nhận diện đơn tái chế thành công dựa trên is_recycled
               const isRecycledSuccess = order.status === 'SUCCESS' && order.is_recycled === true; 
 
               return (
@@ -125,13 +126,13 @@ export default function MyOrdersPage() {
                       <span className="ml-2 text-blue-400">ID: {order.id}</span>
                     </div>
                     
-                    {/* Hiển thị chữ SẢN PHẨM TÁI CHẾ THÀNH CÔNG màu xanh khi Admin duyệt */}
                     <span className={`px-3 py-1 rounded text-[11px] uppercase font-bold border ${
+                      isRecycledSuccess ? 'text-green-400 border-green-500 bg-green-900/20' : 
                       order.status === 'SUCCESS' ? 'text-green-400 border-green-900 bg-green-900/20' : 
                       order.status === 'RECYCLE' ? 'text-orange-400 border-orange-900 bg-orange-900/20' :
                       'text-yellow-500 border-yellow-900 bg-yellow-900/20'
                     }`}>
-                      {order.status === 'SUCCESS' && order.is_recycled ? "SẢN PHẨM TÁI CHẾ THÀNH CÔNG" : order.status}
+                      {isRecycledSuccess ? "SẢN PHẨM TÁI CHẾ THÀNH CÔNG" : order.status}
                     </span>
                   </div>
 
@@ -149,8 +150,8 @@ export default function MyOrdersPage() {
                   <div className="flex justify-between items-center border-t border-zinc-800/50 pt-4">
                     <div className="text-[15px] font-bold italic text-white">Total: ${Number(order.amount).toFixed(2)}</div>
                     <div className="flex gap-2">
-                      {/* Nút bấm sẽ tự động biến mất 100% khi đã tái chế thành công (status SUCCESS + is_recycled true) */}
-                      {!(order.status === 'SUCCESS' && order.is_recycled) && (
+                      {/* Nút bấm ẩn hoàn toàn khi isRecycledSuccess = true */}
+                      {!isRecycledSuccess && (
                         <>
                           <button className="bg-[#d01345] text-white px-4 py-2 rounded-md text-[13px] font-bold flex items-center gap-1 opacity-50 cursor-not-allowed">
                             Hủy
