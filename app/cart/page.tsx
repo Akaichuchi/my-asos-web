@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { supabase } from "@/lib/supabase"; // Nhập supabase để đồng bộ dữ liệu
 import Swal from 'sweetalert2';
 
 export default function CartPage() {
@@ -23,7 +24,7 @@ export default function CartPage() {
   });
 
   useEffect(() => {
-    // Xóa bộ nhớ tạm cũ ngay khi load để tránh hiện số dư admin trước đó
+    // 1. Xóa bộ nhớ tạm số dư cũ
     localStorage.removeItem("user_balance");
 
     const data = localStorage.getItem("cart");
@@ -33,29 +34,34 @@ export default function CartPage() {
     
     const fetchBalance = async () => {
       try {
-        // LẤY ID ĐỘNG TỪ LOCALSTORAGE (Thay vì gán cứng số 10)
-        const storedUserId = localStorage.getItem("userId") || "10"; 
+        // 2. Lấy UserName giống hệt trang MyAccount
+        const storedName = localStorage.getItem("userName");
         
-        // Thêm tham số chống cache để đảm bảo lấy dữ liệu mới nhất từ server
-        const response = await fetch(`/api/user/${storedUserId}?t=${new Date().getTime()}`, {
-          cache: 'no-store',
-          headers: { 'Cache-Control': 'no-cache' }
-        }); 
+        if (!storedName) {
+          setUserBalance(0);
+          setLoading(false);
+          return;
+        }
+
+        // 3. Truy vấn trực tiếp từ Supabase để lấy số dư "tươi" nhất
+        const { data: userData, error } = await supabase
+          .from('User') 
+          .select('balance, id')
+          .eq('username', storedName)
+          .single();
         
-        const userData = await response.json();
-        
-        if (userData && userData.balance !== undefined) {
-          const balanceNum = Number(userData.balance);
+        if (userData) {
+          const balanceNum = Number(userData.balance || 0);
           setUserBalance(balanceNum);
+          // Cập nhật lại userId chính xác từ DB vào máy để dùng khi đặt hàng
+          localStorage.setItem("userId", userData.id.toString());
           localStorage.setItem("user_balance", balanceNum.toString());
         } else {
           setUserBalance(0);
-          localStorage.setItem("user_balance", "0");
         }
       } catch (error) {
-        console.error("Không thể lấy số dư thực tế");
+        console.error("Lỗi đồng bộ số dư");
         setUserBalance(0);
-        localStorage.setItem("user_balance", "0");
       } finally {
         setLoading(false);
       }
@@ -87,6 +93,7 @@ export default function CartPage() {
     if (paymentMethod === "balance") {
       const currentBalance = Number(userBalance);
       const orderTotal = Number(totalPrice);
+      const storedUserId = localStorage.getItem("userId");
 
       if (currentBalance < orderTotal) {
         Swal.fire({
@@ -113,13 +120,12 @@ export default function CartPage() {
       if (result.isConfirmed) {
         try {
           const firstItem = cartItems[0]; 
-          const storedUserId = localStorage.getItem("userId") || "10";
 
           const response = await fetch('/api/orders', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-              userId: parseInt(storedUserId),
+              userId: parseInt(storedUserId || "0"),
               totalAmount: orderTotal,
               productName: cartItems.length > 1 
                 ? `${firstItem.name} và ${cartItems.length - 1} món khác` 
