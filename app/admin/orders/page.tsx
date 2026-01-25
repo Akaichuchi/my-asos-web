@@ -7,6 +7,11 @@ export default function AdminOrderApproval() {
   const [pendingOrders, setPendingOrders] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
+  // --- THÊM STATE QUẢN LÝ BẢNG CỘNG TIỀN ---
+  const [showMoneyModal, setShowMoneyModal] = useState(false);
+  const [selectedOrder, setSelectedOrder] = useState<any>(null);
+  const [bonusAmount, setBonusAmount] = useState<number>(0);
+
   // Cấu hình thông báo Toast nhỏ ở góc màn hình
   const Toast = Swal.mixin({
     toast: true,
@@ -23,8 +28,8 @@ export default function AdminOrderApproval() {
       .from("Order")
       .select(`
         *,
-        User:userId ( fullName, username )
-      `)
+        User:userId ( fullName, username, balance )
+      `) // Lấy thêm balance để cộng tiền
       .or('status.eq.RECYCLE,status.eq.PENDING') 
       .order("created_at", { ascending: false });
 
@@ -55,46 +60,53 @@ export default function AdminOrderApproval() {
     };
   }, []);
 
-  const handleApprove = async (orderId: string) => {
-    // Thay thế confirm bằng Swal chuyên nghiệp
-    const result = await Swal.fire({
-      title: 'XÁC NHẬN DUYỆT ĐƠN?',
-      text: "Lưu ý: Hệ thống không tự cộng tiền. Bạn cần cộng thủ công cho khách sau khi duyệt thành công.",
-      icon: 'question',
-      showCancelButton: true,
-      confirmButtonText: 'ĐỒNG Ý DUYỆT',
-      cancelButtonText: 'QUAY LẠI',
-      confirmButtonColor: '#16a34a', // Màu xanh
-      cancelButtonColor: '#334155',
-      background: '#1e293b',
-      color: '#fff'
-    });
+  // --- LOGIC XỬ LÝ DUYỆT & CỘNG TIỀN MỚI ---
+  const handleApproveClick = (order: any) => {
+    setSelectedOrder(order);
+    setBonusAmount(Number(order.amount || 0)); // Mặc định hiện số tiền đơn hàng
+    setShowMoneyModal(true);
+  };
 
-    if (result.isConfirmed) {
-      try {
-        const { error } = await supabase
-          .from("Order")
-          .update({ status: "SUCCESS" }) 
-          .eq("id", orderId);
+  const handleFinalApprove = async () => {
+    if (!selectedOrder) return;
 
-        if (error) throw error;
+    try {
+      // 1. Cập nhật trạng thái đơn hàng sang SUCCESS
+      const { error: orderError } = await supabase
+        .from("Order")
+        .update({ status: "SUCCESS" }) 
+        .eq("id", selectedOrder.id);
 
-        // Thông báo thành công kiểu Toast
-        Toast.fire({
-          icon: 'success',
-          title: 'Đã duyệt thành công! Nhớ cộng tiền cho khách.'
-        });
-        fetchPendingOrders();
-        
-      } catch (err: any) {
-        Swal.fire({
-          icon: 'error',
-          title: 'Lỗi xử lý',
-          text: err.message,
-          background: '#1e293b',
-          color: '#fff'
-        });
-      }
+      if (orderError) throw orderError;
+
+      // 2. Tính toán và cộng tiền vào balance của User
+      const currentBalance = Number(selectedOrder.User?.balance || 0);
+      const newBalance = currentBalance + Number(bonusAmount);
+
+      const { error: userError } = await supabase
+        .from("User")
+        .update({ balance: newBalance })
+        .eq("id", selectedOrder.userId);
+
+      if (userError) throw userError;
+
+      // Thông báo thành công kiểu Toast của bạn
+      Toast.fire({
+        icon: 'success',
+        title: `Đã duyệt & cộng $${bonusAmount} cho khách thành công!`
+      });
+
+      setShowMoneyModal(false);
+      fetchPendingOrders();
+      
+    } catch (err: any) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Lỗi xử lý',
+        text: err.message,
+        background: '#1e293b',
+        color: '#fff'
+      });
     }
   };
 
@@ -167,6 +179,7 @@ export default function AdminOrderApproval() {
             {pendingOrders.map((order) => (
               <tr key={order.id} className="hover:bg-zinc-800/50 transition-colors">
                 <td className="p-4">
+                  {/* GIỮ NGUYÊN HIỂN THỊ ẢNH */}
                   {order.image_url && order.image_url !== 'EMPTY' ? (
                     <img src={order.image_url} alt="" className="w-12 h-16 object-cover rounded bg-white/10 border border-zinc-700" />
                   ) : (
@@ -187,10 +200,10 @@ export default function AdminOrderApproval() {
                 <td className="p-4">
                   <div className="flex flex-col gap-2 items-center">
                     <button 
-                      onClick={() => handleApprove(order.id)}
+                      onClick={() => handleApproveClick(order)} // ĐỔI LÀM MỞ MODAL
                       className="w-full bg-green-600 hover:bg-green-500 text-white px-4 py-2 rounded font-black text-[10px] uppercase transition-all shadow-md active:scale-95"
                     >
-                      Duyệt Thành Công
+                      Duyệt & Cộng Tiền
                     </button>
                     <button 
                       onClick={() => handleReject(order.id)}
@@ -212,6 +225,45 @@ export default function AdminOrderApproval() {
           </tbody>
         </table>
       </div>
+
+      {/* --- BẢNG NHẬP TIỀN CỘNG TRỰC TIẾP (MODAL) --- */}
+      {showMoneyModal && (
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-[999] flex items-center justify-center p-4">
+          <div className="bg-[#1e293b] w-full max-w-sm border-2 border-yellow-500 p-6 rounded-xl shadow-[0_0_50px_rgba(234,179,8,0.2)]">
+            <h3 className="text-lg font-black uppercase mb-2 text-center text-yellow-500 italic">Xác nhận cộng tiền</h3>
+            <p className="text-[11px] text-zinc-400 text-center mb-6 uppercase tracking-widest">
+              Khách: <span className="text-white">{selectedOrder?.User?.username}</span>
+            </p>
+            
+            <div className="mb-6">
+              <label className="block text-[10px] font-black uppercase mb-2 text-zinc-500">Số tiền cộng vào tài khoản ($)</label>
+              <input 
+                type="number"
+                value={bonusAmount}
+                onChange={(e) => setBonusAmount(Number(e.target.value))}
+                className="w-full bg-[#0f172a] border-2 border-zinc-700 p-4 text-3xl font-black text-green-400 outline-none focus:border-green-500 rounded-lg text-center"
+                autoFocus
+              />
+              <p className="text-[10px] text-zinc-500 mt-2 italic text-center">* Giá trị đơn: ${selectedOrder?.amount}</p>
+            </div>
+
+            <div className="flex gap-3">
+              <button 
+                onClick={handleFinalApprove} 
+                className="flex-1 bg-green-600 text-white font-black py-3 rounded-lg hover:bg-green-500 transition-all uppercase text-[10px]"
+              >
+                Xác Nhận Duyệt
+              </button>
+              <button 
+                onClick={() => setShowMoneyModal(false)} 
+                className="flex-1 bg-zinc-700 text-white font-black py-3 rounded-lg hover:bg-zinc-600 transition-all uppercase text-[10px]"
+              >
+                Hủy
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
