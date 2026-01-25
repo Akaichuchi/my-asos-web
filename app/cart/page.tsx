@@ -23,6 +23,9 @@ export default function CartPage() {
   });
 
   useEffect(() => {
+    // Xóa bộ nhớ tạm cũ ngay khi load để tránh hiện số dư admin trước đó
+    localStorage.removeItem("user_balance");
+
     const data = localStorage.getItem("cart");
     if (data) {
       setCartItems(JSON.parse(data));
@@ -30,22 +33,27 @@ export default function CartPage() {
     
     const fetchBalance = async () => {
       try {
-        const response = await fetch('/api/user/10'); 
+        // LẤY ID ĐỘNG TỪ LOCALSTORAGE (Thay vì gán cứng số 10)
+        const storedUserId = localStorage.getItem("userId") || "10"; 
+        
+        // Thêm tham số chống cache để đảm bảo lấy dữ liệu mới nhất từ server
+        const response = await fetch(`/api/user/${storedUserId}?t=${new Date().getTime()}`, {
+          cache: 'no-store',
+          headers: { 'Cache-Control': 'no-cache' }
+        }); 
+        
         const userData = await response.json();
         
-        // CẬP NHẬT QUAN TRỌNG: Kiểm tra dữ liệu thực tế từ Database
         if (userData && userData.balance !== undefined) {
           const balanceNum = Number(userData.balance);
           setUserBalance(balanceNum);
           localStorage.setItem("user_balance", balanceNum.toString());
         } else {
-          // Nếu user chưa có balance hoặc lỗi dữ liệu, reset về 0 để tránh dùng số cũ trong máy
           setUserBalance(0);
           localStorage.setItem("user_balance", "0");
         }
       } catch (error) {
         console.error("Không thể lấy số dư thực tế");
-        // Ưu tiên an toàn: Nếu lỗi kết nối, reset về 0 thay vì lấy số dư cũ của người khác
         setUserBalance(0);
         localStorage.setItem("user_balance", "0");
       } finally {
@@ -105,12 +113,13 @@ export default function CartPage() {
       if (result.isConfirmed) {
         try {
           const firstItem = cartItems[0]; 
+          const storedUserId = localStorage.getItem("userId") || "10";
 
           const response = await fetch('/api/orders', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-              userId: 10,
+              userId: parseInt(storedUserId),
               totalAmount: orderTotal,
               productName: cartItems.length > 1 
                 ? `${firstItem.name} và ${cartItems.length - 1} món khác` 
