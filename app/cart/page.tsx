@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import Swal from 'sweetalert2'; // Thêm thư viện thông báo
+import Swal from 'sweetalert2';
 
 export default function CartPage() {
   const router = useRouter();
@@ -12,7 +12,6 @@ export default function CartPage() {
   const [userBalance, setUserBalance] = useState(0); 
   const [isOrdered, setIsOrdered] = useState(false);
 
-  // Cấu hình Toast thông báo nhanh cho trang Cart
   const Toast = Swal.mixin({
     toast: true,
     position: 'top-end',
@@ -34,21 +33,27 @@ export default function CartPage() {
         const response = await fetch('/api/user/10'); 
         const userData = await response.json();
         if (userData && userData.balance !== undefined) {
-          setUserBalance(userData.balance);
-          localStorage.setItem("user_balance", userData.balance.toString());
+          const balanceNum = Number(userData.balance);
+          setUserBalance(balanceNum);
+          localStorage.setItem("user_balance", balanceNum.toString());
         }
       } catch (error) {
         console.error("Không thể lấy số dư thực tế");
         const savedBalance = localStorage.getItem("user_balance");
         if (savedBalance) setUserBalance(parseFloat(savedBalance));
+      } finally {
+        // CẬP NHẬT: Đảm bảo dữ liệu tải xong mới tắt loading
+        setLoading(false);
       }
     };
 
     fetchBalance();
-    setLoading(false);
   }, []);
 
   const totalPrice = cartItems.reduce((acc, item) => acc + (Number(item.price) * item.quantity), 0);
+
+  // Kiểm tra điều kiện số dư (Dùng để hiển thị trạng thái nút)
+  const isBalanceEnough = userBalance >= totalPrice;
 
   const removeItem = (id: string) => {
     const updatedCart = cartItems.filter(item => item.id !== id);
@@ -67,21 +72,24 @@ export default function CartPage() {
 
   const handlePlaceOrder = async () => {
     if (paymentMethod === "balance") {
-      if (userBalance < totalPrice) {
+      // Ép kiểu chắc chắn là số trước khi so sánh
+      const currentBalance = Number(userBalance);
+      const orderTotal = Number(totalPrice);
+
+      if (currentBalance < orderTotal) {
         Swal.fire({
           title: 'SỐ DƯ KHÔNG ĐỦ!',
-          text: `Bạn hiện có $${userBalance.toFixed(2)}. Cần thêm $${(totalPrice - userBalance).toFixed(2)} để hoàn tất.`,
+          text: `Bạn hiện có $${currentBalance.toFixed(2)}. Cần thêm $${(orderTotal - currentBalance).toFixed(2)} để hoàn tất.`,
           icon: 'error',
           confirmButtonText: 'ĐÃ HIỂU',
           confirmButtonColor: '#000',
         });
-        return;
+        return; // Dừng hàm ngay lập tức
       }
 
-      // Thay thế confirm bằng Swal xác nhận thanh toán
       const result = await Swal.fire({
         title: 'XÁC NHẬN THANH TOÁN',
-        text: `Hệ thống sẽ trừ $${totalPrice.toFixed(2)} từ số dư ví của bạn.`,
+        text: `Hệ thống sẽ trừ $${orderTotal.toFixed(2)} từ số dư ví của bạn.`,
         icon: 'question',
         showCancelButton: true,
         confirmButtonText: 'THANH TOÁN NGAY',
@@ -99,7 +107,7 @@ export default function CartPage() {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
               userId: 10,
-              totalAmount: totalPrice,
+              totalAmount: orderTotal,
               productName: cartItems.length > 1 
                 ? `${firstItem.name} và ${cartItems.length - 1} món khác` 
                 : firstItem.name,
@@ -110,7 +118,7 @@ export default function CartPage() {
           const resultData = await response.json();
 
           if (response.ok) {
-            const newBalance = userBalance - totalPrice;
+            const newBalance = currentBalance - orderTotal;
             setUserBalance(newBalance);
             localStorage.setItem("user_balance", newBalance.toString());
             localStorage.removeItem("cart");
@@ -255,25 +263,25 @@ export default function CartPage() {
           <div className="mt-10 space-y-3">
             <label className="flex items-center gap-3 cursor-pointer">
               <input type="radio" checked={paymentMethod === "balance"} onChange={() => setPaymentMethod("balance")} className="w-5 h-5 accent-black" />
-              <span className="text-[14px] font-medium">Thanh toán bằng Số dư</span>
-            </label>
-            <label className="flex items-center gap-3 cursor-pointer opacity-50">
-              <input type="radio" disabled className="w-5 h-5 accent-black" />
-              <span className="text-[14px] font-medium">Thanh toán bằng Điểm</span>
+              <span className="text-[14px] font-medium">Thanh toán bằng Số dư 
+                <span className={`ml-2 text-[12px] ${!isBalanceEnough ? 'text-red-500' : 'text-green-500'}`}>
+                  (Ví: ${userBalance.toFixed(2)})
+                </span>
+              </span>
             </label>
           </div>
 
           <button 
             onClick={handlePlaceOrder}
-            className="w-full bg-[#8e7c74] text-white py-6 mt-8 text-[16px] font-black uppercase tracking-[6px] hover:brightness-90 transition-all active:translate-y-1"
+            // CẬP NHẬT: Đổi màu nút nếu không đủ tiền để cảnh báo người dùng
+            className={`w-full py-6 mt-8 text-[16px] font-black uppercase tracking-[6px] transition-all active:translate-y-1 ${
+              isBalanceEnough 
+                ? 'bg-[#8e7c74] text-white hover:brightness-90' 
+                : 'bg-zinc-200 text-zinc-400 cursor-not-allowed'
+            }`}
           >
-            ĐẶT HÀNG
+            {isBalanceEnough ? 'ĐẶT HÀNG' : 'SỐ DƯ KHÔNG ĐỦ'}
           </button>
-        </div>
-
-        <div className="bg-black text-white p-10 text-center font-black uppercase italic text-[11px] tracking-[4px] leading-relaxed">
-            Hài lòng tuyệt đối hoặc hoàn trả trong 30 ngày <br/>
-            <span className="text-zinc-500">Hỗ trợ khách hàng 24/7</span>
         </div>
       </div>
     </div>
