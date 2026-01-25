@@ -17,12 +17,12 @@ export default function AdminDashboard() {
   const [editingProduct, setEditingProduct] = useState<any>(null);
   const [productForm, setProductForm] = useState({
     name: "", price: "", originalPrice: "", images: "", 
-    category: "women", tag: "SELLING FAST", sizeFit: "", details: ""  
+    category: "women", tag: "SELLING FAST", sizeFit: "", 
+    description: "", details: "" // Thêm description vào form
   });
 
   const [amountChange, setAmountChange] = useState<{ [key: string]: string }>({});
 
-  // --- CÁC STATE MỚI ĐƯỢC THÊM VÀO ---
   const [showMoneyModal, setShowMoneyModal] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState<any>(null);
   const [bonusAmount, setBonusAmount] = useState<number>(0);
@@ -54,7 +54,6 @@ export default function AdminDashboard() {
     } catch (err) { console.error("Lỗi tải đơn hàng:", err); }
   };
 
-  // --- CẬP NHẬT: DUYỆT ĐƠN HIỆN BẢNG CỘNG TIỀN ---
   const handleApproveOrder = (order: any) => {
     setSelectedOrder(order);
     setBonusAmount(Number(order.amount || 0));
@@ -113,7 +112,7 @@ export default function AdminDashboard() {
     }
   };
 
-  // --- CẬP NHẬT: THÊM TÍNH NĂNG ĐỔI MẬT KHẨU ---
+  // --- FIX LỖI ĐỔI MẬT KHẨU ---
   const handleChangePassword = async (userId: string, username: string) => {
     const { value: newPassword } = await Swal.fire({
       title: 'ĐỔI MẬT KHẨU',
@@ -121,17 +120,26 @@ export default function AdminDashboard() {
       input: 'text',
       inputPlaceholder: 'Nhập mật khẩu mới...',
       showCancelButton: true,
-      confirmButtonColor: '#000'
+      confirmButtonColor: '#000',
+      cancelButtonText: 'HỦY'
     });
 
     if (newPassword) {
-      const res = await fetch('/api/register', {
-        method: 'PUT',
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id: userId, password: newPassword }),
-      });
-      if (res.ok) Swal.fire('Thành công', `Đã đổi pass cho ${username} thành: ${newPassword}`, 'success');
-      fetchUsers();
+      try {
+        const res = await fetch('/api/register', {
+          method: 'PUT',
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ id: userId, password: newPassword }),
+        });
+        if (res.ok) {
+          Swal.fire('Thành công', `Đã đổi pass cho ${username} thành: ${newPassword}`, 'success');
+          fetchUsers();
+        } else {
+          throw new Error();
+        }
+      } catch (error) {
+        Swal.fire('Lỗi', 'Không thể cập nhật mật khẩu!', 'error');
+      }
     }
   };
 
@@ -189,7 +197,7 @@ export default function AdminDashboard() {
     if (res.ok) { 
         Toast.fire({ icon: 'success', title: 'Thành công!' }); 
         setEditingProduct(null); 
-        setProductForm({ name: "", price: "", originalPrice: "", images: "", category: "women", tag: "SELLING FAST", sizeFit: "", details: "" });
+        setProductForm({ name: "", price: "", originalPrice: "", images: "", category: "women", tag: "SELLING FAST", sizeFit: "", description: "", details: "" });
         fetchProducts(); 
     }
   };
@@ -247,7 +255,6 @@ export default function AdminDashboard() {
       </div>
 
       <div className="max-w-6xl mx-auto p-6 lg:p-10">
-        {/* TAB KHÁCH HÀNG */}
         {activeTab === 'users' && (
           <div className="bg-white border-2 border-black p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
             <h2 className="text-2xl font-black uppercase mb-6 italic underline">User Control</h2>
@@ -285,7 +292,6 @@ export default function AdminDashboard() {
           </div>
         )}
 
-        {/* TAB ĐƠN HÀNG - CÓ HIỆN ẢNH VÀ BẢNG CỘNG TIỀN */}
         {activeTab === 'orders' && (
           <div className="bg-white border-2 border-black p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
             <h2 className="text-2xl font-black uppercase mb-6 italic underline">Duyệt Đơn Hàng</h2>
@@ -309,7 +315,6 @@ export default function AdminDashboard() {
           </div>
         )}
 
-        {/* TAB SẢN PHẨM GIỮ NGUYÊN BỐ CỤC 100% */}
         {activeTab === 'products' && (
           <div className="space-y-10">
             <div className="bg-white border-2 border-black p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
@@ -327,6 +332,17 @@ export default function AdminDashboard() {
                     <label className="text-[10px] font-bold uppercase">Giá Gốc ($):</label>
                     <input type="text" className="w-full border-2 border-black p-2 outline-none" value={productForm.originalPrice} onChange={(e) => setProductForm({...productForm, originalPrice: e.target.value})} />
                   </div>
+
+                  {/* THÊM 2 Ô MÔ TẢ MỚI */}
+                  <div className="md:col-span-2">
+                    <label className="text-[10px] font-bold uppercase text-blue-600">Mô tả ngắn (Description):</label>
+                    <input type="text" className="w-full border-2 border-black p-2 outline-none" value={productForm.description} onChange={(e) => setProductForm({...productForm, description: e.target.value})} placeholder="VD: Bảo hành 12 tháng, giao hàng nhanh..." />
+                  </div>
+                  <div className="md:col-span-2">
+                    <label className="text-[10px] font-bold uppercase text-red-600">Chi tiết sản phẩm (Details):</label>
+                    <textarea className="w-full border-2 border-black p-2 outline-none h-24 text-xs" value={productForm.details} onChange={(e) => setProductForm({...productForm, details: e.target.value})} placeholder="Nhập chi tiết thông số kỹ thuật..." />
+                  </div>
+
                   <div className="md:col-span-2">
                     <div className="flex justify-between items-end mb-1">
                       <label className="text-[10px] font-bold uppercase text-blue-600">Hình ảnh (Cloudinary):*</label>
@@ -339,7 +355,7 @@ export default function AdminDashboard() {
                   </button>
                 </form>
             </div>
-            {/* Inventory list... */}
+
             <div className="bg-white border-2 border-black p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
               <h2 className="text-xl font-black uppercase mb-4 italic">Inventory</h2>
               <div className="grid grid-cols-1 gap-6">
@@ -363,7 +379,6 @@ export default function AdminDashboard() {
         )}
       </div>
 
-      {/* MODAL CỘNG TIỀN TAY KHI DUYỆT ĐƠN */}
       {showMoneyModal && (
         <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
           <div className="bg-white w-full max-w-sm border-[4px] border-black p-8 shadow-[15px_15px_0px_0px_rgba(0,0,0,0.2)]">
