@@ -13,6 +13,12 @@ export default function MyAccount() {
   const [avatar, setAvatar] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  // States mới cho tính năng đổi mật khẩu
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [isUpdatingPassword, setIsUpdatingPassword] = useState(false);
+
   const countries = [
     "Việt Nam", "USA", "Japan", "Korea", "China", "France", "Germany", "UK", 
     "Canada", "Australia", "Singapore", "Thailand", "Russia", "India", 
@@ -133,6 +139,60 @@ export default function MyAccount() {
     }
   };
 
+  // Hàm xử lý đổi mật khẩu
+  const handleChangePassword = async () => {
+    const storedName = localStorage.getItem("userName");
+    if (!storedName) return;
+
+    if (!currentPassword || !newPassword || !confirmPassword) {
+      return Toast.fire({ icon: 'error', title: 'Vui lòng nhập đầy đủ mật khẩu!' });
+    }
+
+    if (newPassword !== confirmPassword) {
+      return Toast.fire({ icon: 'error', title: 'Mật khẩu mới không trùng khớp!' });
+    }
+
+    setIsUpdatingPassword(true);
+
+    // 1. Kiểm tra mật khẩu cũ từ Database
+    const { data: user } = await supabase
+      .from('User')
+      .select('password')
+      .eq('username', storedName)
+      .single();
+
+    if (user?.password !== currentPassword) {
+      setIsUpdatingPassword(false);
+      return Swal.fire({
+        icon: 'error',
+        title: 'Sai mật khẩu',
+        text: 'Mật khẩu hiện tại không chính xác!',
+        confirmButtonColor: '#d01345'
+      });
+    }
+
+    // 2. Cập nhật mật khẩu mới
+    const { error } = await supabase
+      .from('User')
+      .update({ password: newPassword })
+      .eq('username', storedName);
+
+    if (error) {
+      Swal.fire({ icon: 'error', title: 'Lỗi', text: error.message });
+    } else {
+      Swal.fire({
+        icon: 'success',
+        title: 'Thành công',
+        text: 'Mật khẩu của bạn đã được thay đổi.',
+        confirmButtonColor: '#1a56db'
+      });
+      setCurrentPassword("");
+      setNewPassword("");
+      setConfirmPassword("");
+    }
+    setIsUpdatingPassword(false);
+  };
+
   return (
     <div className="min-h-screen bg-[#f4f7f6] py-10 px-4 font-sans text-gray-800 relative">
       <div className="max-w-2xl mx-auto">
@@ -180,7 +240,7 @@ export default function MyAccount() {
         </div>
 
         {/* SECTION 2: EDITABLE INFORMATION */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8 mb-6">
           <h3 className="text-xl font-bold mb-6">Thông tin chung</h3>
           
           <div className="space-y-6">
@@ -226,6 +286,57 @@ export default function MyAccount() {
                 Lưu thay đổi
               </button>
               {isSaved && <p className="text-green-600 text-sm mt-2 font-medium">Đã Cập Nhật Thành Công!</p>}
+            </div>
+          </div>
+        </div>
+
+        {/* SECTION 3: BẢO MẬT & MẬT KHẨU (PHẦN MỚI) */}
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8">
+          <h3 className="text-xl font-bold mb-6 text-red-600">Bảo mật & Mật khẩu</h3>
+          
+          <div className="space-y-5">
+            <div>
+              <label className="block text-sm font-bold mb-2">Mật khẩu hiện tại</label>
+              <input 
+                type="password" 
+                value={currentPassword}
+                onChange={(e) => setCurrentPassword(e.target.value)}
+                placeholder="Nhập mật khẩu đang sử dụng"
+                className="w-full bg-[#f9fafb] border border-gray-200 rounded-lg py-3 px-4 focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+              />
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-bold mb-2">Mật khẩu mới</label>
+                <input 
+                  type="password" 
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  placeholder="Nhập mật khẩu mới"
+                  className="w-full bg-[#f9fafb] border border-gray-200 rounded-lg py-3 px-4 focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-bold mb-2">Xác nhận mật khẩu mới</label>
+                <input 
+                  type="password" 
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  placeholder="Nhập lại mật khẩu mới"
+                  className="w-full bg-[#f9fafb] border border-gray-200 rounded-lg py-3 px-4 focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                />
+              </div>
+            </div>
+
+            <div className="pt-4 border-t">
+              <button 
+                onClick={handleChangePassword}
+                disabled={isUpdatingPassword}
+                className="w-full md:w-auto bg-[#d01345] text-white px-10 py-3 rounded-lg font-bold uppercase tracking-widest hover:bg-red-700 transition-all active:scale-95 disabled:opacity-50"
+              >
+                {isUpdatingPassword ? "Đang xử lý..." : "Đổi mật khẩu"}
+              </button>
             </div>
           </div>
         </div>
