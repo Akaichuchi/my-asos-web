@@ -150,7 +150,7 @@ export default function Header() {
                   )}
                   <ul className="space-y-4 text-[13px] font-medium">
                     <li><Link href="/my-account" className="hover:underline flex items-center gap-3"><User size={16}/> Tài khoản của tôi</Link></li>
-                    <li><Link href="/my-orders" className="hover:underline flex items-center gap-3"><Package size={16}/> Theo dõi đơn hàng</Link></li>
+                    <li><Link href="/my-account/orders" className="hover:underline flex items-center gap-3"><Package size={16}/> Theo dõi đơn hàng</Link></li>
                     {isLoggedIn && <li onClick={handleSignOut} className="hover:underline cursor-pointer text-gray-400 flex items-center gap-3"><LogOut size={16}/> Đăng xuất</li>}
                   </ul>
                 </div>
@@ -233,7 +233,7 @@ export default function Header() {
                   </li>
                   <li className="flex items-center gap-4">
                     <Package size={24} strokeWidth={1.5} />
-                    <Link href="/my-orders" onClick={() => setIsSideMenuOpen(false)}>Theo dõi đơn hàng</Link>
+                    <Link href="/my-account/orders" onClick={() => setIsSideMenuOpen(false)}>Theo dõi đơn hàng</Link>
                   </li>
                   {isLoggedIn && <li onClick={handleSignOut} className="text-gray-400 cursor-pointer pl-10 flex items-center gap-2 lowercase"><LogOut size={16}/> Đăng xuất</li>}
                   <li className="flex justify-between items-center border-t pt-6 text-[11px] text-gray-500">Trợ giúp & Thông tin <span className="text-lg">+</span></li>
