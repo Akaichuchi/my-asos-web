@@ -32,17 +32,23 @@ export default function CartPage() {
       try {
         const response = await fetch('/api/user/10'); 
         const userData = await response.json();
+        
+        // CẬP NHẬT QUAN TRỌNG: Kiểm tra dữ liệu thực tế từ Database
         if (userData && userData.balance !== undefined) {
           const balanceNum = Number(userData.balance);
           setUserBalance(balanceNum);
           localStorage.setItem("user_balance", balanceNum.toString());
+        } else {
+          // Nếu user chưa có balance hoặc lỗi dữ liệu, reset về 0 để tránh dùng số cũ trong máy
+          setUserBalance(0);
+          localStorage.setItem("user_balance", "0");
         }
       } catch (error) {
         console.error("Không thể lấy số dư thực tế");
-        const savedBalance = localStorage.getItem("user_balance");
-        if (savedBalance) setUserBalance(parseFloat(savedBalance));
+        // Ưu tiên an toàn: Nếu lỗi kết nối, reset về 0 thay vì lấy số dư cũ của người khác
+        setUserBalance(0);
+        localStorage.setItem("user_balance", "0");
       } finally {
-        // CẬP NHẬT: Đảm bảo dữ liệu tải xong mới tắt loading
         setLoading(false);
       }
     };
@@ -52,7 +58,6 @@ export default function CartPage() {
 
   const totalPrice = cartItems.reduce((acc, item) => acc + (Number(item.price) * item.quantity), 0);
 
-  // Kiểm tra điều kiện số dư (Dùng để hiển thị trạng thái nút)
   const isBalanceEnough = userBalance >= totalPrice;
 
   const removeItem = (id: string) => {
@@ -72,7 +77,6 @@ export default function CartPage() {
 
   const handlePlaceOrder = async () => {
     if (paymentMethod === "balance") {
-      // Ép kiểu chắc chắn là số trước khi so sánh
       const currentBalance = Number(userBalance);
       const orderTotal = Number(totalPrice);
 
@@ -84,7 +88,7 @@ export default function CartPage() {
           confirmButtonText: 'ĐÃ HIỂU',
           confirmButtonColor: '#000',
         });
-        return; // Dừng hàm ngay lập tức
+        return;
       }
 
       const result = await Swal.fire({
@@ -125,20 +129,10 @@ export default function CartPage() {
             setCartItems([]);
             setIsOrdered(true);
           } else {
-            Swal.fire({
-              icon: 'error',
-              title: 'LỖI',
-              text: resultData.error,
-              confirmButtonColor: '#000'
-            });
+            Swal.fire({ icon: 'error', title: 'LỖI', text: resultData.error, confirmButtonColor: '#000' });
           }
         } catch (error) {
-          Swal.fire({
-            icon: 'error',
-            title: 'LỖI HỆ THỐNG',
-            text: 'Vui lòng thử lại sau!',
-            confirmButtonColor: '#000'
-          });
+          Swal.fire({ icon: 'error', title: 'LỖI HỆ THỐNG', text: 'Vui lòng thử lại sau!', confirmButtonColor: '#000' });
         }
       }
     }
@@ -154,16 +148,10 @@ export default function CartPage() {
             CẢM ƠN BẠN ĐÃ ĐẶT HÀNG!
           </h2>
           <div className="space-y-4">
-            <Link 
-              href="/" 
-              className="block w-full bg-[#8e7c74] text-white py-4 text-[11px] font-bold uppercase tracking-[2px] hover:brightness-90 transition-all text-center"
-            >
+            <Link href="/" className="block w-full bg-[#8e7c74] text-white py-4 text-[11px] font-bold uppercase tracking-[2px] hover:brightness-90 transition-all text-center">
               TIẾP TỤC MUA SẮM
             </Link>
-            <button 
-              onClick={() => router.push("/my-account/orders")} 
-              className="block w-full bg-[#8e7c74] text-white py-4 text-[11px] font-bold uppercase tracking-[2px] hover:brightness-90 transition-all"
-            >
+            <button onClick={() => router.push("/my-account/orders")} className="block w-full bg-[#8e7c74] text-white py-4 text-[11px] font-bold uppercase tracking-[2px] hover:brightness-90 transition-all">
               THEO DÕI ĐƠN CỦA TÔI
             </button>
           </div>
@@ -273,11 +261,8 @@ export default function CartPage() {
 
           <button 
             onClick={handlePlaceOrder}
-            // CẬP NHẬT: Đổi màu nút nếu không đủ tiền để cảnh báo người dùng
             className={`w-full py-6 mt-8 text-[16px] font-black uppercase tracking-[6px] transition-all active:translate-y-1 ${
-              isBalanceEnough 
-                ? 'bg-[#8e7c74] text-white hover:brightness-90' 
-                : 'bg-zinc-200 text-zinc-400 cursor-not-allowed'
+              isBalanceEnough ? 'bg-[#8e7c74] text-white hover:brightness-90' : 'bg-zinc-200 text-zinc-400 cursor-not-allowed'
             }`}
           >
             {isBalanceEnough ? 'ĐẶT HÀNG' : 'SỐ DƯ KHÔNG ĐỦ'}
