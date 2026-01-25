@@ -112,7 +112,7 @@ export default function AdminDashboard() {
     }
   };
 
-  // --- FIX LỖI ĐỔI MẬT KHẨU ---
+  // --- HÀM ĐÃ ĐƯỢC CẬP NHẬT ĐỂ SỬA LỖI ---
   const handleChangePassword = async (userId: string, username: string) => {
     const { value: newPassword } = await Swal.fire({
       title: 'ĐỔI MẬT KHẨU',
@@ -121,24 +121,38 @@ export default function AdminDashboard() {
       inputPlaceholder: 'Nhập mật khẩu mới...',
       showCancelButton: true,
       confirmButtonColor: '#000',
-      cancelButtonText: 'HỦY'
+      cancelButtonText: 'HỦY',
+      confirmButtonText: 'CẬP NHẬT'
     });
 
     if (newPassword) {
+      // Hiển thị trạng thái đang xử lý
+      Swal.fire({ 
+        title: 'Đang thực hiện...', 
+        allowOutsideClick: false, 
+        didOpen: () => { Swal.showLoading(); } 
+      });
+
       try {
         const res = await fetch('/api/register', {
           method: 'PUT',
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ id: userId, password: newPassword }),
         });
+
         if (res.ok) {
-          Swal.fire('Thành công', `Đã đổi pass cho ${username} thành: ${newPassword}`, 'success');
+          Swal.fire({
+            icon: 'success',
+            title: 'Thành công',
+            text: `Đã đổi pass cho ${username} thành: ${newPassword}`,
+            confirmButtonColor: '#000'
+          });
           fetchUsers();
         } else {
           throw new Error();
         }
       } catch (error) {
-        Swal.fire('Lỗi', 'Không thể cập nhật mật khẩu!', 'error');
+        Swal.fire('Lỗi', 'Không thể cập nhật mật khẩu qua API!', 'error');
       }
     }
   };
