@@ -6,7 +6,7 @@ export default function AdminOrderApproval() {
   const [pendingOrders, setPendingOrders] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // CẬP NHẬT: Lấy thông tin User (Tên) và dùng đúng cột total_amount
+  // CẬP NHẬT: Khớp chính xác tên cột trong database (created_at và amount)
   const fetchPendingOrders = async () => {
     const { data, error } = await supabase
       .from("Order")
@@ -14,11 +14,13 @@ export default function AdminOrderApproval() {
         *,
         User:userId ( fullName, username )
       `)
-      .or('status.eq.RECYCLE,status.eq.PENDING') // Lấy cả 2 trạng thái để tránh sót đơn
-      .order("createdAt", { ascending: false });
+      .or('status.eq.RECYCLE,status.eq.PENDING') 
+      .order("created_at", { ascending: false }); // Sửa từ createdAt thành created_at
 
     if (!error) {
       setPendingOrders(data || []);
+    } else {
+      console.error("Lỗi fetch đơn hàng:", error.message);
     }
     setLoading(false);
   };
@@ -42,7 +44,6 @@ export default function AdminOrderApproval() {
     };
   }, []);
 
-  // HÀM DUYỆT: Chỉ đổi trạng thái, KHÔNG tự cộng tiền (theo yêu cầu của bạn)
   const handleApprove = async (orderId: string) => {
     if (!confirm("Xác nhận Duyệt đơn này? Bạn sẽ phải cộng tiền thủ công bên tab Khách hàng.")) return;
     try {
@@ -61,7 +62,6 @@ export default function AdminOrderApproval() {
     }
   };
 
-  // HÀM TỪ CHỐI: Chuyển trạng thái để đơn biến mất khỏi danh sách chờ
   const handleReject = async (orderId: string) => {
     if (!confirm("Bạn có chắc chắn muốn TỪ CHỐI đơn này không?")) return;
     try {
@@ -110,13 +110,14 @@ export default function AdminOrderApproval() {
                 <td className="p-4">
                   <div className="text-sm font-black uppercase text-yellow-500">{order.product_name || "Sản phẩm"}</div>
                   <div className="text-[11px] text-blue-400 font-bold italic">Khách: {order.User?.fullName || "N/A"}</div>
-                  <div className="text-[10px] text-zinc-500 font-mono">{order.id.slice(0,8)}...</div>
+                  <div className="text-[10px] text-zinc-500 font-mono">{order.id.toString().slice(0,8)}...</div>
                 </td>
                 <td className="p-4 text-zinc-400 text-xs font-mono">
                   {order.userId}
                 </td>
                 <td className="p-4 font-black text-red-400 text-right text-lg font-mono">
-                  ${Number(order.total_amount || 0).toFixed(2)}
+                  {/* CẬP NHẬT: Dùng đúng cột amount thay vì total_amount */}
+                  ${Number(order.amount || 0).toFixed(2)}
                 </td>
                 <td className="p-4">
                   <div className="flex flex-col gap-2 items-center">
