@@ -33,6 +33,16 @@ export default function AdminDashboard() {
     color: '#fff'
   });
 
+  // --- HÀM SAO CHÉP LINK SẢN PHẨM MỚI THÊM ---
+  const handleCopyProductLink = (id: any) => {
+    const productUrl = `${window.location.origin}/product/${id}`;
+    navigator.clipboard.writeText(productUrl);
+    Toast.fire({
+      icon: 'success',
+      title: 'Đã sao chép link sản phẩm!'
+    });
+  };
+
   const fetchOrders = async () => {
     try {
       const { data, error } = await supabase
@@ -463,6 +473,9 @@ export default function AdminDashboard() {
                         <p className="text-[10px] text-gray-500 italic">Category: {p.category}</p>
                     </div>
                     <div className="flex md:flex-col gap-2 justify-center">
+                        {/* NÚT SAO CHÉP MỚI */}
+                        <button onClick={() => handleCopyProductLink(p.id)} className="bg-blue-600 text-white text-[10px] px-4 py-2 font-bold uppercase hover:bg-black transition-all">CHÉP LINK</button>
+                        
                         <button onClick={() => { setEditingProduct(p); setProductForm(p); }} className="bg-black text-white text-[10px] px-4 py-2 font-bold uppercase">SỬA</button>
                         <button onClick={() => handleDeleteProduct(p.id)} className="bg-red-600 text-white text-[10px] px-4 py-2 font-bold uppercase">XÓA</button>
                     </div>
