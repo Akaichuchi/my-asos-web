@@ -18,7 +18,7 @@ export default function AdminDashboard() {
   const [productForm, setProductForm] = useState({
     name: "", price: "", originalPrice: "", images: "", 
     category: "women", tag: "SELLING FAST", sizeFit: "", 
-    description: "", details: "" // Thêm description vào form
+    description: "", details: "" 
   });
 
   const [amountChange, setAmountChange] = useState<{ [key: string]: string }>({});
@@ -112,7 +112,6 @@ export default function AdminDashboard() {
     }
   };
 
-  // --- HÀM ĐÃ ĐƯỢC CẬP NHẬT ĐỂ SỬA LỖI ---
   const handleChangePassword = async (userId: string, username: string) => {
     const { value: newPassword } = await Swal.fire({
       title: 'ĐỔI MẬT KHẨU',
@@ -126,7 +125,6 @@ export default function AdminDashboard() {
     });
 
     if (newPassword) {
-      // Hiển thị trạng thái đang xử lý
       Swal.fire({ 
         title: 'Đang thực hiện...', 
         allowOutsideClick: false, 
@@ -347,7 +345,20 @@ export default function AdminDashboard() {
                     <input type="text" className="w-full border-2 border-black p-2 outline-none" value={productForm.originalPrice} onChange={(e) => setProductForm({...productForm, originalPrice: e.target.value})} />
                   </div>
 
-                  {/* THÊM 2 Ô MÔ TẢ MỚI */}
+                  {/* Ô CHỌN DANH MỤC MEN/WOMEN MỚI CẬP NHẬT */}
+                  <div className="md:col-span-2">
+                    <label className="text-[10px] font-bold uppercase text-purple-600">Danh mục (Category):*</label>
+                    <select 
+                      className="w-full border-2 border-black p-2 outline-none font-bold bg-white"
+                      value={productForm.category}
+                      onChange={(e) => setProductForm({...productForm, category: e.target.value})}
+                      required
+                    >
+                      <option value="women">WOMEN (Nữ)</option>
+                      <option value="men">MEN (Nam)</option>
+                    </select>
+                  </div>
+
                   <div className="md:col-span-2">
                     <label className="text-[10px] font-bold uppercase text-blue-600">Mô tả ngắn (Description):</label>
                     <input type="text" className="w-full border-2 border-black p-2 outline-none" value={productForm.description} onChange={(e) => setProductForm({...productForm, description: e.target.value})} placeholder="VD: Bảo hành 12 tháng, giao hàng nhanh..." />
@@ -378,7 +389,7 @@ export default function AdminDashboard() {
                     <img src={p.images?.split(',')[0]} className="w-24 aspect-[3/4] object-cover border border-black" alt={p.name} />
                     <div className="flex-1">
                         <p className="text-sm font-black uppercase underline">{p.name}</p>
-                        <p className="text-xs font-bold text-red-600">${p.price}</p>
+                        <p className="text-xs font-bold text-red-600">${p.price} <span className="text-gray-400">({p.category})</span></p>
                     </div>
                     <div className="flex md:flex-col gap-2">
                         <button onClick={() => handleCopyProductLink(p.id)} className="bg-blue-600 text-white text-[10px] px-4 py-2 font-bold uppercase">Link</button>
