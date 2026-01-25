@@ -21,7 +21,7 @@ export default function AdminDashboard() {
 
   const [amountChange, setAmountChange] = useState<{ [key: string]: string }>({});
 
-  // CẬP NHẬT: Tải đơn hàng kèm thông tin User (Tên và Số dư) để đối soát
+  // CẬP NHẬT: Sửa tên cột createdAt -> created_at và total_amount -> amount để khớp database
   const fetchOrders = async () => {
     try {
       const { data, error } = await supabase
@@ -31,8 +31,9 @@ export default function AdminDashboard() {
           User:userId ( fullName, username, balance )
         `)
         .or('status.eq.RECYCLE,status.eq.PENDING')
-        .order('createdAt', { ascending: false }); 
+        .order('created_at', { ascending: false }); 
       if (!error && data) setOrders(data);
+      else if (error) console.error("Lỗi truy vấn Supabase:", error.message);
     } catch (err) { console.error("Lỗi tải đơn hàng:", err); }
   };
 
@@ -108,14 +109,12 @@ export default function AdminDashboard() {
     } catch (error) { console.error("Lỗi tải sản phẩm:", error); }
   };
 
-  // --- CẬP NHẬT QUAN TRỌNG: REALTIME LISTENER ---
   useEffect(() => {
     if (isAuthorized) {
       fetchUsers();
       fetchProducts();
       fetchOrders(); 
 
-      // Lắng nghe sự thay đổi của bảng Order để tự động cập nhật danh sách duyệt
       const channel = supabase
         .channel('admin-order-updates')
         .on(
@@ -284,7 +283,8 @@ export default function AdminDashboard() {
                         KHÁCH: {order.User?.fullName || 'N/A'} (@{order.User?.username || 'unknown'})
                       </div>
                       <div className="text-sm font-black uppercase leading-tight">{order.product_name || 'Đơn tái chế'}</div>
-                      <div className="text-lg font-mono font-black text-red-600 italic">Giá trị: ${order.total_amount || 0}</div>
+                      {/* SỬA: total_amount thành amount để khớp database */}
+                      <div className="text-lg font-mono font-black text-red-600 italic">Giá trị: ${order.amount || 0}</div>
                     </div>
                   </div>
                   <div className="flex items-center gap-3 mt-4 md:mt-0 w-full md:w-auto">
