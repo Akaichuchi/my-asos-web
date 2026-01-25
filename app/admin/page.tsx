@@ -21,7 +21,7 @@ export default function AdminDashboard() {
 
   const [amountChange, setAmountChange] = useState<{ [key: string]: string }>({});
 
-  // CẬP NHẬT: Sửa tên cột createdAt -> created_at và total_amount -> amount để khớp database
+  // CẬP NHẬT CHÍNH: Khớp tên cột created_at và lấy dữ liệu RECYCLE/PENDING
   const fetchOrders = async () => {
     try {
       const { data, error } = await supabase
@@ -32,7 +32,11 @@ export default function AdminDashboard() {
         `)
         .or('status.eq.RECYCLE,status.eq.PENDING')
         .order('created_at', { ascending: false }); 
-      if (!error && data) setOrders(data);
+      
+      if (!error && data) {
+        console.log("Dữ liệu đơn hàng:", data);
+        setOrders(data);
+      }
       else if (error) console.error("Lỗi truy vấn Supabase:", error.message);
     } catch (err) { console.error("Lỗi tải đơn hàng:", err); }
   };
@@ -283,7 +287,7 @@ export default function AdminDashboard() {
                         KHÁCH: {order.User?.fullName || 'N/A'} (@{order.User?.username || 'unknown'})
                       </div>
                       <div className="text-sm font-black uppercase leading-tight">{order.product_name || 'Đơn tái chế'}</div>
-                      {/* SỬA: total_amount thành amount để khớp database */}
+                      {/* SỬA QUAN TRỌNG: Dùng order.amount thay vì total_amount */}
                       <div className="text-lg font-mono font-black text-red-600 italic">Giá trị: ${order.amount || 0}</div>
                     </div>
                   </div>
