@@ -11,7 +11,10 @@ export default function ProductDetailPage() {
   const [recentlyViewed, setRecentlyViewed] = useState<any[]>([]);
   const [activeImg, setActiveImg] = useState("");
   const [loading, setLoading] = useState(true);
-  const [selectedSize, setSelectedSize] = useState("");
+  
+  // CẬP NHẬT: Mặc định chọn size "S" thay vì để trống ""
+  const [selectedSize, setSelectedSize] = useState("S");
+  
   const [copied, setCopied] = useState(false);
 
   // State cho số lượng
@@ -69,7 +72,6 @@ export default function ProductDetailPage() {
     });
   };
 
-  // Cập nhật logic: Thêm vào giỏ hàng và chuyển hướng sang trang /cart ngay lập tức
   const handleBuyNow = () => {
     if (!selectedSize) { 
       alert("Vui lòng chọn kích cỡ trước khi thanh toán!"); 
@@ -96,8 +98,6 @@ export default function ProductDetailPage() {
     }
 
     localStorage.setItem("cart", JSON.stringify(currentCart));
-    
-    // Điều hướng khách hàng đến trang giỏ hàng
     router.push("/cart");
   };
 
@@ -133,8 +133,7 @@ export default function ProductDetailPage() {
     }
   };
 
-  if (loading) return <div className="h-screen flex items-center justify-center font-black italic animate-pulse"> NEWEGG
-ĐANG TẢI DỮ LIỆU...</div>;
+  if (loading) return <div className="h-screen flex items-center justify-center font-black italic animate-pulse"> NEWEGG ĐANG TẢI DỮ LIỆU...</div>;
   if (!product) return <div className="p-20 text-center font-bold">SẢN PHẨM KHÔNG TỒN TẠI</div>;
 
   const images = product.images ? product.images.split(',') : [];
@@ -180,8 +179,8 @@ export default function ProductDetailPage() {
             </div>
             <div className="relative">
               <select value={selectedSize} onChange={(e) => setSelectedSize(e.target.value)} className="w-full border border-[#ddd] py-3 px-4 text-[14px] focus:border-[#2d2d2d] outline-none appearance-none bg-white cursor-pointer font-bold">
-                <option value="">Vui lòng chọn size</option>
-                {['XS', 'S', 'M', 'L', 'XL', '2XL'].map(size => <option key={size} value={size}>{size}</option>)}
+                {/* Đã cập nhật: Bỏ option "Vui lòng chọn size" để mặc định lấy size đầu tiên */}
+                {['S', 'M', 'L', 'XL', '2XL'].map(size => <option key={size} value={size}>{size}</option>)}
               </select>
               <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-[#666]">▼</div>
             </div>
@@ -196,7 +195,6 @@ export default function ProductDetailPage() {
             </div>
 
             <div className="flex flex-col gap-3 pt-2">
-              {/* Đã bỏ nút "Thêm vào giỏ hàng", chỉ giữ lại "Thanh toán ngay" */}
               <button onClick={handleBuyNow} className="w-full bg-[#2d2d2d] text-white py-4 font-bold uppercase text-[14px] tracking-widest hover:bg-black transition-all shadow-md active:scale-95">
                 Thanh toán ngay
               </button>
