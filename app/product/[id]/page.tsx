@@ -133,7 +133,8 @@ export default function ProductDetailPage() {
     }
   };
 
-  if (loading) return <div className="h-screen flex items-center justify-center font-black italic animate-pulse">ĐANG TẢI DỮ LIỆU...</div>;
+  if (loading) return <div className="h-screen flex items-center justify-center font-black italic animate-pulse"> NEWEGG
+ĐANG TẢI DỮ LIỆU...</div>;
   if (!product) return <div className="p-20 text-center font-bold">SẢN PHẨM KHÔNG TỒN TẠI</div>;
 
   const images = product.images ? product.images.split(',') : [];
