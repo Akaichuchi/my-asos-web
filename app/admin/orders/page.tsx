@@ -15,7 +15,7 @@ export default function AdminOrderApproval() {
         User:userId ( fullName, username )
       `)
       .or('status.eq.RECYCLE,status.eq.PENDING') 
-      .order("created_at", { ascending: false }); // Sửa từ createdAt thành created_at
+      .order("created_at", { ascending: false }); // Sắp xếp theo cột thời gian chuẩn
 
     if (!error) {
       setPendingOrders(data || []);
@@ -101,29 +101,31 @@ export default function AdminOrderApproval() {
             {pendingOrders.map((order) => (
               <tr key={order.id} className="hover:bg-zinc-800/50 transition-colors">
                 <td className="p-4">
-                  {order.image_url ? (
+                  {order.image_url && order.image_url !== 'EMPTY' ? (
                     <img src={order.image_url} alt="" className="w-12 h-16 object-cover rounded bg-white/10 border border-zinc-700" />
                   ) : (
                     <div className="w-12 h-16 bg-zinc-800 rounded flex items-center justify-center text-[10px] text-zinc-500">No Image</div>
                   )}
                 </td>
                 <td className="p-4">
+                  {/* CỘT CHÍNH XÁC: product_name */}
                   <div className="text-sm font-black uppercase text-yellow-500">{order.product_name || "Sản phẩm"}</div>
+                  {/* CỘT CHÍNH XÁC: User.fullName */}
                   <div className="text-[11px] text-blue-400 font-bold italic">Khách: {order.User?.fullName || "N/A"}</div>
-                  <div className="text-[10px] text-zinc-500 font-mono">{order.id.toString().slice(0,8)}...</div>
+                  <div className="text-[10px] text-zinc-500 font-mono italic">Ngày: {order.created_at}</div>
                 </td>
                 <td className="p-4 text-zinc-400 text-xs font-mono">
                   {order.userId}
                 </td>
                 <td className="p-4 font-black text-red-400 text-right text-lg font-mono">
-                  {/* CẬP NHẬT: Dùng đúng cột amount thay vì total_amount */}
+                  {/* CỘT CHÍNH XÁC: amount */}
                   ${Number(order.amount || 0).toFixed(2)}
                 </td>
                 <td className="p-4">
                   <div className="flex flex-col gap-2 items-center">
                     <button 
                       onClick={() => handleApprove(order.id)}
-                      className="w-full bg-green-600 hover:bg-green-500 text-white px-4 py-2 rounded font-black text-[10px] uppercase transition-all"
+                      className="w-full bg-green-600 hover:bg-green-500 text-white px-4 py-2 rounded font-black text-[10px] uppercase transition-all shadow-md"
                     >
                       Duyệt Thành Công
                     </button>
