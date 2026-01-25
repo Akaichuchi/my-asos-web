@@ -50,7 +50,6 @@ export default function AdminDashboard() {
     } catch (err) { alert('Lỗi khi duyệt đơn hàng!'); }
   };
 
-  // THÊM MỚI: Tính năng từ chối đơn hàng
   const handleRejectOrder = async (orderId: string) => {
     if (!confirm('Bạn có chắc chắn muốn TỪ CHỐI đơn hàng này?')) return;
     try {
@@ -109,11 +108,26 @@ export default function AdminDashboard() {
     } catch (error) { console.error("Lỗi tải sản phẩm:", error); }
   };
 
+  // --- CẬP NHẬT QUAN TRỌNG: REALTIME LISTENER ---
   useEffect(() => {
     if (isAuthorized) {
       fetchUsers();
       fetchProducts();
       fetchOrders(); 
+
+      // Lắng nghe sự thay đổi của bảng Order để tự động cập nhật danh sách duyệt
+      const channel = supabase
+        .channel('admin-order-updates')
+        .on(
+          'postgres_changes',
+          { event: '*', schema: 'public', table: 'Order' },
+          () => { fetchOrders(); }
+        )
+        .subscribe();
+
+      return () => {
+        supabase.removeChannel(channel);
+      };
     }
   }, [isAuthorized]);
 
@@ -251,7 +265,6 @@ export default function AdminDashboard() {
           </div>
         )}
 
-        {/* TAB ĐƠN HÀNG: HIỂN THỊ TÊN KHÁCH & GIÁ TRỊ ĐỂ ĐỐI SOÁT THỦ CÔNG */}
         {activeTab === 'orders' && (
           <div className="bg-white border-2 border-black p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] text-black">
             <h2 className="text-2xl font-black uppercase mb-6 italic underline">Duyệt Đơn Hàng</h2>
