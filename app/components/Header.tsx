@@ -1,6 +1,12 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link"; 
+import { 
+  Home, Tag, Sparkles, Shirt, ShoppingBag, 
+  Footprints, Watch, User, Package, LogOut, 
+  Search, Heart, ShoppingCart, Menu, X,
+  Layers, Coffee, Zap, Diamond, Stars, Flame, ChevronRight
+} from "lucide-react";
 
 export default function Header() {
   const [isMegaMenuOpen, setIsMegaMenuOpen] = useState(false);
@@ -28,7 +34,6 @@ export default function Header() {
   const bagPath = "/cart";
 
   useEffect(() => {
-    // CẬP NHẬT: Lấy trực tiếp userName từ localStorage để hiển thị tên thật
     const storedName = localStorage.getItem("userName");
     if (storedName) {
       setUser({ name: storedName });
@@ -59,30 +64,28 @@ export default function Header() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  // CẬP NHẬT: Thay thế URL ảnh lỗi bằng Icon Lucide cho Mobile
   const menuData = {
     mobileNav: [
-      { name: "Trang chủ", img: "https://images.asos-media.com/navigation/ww_gbl_home_117075775_1x1", path: "/" },
-      { name: "Giảm giá", img: "https://images.asos-media.com/navigation/ww_sale_gbl_1734344_1x1", path: "/women" },
-      { name: "Hàng mới", img: "https://images.asos-media.com/navigation/ww_gbl_new_in_1615715_1x1", path: "/women" },
-      { name: "Quần áo", img: "https://images.asos-media.com/navigation/ww_gbl_clothing_8799_1x1", path: "/women" },
-      { name: "Váy đầm", img: "https://images.asos-media.com/navigation/ww_gbl_dresses_8799_1x1", path: "/women" },
-      { name: "Giày dép", img: "https://images.asos-media.com/navigation/ww_gbl_shoes_4172_1x1", path: "/women" },
-      { name: "Phụ kiện", img: "https://images.asos-media.com/navigation/ww_gbl_accessories_4174_1x1", path: "/women" }
+      { name: "Trang chủ", icon: <Home size={22} strokeWidth={1.5} />, path: "/" },
+      { name: "Giảm giá", icon: <Tag size={22} strokeWidth={1.5} />, path: "/women" },
+      { name: "Hàng mới", icon: <Sparkles size={22} strokeWidth={1.5} />, path: "/women" },
+      { name: "Quần áo", icon: <Shirt size={22} strokeWidth={1.5} />, path: "/women" },
+      { name: "Váy đầm", icon: <ShoppingBag size={22} strokeWidth={1.5} />, path: "/women" },
+      { name: "Giày dép", icon: <Footprints size={22} strokeWidth={1.5} />, path: "/women" },
+      { name: "Phụ kiện", icon: <Watch size={22} strokeWidth={1.5} />, path: "/women" }
+    ],
+    // Icon cho Mega Menu Mùa đông
+    winterIcons: [
+      { name: "Cơ bản", icon: <Layers size={20} className="text-zinc-500" /> },
+      { name: "Đồ mặc nhà", icon: <Coffee size={20} className="text-zinc-500" /> },
+      { name: "Lông nhân tạo", icon: <Zap size={20} className="text-zinc-500" /> },
+      { name: "Đồ da", icon: <Diamond size={20} className="text-zinc-500" /> }
     ]
   };
 
-  const handleCategoryClick = (category: string) => {
-    if (activeCategory === category && isMegaMenuOpen) {
-      setIsMegaMenuOpen(false);
-      setActiveCategory("");
-    } else {
-      setActiveCategory(category);
-      setIsMegaMenuOpen(true);
-    }
-  };
-
   const handleSignOut = () => {
-    localStorage.removeItem("userName"); // Xóa đúng key userName khi đăng xuất
+    localStorage.removeItem("userName");
     setIsLoggedIn(false);
     setUser({ name: "" });
     setIsSideMenuOpen(false);
@@ -104,7 +107,7 @@ export default function Header() {
       <div className="bg-[#2d2d2d] text-white">
         <div className="max-w-7xl mx-auto px-4 flex items-center justify-between h-14 md:h-16 gap-4">
           <button className="md:hidden p-2" onClick={() => setIsSideMenuOpen(true)}>
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" /></svg>
+            <Menu className="w-6 h-6" />
           </button>
 
           <Link href="/" className="text-3xl md:text-[34px] font-black tracking-tighter uppercase decoration-none">NEWEGG</Link>
@@ -126,14 +129,14 @@ export default function Header() {
               className="w-full bg-white text-black rounded-full py-2 px-5 pr-10 text-sm focus:outline-none"
             />
             <button className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-black">
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+              <Search className="w-5 h-5" />
             </button>
           </div>
 
           <div className="flex gap-1.5 md:gap-4 items-center h-full">
             <div className="relative h-full flex items-center" ref={accountRef} onMouseEnter={() => setIsAccountOpen(true)} onMouseLeave={() => setIsAccountOpen(false)}>
               <button className="p-2 hover:bg-[#525252] transition-colors rounded-full">
-                <svg className="w-6 h-6 md:w-7 md:h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
+                <User className="w-6 h-6 md:w-7 md:h-7" strokeWidth={1.5} />
               </button>
               {isAccountOpen && (
                 <div className="absolute right-0 top-full w-64 bg-white shadow-2xl border border-gray-100 z-[100] p-5 text-black">
@@ -146,16 +149,16 @@ export default function Header() {
                     <div className="mb-5 border-b pb-2 text-[14px] font-black italic uppercase">Xin chào {user.name}</div>
                   )}
                   <ul className="space-y-4 text-[13px] font-medium">
-                    <li><Link href="/my-account" className="hover:underline flex items-center gap-3">👤 Tài khoản của tôi</Link></li>
-                    <li><Link href="/my-orders" className="hover:underline flex items-center gap-3">🛍️ Theo dõi đơn hàng</Link></li>
-                    {isLoggedIn && <li onClick={handleSignOut} className="hover:underline cursor-pointer text-gray-400">Đăng xuất</li>}
+                    <li><Link href="/my-account" className="hover:underline flex items-center gap-3"><User size={16}/> Tài khoản của tôi</Link></li>
+                    <li><Link href="/my-orders" className="hover:underline flex items-center gap-3"><Package size={16}/> Theo dõi đơn hàng</Link></li>
+                    {isLoggedIn && <li onClick={handleSignOut} className="hover:underline cursor-pointer text-gray-400 flex items-center gap-3"><LogOut size={16}/> Đăng xuất</li>}
                   </ul>
                 </div>
               )}
             </div>
 
-            <Link href={wishlistPath} className="relative h-full flex items-center p-2 hover:bg-[#525252] transition-colors rounded-full" title="Sản phẩm yêu thích">
-                <svg className="w-6 h-6 md:w-7 md:h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /></svg>
+            <Link href={wishlistPath} className="relative h-full flex items-center p-2 hover:bg-[#525252] transition-colors rounded-full">
+                <Heart className="w-6 h-6 md:w-7 md:h-7" strokeWidth={1.8} />
                 {wishlistCount > 0 && (
                   <span className="absolute top-1.5 right-0 bg-white text-black text-[9px] w-4 h-4 rounded-full flex items-center justify-center font-bold border border-black shadow-sm">
                     {wishlistCount}
@@ -163,8 +166,8 @@ export default function Header() {
                 )}
             </Link>
 
-            <Link href={bagPath} className="relative h-full flex items-center p-2 hover:bg-[#525252] transition-colors rounded-full" title="Giỏ hàng">
-                <svg className="w-6 h-6 md:w-7 md:h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" d="M16 11V7a4 4 0 11-8 0v4M5 9h14l1 12H4L5 9z" /></svg>
+            <Link href={bagPath} className="relative h-full flex items-center p-2 hover:bg-[#525252] transition-colors rounded-full">
+                <ShoppingCart className="w-6 h-6 md:w-7 md:h-7" strokeWidth={1.8} />
                 {cartCount > 0 && (
                   <span className="absolute bottom-1 right-1 bg-[#d01345] text-white text-[9px] w-4 h-4 rounded-full flex items-center justify-center font-bold">
                     {cartCount}
@@ -182,7 +185,7 @@ export default function Header() {
           <div className="flex border-b border-gray-200 sticky top-0 bg-white z-10">
             <Link href="/women" onClick={() => setIsSideMenuOpen(false)} className="flex-1 py-4 text-[13px] font-bold uppercase border-b-2 border-black tracking-widest text-center">Nữ</Link>
             <Link href="/men" onClick={() => setIsSideMenuOpen(false)} className="flex-1 py-4 text-[13px] font-bold uppercase text-gray-400 bg-gray-50 border-b-2 border-transparent tracking-widest text-center">Nam</Link>
-            <button onClick={() => setIsSideMenuOpen(false)} className="p-4 bg-black text-white"><svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg></button>
+            <button onClick={() => setIsSideMenuOpen(false)} className="p-4 bg-black text-white"><X size={24}/></button>
           </div>
 
           <div className="flex-1 overflow-y-auto pb-10">
@@ -202,10 +205,10 @@ export default function Header() {
 
             <div className="px-3 space-y-1">
               {menuData.mobileNav.map((item) => (
-                <Link key={item.name} href={item.path} onClick={() => setIsSideMenuOpen(false)} className="flex items-center justify-between p-4 bg-gray-50 hover:bg-gray-100 transition-colors rounded-sm">
+                <Link key={item.name} href={item.path} onClick={() => setIsSideMenuOpen(false)} className="flex items-center justify-between p-4 bg-gray-50 hover:bg-gray-100 transition-colors rounded-sm group">
                   <span className="text-[12px] font-bold uppercase tracking-[0.2em]">{item.name}</span>
-                  <div className="w-[56px] h-[56px] overflow-hidden">
-                    <img src={item.img} alt={item.name} className="w-full h-full object-cover" />
+                  <div className="text-zinc-400 group-hover:text-black transition-colors">
+                    {item.icon}
                   </div>
                 </Link>
               ))}
@@ -225,14 +228,14 @@ export default function Header() {
 
                 <ul className="space-y-6 text-[13px] font-bold uppercase tracking-widest">
                   <li className="flex items-center gap-4">
-                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
+                    <User size={24} strokeWidth={1.5} />
                     <Link href="/my-account" onClick={() => setIsSideMenuOpen(false)}>Tài khoản của tôi</Link>
                   </li>
                   <li className="flex items-center gap-4">
-                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 002-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /></svg>
+                    <Package size={24} strokeWidth={1.5} />
                     <Link href="/my-orders" onClick={() => setIsSideMenuOpen(false)}>Theo dõi đơn hàng</Link>
                   </li>
-                  {isLoggedIn && <li onClick={handleSignOut} className="text-gray-400 cursor-pointer pl-10 lowercase">Đăng xuất</li>}
+                  {isLoggedIn && <li onClick={handleSignOut} className="text-gray-400 cursor-pointer pl-10 flex items-center gap-2 lowercase"><LogOut size={16}/> Đăng xuất</li>}
                   <li className="flex justify-between items-center border-t pt-6 text-[11px] text-gray-500">Trợ giúp & Thông tin <span className="text-lg">+</span></li>
                 </ul>
             </div>
@@ -255,7 +258,7 @@ export default function Header() {
         </div>
       </div>
 
-      {/* MEGA MENU - DESKTOP */}
+      {/* MEGA MENU - DESKTOP CẬP NHẬT ICON */}
       {isMegaMenuOpen && (
         <div 
           className="absolute top-full left-0 w-full bg-white border-b border-gray-200 shadow-2xl hidden md:block"
@@ -265,7 +268,9 @@ export default function Header() {
             <div>
               <h4 className="font-bold text-[13px] mb-6 uppercase tracking-widest border-b pb-2">Sản phẩm mới</h4>
               <ul className="space-y-4 text-[12px] text-gray-500">
-                {["Xem tất cả", "Mới trong ngày", "Bán chạy nhất", "Quần áo", "Váy đầm", "Áo", "Giày"].map(i => (
+                <li className="hover:text-black flex items-center gap-2"><Flame size={14} className="text-orange-500"/> Bán chạy nhất</li>
+                <li className="hover:text-black flex items-center gap-2"><Sparkles size={14} className="text-blue-500"/> Mới trong ngày</li>
+                {["Xem tất cả", "Quần áo", "Váy đầm", "Áo", "Giày"].map(i => (
                   <li key={i} className="hover:text-black hover:underline cursor-pointer">{i}</li>
                 ))}
               </ul>
@@ -274,14 +279,11 @@ export default function Header() {
             <div>
               <h4 className="font-bold text-[13px] mb-6 uppercase tracking-widest border-b pb-2">Mùa đông</h4>
               <ul className="space-y-4">
-                {[
-                  { name: "Cơ bản", img: "https://images.asos-media.com/navigation/ww_gbl_winter_essentials_117075775_1x1" },
-                  { name: "Đồ mặc nhà", img: "https://images.asos-media.com/navigation/ww_gbl_loungewear_117075775_1x1" },
-                  { name: "Lông nhân tạo", img: "https://images.asos-media.com/navigation/ww_gbl_faux_fur_117075775_1x1" },
-                  { name: "Đồ da", img: "https://images.asos-media.com/navigation/ww_gbl_leather_117075775_1x1" }
-                ].map(item => (
+                {menuData.winterIcons.map(item => (
                   <li key={item.name} className="flex items-center gap-3 text-[12px] text-gray-500 hover:text-black cursor-pointer group">
-                    <img src={item.img} className="w-8 h-8 rounded-full border group-hover:opacity-80" alt={item.name} />
+                    <div className="w-8 h-8 rounded-full bg-zinc-50 flex items-center justify-center border group-hover:bg-zinc-100 transition-colors">
+                      {item.icon}
+                    </div>
                     <span>{item.name}</span>
                   </li>
                 ))}
@@ -292,19 +294,22 @@ export default function Header() {
               <h4 className="font-bold text-[13px] mb-6 uppercase tracking-widest border-b pb-2">Được yêu thích</h4>
               <ul className="space-y-4 text-[12px] text-gray-500">
                 {["Váy đầm", "Áo", "Áo len", "Quần jeans", "Bộ sưu tập"].map(i => (
-                  <li key={i} className="hover:text-black hover:underline cursor-pointer">{i}</li>
+                  <li key={i} className="hover:text-black flex items-center gap-2 cursor-pointer group">
+                    <ChevronRight size={12} className="group-hover:translate-x-1 transition-transform" /> {i}
+                  </li>
                 ))}
               </ul>
             </div>
 
-            <div className="border-l pl-10 text-center">
-              <h4 className="font-bold text-[13px] mb-6 uppercase tracking-widest">Bộ sưu tập mới</h4>
-              <div className="relative group cursor-pointer overflow-hidden aspect-[3/4] mb-4">
-                <img src="https://images.asos-media.com/navigation/ww_gbl_new_edits_117075775_1x1" className="w-full h-full object-cover transition-transform group-hover:scale-105" alt="New Edits" />
-                <div className="absolute inset-0 bg-black/5 flex items-end justify-center p-4">
-                  <span className="bg-white text-black text-[10px] font-bold px-6 py-2 uppercase tracking-widest shadow-lg">Khám phá</span>
-                </div>
+            <div className="border-l pl-10 text-center flex flex-col items-center justify-center">
+              <div className="w-20 h-20 bg-zinc-50 rounded-2xl flex items-center justify-center mb-4 text-zinc-300 border border-dashed border-zinc-200">
+                <Stars size={40} strokeWidth={1} />
               </div>
+              <h4 className="font-bold text-[13px] mb-2 uppercase tracking-widest">Bộ sưu tập mới</h4>
+              <p className="text-[10px] text-zinc-400 mb-5 px-6 italic">Khám phá phong cách mới nhất vừa cập bến tuần này.</p>
+              <button className="bg-black text-white text-[10px] font-bold px-8 py-2.5 uppercase tracking-widest shadow-lg hover:bg-zinc-800 transition-all active:scale-95">
+                Khám phá
+              </button>
             </div>
           </div>
         </div>

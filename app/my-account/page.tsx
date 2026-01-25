@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
 import { supabase } from "@/lib/supabase"; 
+import Swal from 'sweetalert2'; // Thêm thư viện thông báo chuyên nghiệp
 
 export default function MyAccount() {
   const [userName, setUserName] = useState("");
@@ -8,9 +9,6 @@ export default function MyAccount() {
   const [country, setCountry] = useState("Việt Nam");
   const [balance, setBalance] = useState("0.00");
   const [isSaved, setIsSaved] = useState(false);
-  
-  // State mới cho thông báo chuyên nghiệp
-  const [toast, setToast] = useState<{ msg: string; type: "success" | "error" } | null>(null);
   
   const [avatar, setAvatar] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -22,11 +20,20 @@ export default function MyAccount() {
     "Italy", "Spain", "Mexico", "Turkey", "Switzerland"
   ];
 
-  // Hàm hiển thị thông báo thay cho alert
-  const showToast = (msg: string, type: "success" | "error" = "success") => {
-    setToast({ msg, type });
-    setTimeout(() => setToast(null), 3000);
-  };
+  // Cấu hình Toast thông báo nhanh đồng nhất với trang Cart
+  const Toast = Swal.mixin({
+    toast: true,
+    position: 'top-end',
+    showConfirmButton: false,
+    timer: 3000,
+    timerProgressBar: true,
+    background: '#fff',
+    color: '#000',
+    didOpen: (toast) => {
+      toast.addEventListener('mouseenter', Swal.stopTimer)
+      toast.addEventListener('mouseleave', Swal.resumeTimer)
+    }
+  });
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -58,7 +65,13 @@ export default function MyAccount() {
             setBalance(Number(payload.new.balance || 0).toFixed(2));
             setFullName(payload.new.fullName || "");
             setCountry(payload.new.country || "Việt Nam");
-            showToast("Số dư tài khoản đã được cập nhật!");
+            
+            // Thông báo cập nhật số dư thời gian thực
+            Toast.fire({
+              icon: 'info',
+              title: 'Số dư tài khoản đã được cập nhật!',
+              background: '#f0f9ff'
+            });
           }
         }
       )
@@ -73,13 +86,19 @@ export default function MyAccount() {
     const file = e.target.files?.[0];
     if (file) {
       if (file.size > 800 * 1024) {
-        showToast("Dung lượng ảnh quá lớn (Tối đa 800K)", "error");
+        Swal.fire({
+          icon: 'warning',
+          title: 'Dung lượng quá lớn',
+          text: 'Vui lòng chọn ảnh dưới 800KB để đảm bảo tốc độ tải trang.',
+          confirmButtonColor: '#1a56db',
+        });
         return;
       }
       const reader = new FileReader();
       reader.onloadend = () => {
         const base64String = reader.result as string;
         setAvatar(base64String);
+        Toast.fire({ icon: 'success', title: 'Đã nhận diện hình ảnh mới' });
       };
       reader.readAsDataURL(file);
     }
@@ -98,34 +117,24 @@ export default function MyAccount() {
       .eq('username', storedName);
 
     if (error) {
-      showToast("Lỗi cập nhật: " + error.message, "error");
+      Swal.fire({
+        icon: 'error',
+        title: 'Lỗi cập nhật',
+        text: error.message,
+        confirmButtonColor: '#000'
+      });
     } else {
       setIsSaved(true);
       setTimeout(() => setIsSaved(false), 3000);
-      showToast("Cập nhật thông tin thành công!");
+      Toast.fire({
+        icon: 'success',
+        title: 'Cập nhật thông tin thành công!'
+      });
     }
   };
 
   return (
     <div className="min-h-screen bg-[#f4f7f6] py-10 px-4 font-sans text-gray-800 relative">
-      
-      {/* GIAO DIỆN THÔNG BÁO (TOAST) CHUYÊN NGHIỆP */}
-      {toast && (
-        <div className={`fixed top-5 right-5 z-[100] flex items-center gap-3 p-4 rounded-xl shadow-2xl border-l-4 animate-slide-in ${
-          toast.type === "success" ? "bg-white border-green-500" : "bg-white border-red-500"
-        }`}>
-          <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold ${
-            toast.type === "success" ? "bg-green-100 text-green-600" : "bg-red-100 text-red-600"
-          }`}>
-            {toast.type === "success" ? "✓" : "✕"}
-          </div>
-          <div>
-            <p className="font-bold text-sm text-gray-900">Thông báo</p>
-            <p className="text-xs text-gray-500">{toast.msg}</p>
-          </div>
-        </div>
-      )}
-
       <div className="max-w-2xl mx-auto">
         <h1 className="text-2xl font-bold mb-6">Cài đặt Người dùng</h1>
 
@@ -216,21 +225,11 @@ export default function MyAccount() {
               >
                 Lưu thay đổi
               </button>
-              {isSaved && <p className="text-green-600 text-sm mt-2 font-medium">Đã đồng bộ với Supabase!</p>}
+              {isSaved && <p className="text-green-600 text-sm mt-2 font-medium">Đã Cập Nhật Thành Công!</p>}
             </div>
           </div>
         </div>
       </div>
-
-      <style jsx>{`
-        @keyframes slide-in {
-          from { transform: translateX(100%); opacity: 0; }
-          to { transform: translateX(0); opacity: 1; }
-        }
-        .animate-slide-in { 
-          animation: slide-in 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; 
-        }
-      `}</style>
     </div>
   );
 }

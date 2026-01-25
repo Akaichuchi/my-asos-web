@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import Swal from 'sweetalert2'; // Thêm thư viện thông báo
 
 export default function CartPage() {
   const router = useRouter();
@@ -10,6 +11,17 @@ export default function CartPage() {
   const [paymentMethod, setPaymentMethod] = useState("balance");
   const [userBalance, setUserBalance] = useState(0); 
   const [isOrdered, setIsOrdered] = useState(false);
+
+  // Cấu hình Toast thông báo nhanh cho trang Cart
+  const Toast = Swal.mixin({
+    toast: true,
+    position: 'top-end',
+    showConfirmButton: false,
+    timer: 2000,
+    timerProgressBar: true,
+    background: '#fff',
+    color: '#000'
+  });
 
   useEffect(() => {
     const data = localStorage.getItem("cart");
@@ -42,6 +54,7 @@ export default function CartPage() {
     const updatedCart = cartItems.filter(item => item.id !== id);
     setCartItems(updatedCart);
     localStorage.setItem("cart", JSON.stringify(updatedCart));
+    Toast.fire({ icon: 'info', title: 'Đã xóa khỏi túi hàng' });
   };
 
   const updateQuantity = (id: string, qty: number) => {
@@ -55,14 +68,30 @@ export default function CartPage() {
   const handlePlaceOrder = async () => {
     if (paymentMethod === "balance") {
       if (userBalance < totalPrice) {
-        alert("SỐ DƯ KHÔNG ĐỦ!");
+        Swal.fire({
+          title: 'SỐ DƯ KHÔNG ĐỦ!',
+          text: `Bạn hiện có $${userBalance.toFixed(2)}. Cần thêm $${(totalPrice - userBalance).toFixed(2)} để hoàn tất.`,
+          icon: 'error',
+          confirmButtonText: 'ĐÃ HIỂU',
+          confirmButtonColor: '#000',
+        });
         return;
       }
 
-      const confirmOrder = confirm(`XÁC NHẬN THANH TOÁN $${totalPrice.toFixed(2)}?`);
-      if (confirmOrder) {
+      // Thay thế confirm bằng Swal xác nhận thanh toán
+      const result = await Swal.fire({
+        title: 'XÁC NHẬN THANH TOÁN',
+        text: `Hệ thống sẽ trừ $${totalPrice.toFixed(2)} từ số dư ví của bạn.`,
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: 'THANH TOÁN NGAY',
+        cancelButtonText: 'HỦY',
+        confirmButtonColor: '#8e7c74',
+        cancelButtonColor: '#d3d3d3',
+      });
+
+      if (result.isConfirmed) {
         try {
-          // LẤY DỮ LIỆU ĐỂ HIỆN HÌNH ẢNH
           const firstItem = cartItems[0]; 
 
           const response = await fetch('/api/orders', {
@@ -71,15 +100,14 @@ export default function CartPage() {
             body: JSON.stringify({
               userId: 10,
               totalAmount: totalPrice,
-              // Gửi thêm productName và imageUrl để Database ghi nhận
               productName: cartItems.length > 1 
                 ? `${firstItem.name} và ${cartItems.length - 1} món khác` 
                 : firstItem.name,
-              imageUrl: firstItem.image // Key này phải khớp với cột image_url trong DB
+              imageUrl: firstItem.image
             }),
           });
 
-          const result = await response.json();
+          const resultData = await response.json();
 
           if (response.ok) {
             const newBalance = userBalance - totalPrice;
@@ -89,10 +117,20 @@ export default function CartPage() {
             setCartItems([]);
             setIsOrdered(true);
           } else {
-            alert("LỖI: " + result.error);
+            Swal.fire({
+              icon: 'error',
+              title: 'LỖI',
+              text: resultData.error,
+              confirmButtonColor: '#000'
+            });
           }
         } catch (error) {
-          alert("Lỗi kết nối hệ thống. Vui lòng thử lại!");
+          Swal.fire({
+            icon: 'error',
+            title: 'LỖI HỆ THỐNG',
+            text: 'Vui lòng thử lại sau!',
+            confirmButtonColor: '#000'
+          });
         }
       }
     }
@@ -110,7 +148,7 @@ export default function CartPage() {
           <div className="space-y-4">
             <Link 
               href="/" 
-              className="block w-full bg-[#8e7c74] text-white py-4 text-[11px] font-bold uppercase tracking-[2px] hover:brightness-90 transition-all"
+              className="block w-full bg-[#8e7c74] text-white py-4 text-[11px] font-bold uppercase tracking-[2px] hover:brightness-90 transition-all text-center"
             >
               TIẾP TỤC MUA SẮM
             </Link>
@@ -192,7 +230,7 @@ export default function CartPage() {
           <div className="flex gap-2">
             <input type="text" placeholder="Coupon code" className="flex-1 border-2 border-black px-4 py-3 outline-none text-[14px] font-black" />
             <button className="bg-[#8e7c74] text-white px-8 py-3 text-[11px] font-black uppercase tracking-widest">
-              ÁP DỤNG MÃ GIẢM GIÁ
+              ÁP DỤNG
             </button>
           </div>
         </div>
@@ -201,7 +239,7 @@ export default function CartPage() {
           <h2 className="text-[22px] font-black uppercase italic mb-6 border-b-2 border-zinc-100 pb-2">TỔNG GIỎ HÀNG</h2>
           <div className="space-y-4 text-[15px] font-bold">
             <div className="flex justify-between border-b border-zinc-100 pb-2">
-              <span className="text-zinc-400 uppercase">Tổng cộng</span>
+              <span className="text-zinc-400 uppercase">Tạm tính</span>
               <span>${totalPrice.toFixed(2)}</span>
             </div>
             <div className="flex justify-between border-b border-zinc-100 pb-2">

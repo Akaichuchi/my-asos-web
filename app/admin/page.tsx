@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import Script from 'next/script';
 import { supabase } from '@/lib/supabase'; 
+import Swal from 'sweetalert2'; // THÊM THƯ VIỆN THÔNG BÁO
 
 export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState('users');
@@ -21,7 +22,17 @@ export default function AdminDashboard() {
 
   const [amountChange, setAmountChange] = useState<{ [key: string]: string }>({});
 
-  // CẬP NHẬT CHÍNH: Khớp tên cột created_at, amount và lấy dữ liệu RECYCLE/PENDING
+  // Cấu hình Toast mặc định cho đẹp
+  const Toast = Swal.mixin({
+    toast: true,
+    position: 'top-end',
+    showConfirmButton: false,
+    timer: 2000,
+    timerProgressBar: true,
+    background: '#1e293b',
+    color: '#fff'
+  });
+
   const fetchOrders = async () => {
     try {
       const { data, error } = await supabase
@@ -41,41 +52,74 @@ export default function AdminDashboard() {
   };
 
   const handleApproveOrder = async (orderId: string) => {
-    if (!confirm('Xác nhận Duyệt đơn hàng? (Hệ thống không tự cộng tiền, hãy cộng thủ công bên tab Khách hàng)')) return;
-    try {
-      const { error } = await supabase
-        .from('Order')
-        .update({ status: 'SUCCESS' }) 
-        .eq('id', orderId);
+    const result = await Swal.fire({
+      title: 'XÁC NHẬN DUYỆT?',
+      text: "Bạn cần cộng tiền thủ công bên tab Khách hàng sau khi duyệt.",
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonColor: '#000',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'ĐỒNG Ý DUYỆT',
+      cancelButtonText: 'HỦY'
+    });
 
-      if (error) throw error;
-      alert('Đã duyệt đơn hàng thành công!');
-      fetchOrders(); 
-    } catch (err) { alert('Lỗi khi duyệt đơn hàng!'); }
+    if (result.isConfirmed) {
+      try {
+        const { error } = await supabase
+          .from('Order')
+          .update({ status: 'SUCCESS' }) 
+          .eq('id', orderId);
+
+        if (error) throw error;
+        Toast.fire({ icon: 'success', title: 'Đã duyệt đơn thành công!' });
+        fetchOrders(); 
+      } catch (err) { Toast.fire({ icon: 'error', title: 'Lỗi khi duyệt đơn!' }); }
+    }
   };
 
   const handleRejectOrder = async (orderId: string) => {
-    if (!confirm('Bạn có chắc chắn muốn TỪ CHỐI đơn hàng này?')) return;
-    try {
-      const { error } = await supabase
-        .from('Order')
-        .update({ status: 'REJECTED' })
-        .eq('id', orderId);
-      if (error) throw error;
-      alert('Đã từ chối đơn hàng.');
-      fetchOrders();
-    } catch (err) { alert('Lỗi khi từ chối!'); }
+    const result = await Swal.fire({
+      title: 'TỪ CHỐI ĐƠN?',
+      text: "Đơn hàng này sẽ chuyển sang trạng thái REJECTED.",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      confirmButtonText: 'XÁC NHẬN TỪ CHỐI',
+      cancelButtonText: 'QUAY LẠI'
+    });
+
+    if (result.isConfirmed) {
+      try {
+        const { error } = await supabase
+          .from('Order')
+          .update({ status: 'REJECTED' })
+          .eq('id', orderId);
+        if (error) throw error;
+        Toast.fire({ icon: 'success', title: 'Đã từ chối đơn hàng.' });
+        fetchOrders();
+      } catch (err) { Toast.fire({ icon: 'error', title: 'Lỗi xử lý!' }); }
+    }
   };
 
-  // TÍNH NĂNG MỚI: Xóa đơn hàng vĩnh viễn
   const handleDeleteOrder = async (orderId: string) => {
-    if (!confirm('CẢNH BÁO: Xóa vĩnh viễn đơn hàng này?')) return;
-    try {
-      const { error } = await supabase.from('Order').delete().eq('id', orderId);
-      if (error) throw error;
-      alert('Đã xóa đơn hàng thành công!');
-      fetchOrders();
-    } catch (err) { alert('Lỗi khi xóa đơn!'); }
+    const result = await Swal.fire({
+      title: 'CẢNH BÁO XÓA!',
+      text: "Dữ liệu đơn hàng sẽ bị mất vĩnh viễn!",
+      icon: 'error',
+      showCancelButton: true,
+      confirmButtonColor: '#000',
+      confirmButtonText: 'XÓA VĨNH VIỄN',
+      cancelButtonText: 'HỦY'
+    });
+
+    if (result.isConfirmed) {
+      try {
+        const { error } = await supabase.from('Order').delete().eq('id', orderId);
+        if (error) throw error;
+        Toast.fire({ icon: 'success', title: 'Đã xóa đơn hàng!' });
+        fetchOrders();
+      } catch (err) { Toast.fire({ icon: 'error', title: 'Lỗi khi xóa!' }); }
+    }
   };
 
   const handleUpload = () => {
@@ -102,8 +146,12 @@ export default function AdminDashboard() {
 
   const handlePinSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (pin === correctPin) setIsAuthorized(true);
-    else { alert('Mã PIN không chính xác!'); setPin(''); }
+    if (pin === correctPin) {
+      setIsAuthorized(true);
+    } else { 
+      Swal.fire({ icon: 'error', title: 'Sai mã PIN!', text: 'Vui lòng kiểm tra lại.', confirmButtonColor: '#000' });
+      setPin(''); 
+    }
   };
 
   const fetchUsers = async () => {
@@ -165,39 +213,63 @@ export default function AdminDashboard() {
         body: JSON.stringify(payload),
       });
       if (res.ok) {
-        alert(editingProduct ? 'Cập nhật thành công!' : 'Đã đăng sản phẩm mới!');
+        Toast.fire({ icon: 'success', title: editingProduct ? 'Đã cập nhật!' : 'Đã đăng sản phẩm!' });
         setEditingProduct(null);
         setProductForm({ name: "", price: "", originalPrice: "", images: "", category: "women", tag: "SELLING FAST", sizeFit: "", details: "" });
         fetchProducts();
       } else {
         const errorData = await res.json();
-        alert(`Lỗi: ${errorData.error || 'Không thể thực hiện'}`);
+        Swal.fire('Lỗi', errorData.error || 'Thao tác thất bại', 'error');
       }
-    } catch (error) { alert('Lỗi thao tác sản phẩm!'); }
+    } catch (error) { Toast.fire({ icon: 'error', title: 'Lỗi kết nối!' }); }
   };
 
   const handleDeleteProduct = async (id: number) => {
-    if (confirm('Xóa sản phẩm này?')) {
+    const result = await Swal.fire({
+      title: 'XÓA SẢN PHẨM?',
+      text: "Hành động này không thể hoàn tác!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'XÓA NGAY',
+      confirmButtonColor: '#000'
+    });
+
+    if (result.isConfirmed) {
       await fetch(`/api/products?id=${id}`, { method: 'DELETE' });
+      Toast.fire({ icon: 'success', title: 'Đã xóa sản phẩm.' });
       fetchProducts();
     }
   };
 
   const handleDeleteUser = async (id: string) => {
-    if (confirm('XÁC NHẬN: Bạn muốn xóa khách hàng này vĩnh viễn?')) {
+    const result = await Swal.fire({
+      title: 'XÓA KHÁCH HÀNG?',
+      text: "Xác nhận xóa tài khoản này vĩnh viễn khỏi hệ thống?",
+      icon: 'error',
+      showCancelButton: true,
+      confirmButtonText: 'XÓA VĨNH VIỄN',
+      confirmButtonColor: '#d33'
+    });
+
+    if (result.isConfirmed) {
       try {
         const res = await fetch(`/api/register?id=${id}`, { method: 'DELETE' });
-        if (res.ok) { setUsers(users.filter(u => u.id !== id)); alert('Đã xóa thành công!'); }
-      } catch (error) { alert('Lỗi khi xóa!'); }
+        if (res.ok) { 
+          setUsers(users.filter(u => u.id !== id)); 
+          Toast.fire({ icon: 'success', title: 'Đã xóa khách hàng.' });
+        }
+      } catch (error) { Toast.fire({ icon: 'error', title: 'Lỗi khi xóa!' }); }
     }
   };
 
   const handleUpdateBalance = async (userId: string) => {
     const changeAmount = parseFloat(amountChange[userId]);
-    if (isNaN(changeAmount)) return alert('Vui lòng nhập số tiền hợp lệ');
+    if (isNaN(changeAmount)) return Toast.fire({ icon: 'warning', title: 'Nhập số tiền hợp lệ!' });
+    
     const user = users.find(u => u.id === userId);
     const currentBalance = user?.balance || 0;
     const newBalance = currentBalance + changeAmount;
+    
     try {
       const res = await fetch('/api/register', {
         method: 'PUT',
@@ -205,11 +277,16 @@ export default function AdminDashboard() {
         body: JSON.stringify({ id: userId, balance: newBalance }),
       });
       if (res.ok) { 
-        alert(`Đã cập nhật số dư thành công! Mới: $${newBalance.toFixed(2)}`); 
+        Swal.fire({
+          icon: 'success',
+          title: 'CẬP NHẬT XONG!',
+          text: `Số dư mới: $${newBalance.toFixed(2)}`,
+          confirmButtonColor: '#000'
+        });
         setAmountChange({ ...amountChange, [userId]: "" }); 
         fetchUsers(); 
-      } else { alert('Không thể cập nhật số dư. Kiểm tra lại API.'); }
-    } catch (error) { alert('Lỗi kết nối server!'); }
+      } else { Toast.fire({ icon: 'error', title: 'Lỗi cập nhật!' }); }
+    } catch (error) { Toast.fire({ icon: 'error', title: 'Lỗi server!' }); }
   };
 
   if (!isAuthorized) {
@@ -287,7 +364,6 @@ export default function AdminDashboard() {
               ) : orders.map((order) => (
                 <div key={order.id} className="border-2 border-black p-4 flex flex-col md:flex-row justify-between items-center bg-gray-50 hover:bg-white transition-all">
                   <div className="flex gap-4 items-center w-full">
-                    {/* BỎ CỘT HÌNH ẢNH TRANG ADMIN NẾU MUỐN - Nhưng tôi vẫn giữ gọn ở đây theo code cũ của bạn */}
                     <div>
                       <div className="text-[10px] font-bold text-blue-600 uppercase">
                         KHÁCH: {order.User?.fullName || 'N/A'} (@{order.User?.username || 'unknown'})
@@ -328,7 +404,6 @@ export default function AdminDashboard() {
 
         {activeTab === 'products' && (
           <div className="space-y-10">
-            {/* Form thêm sản phẩm giữ nguyên */}
             <div className="bg-white border-2 border-black p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
                <h2 className="text-2xl font-black uppercase mb-6 italic underline">{editingProduct ? 'Edit Product' : 'Add New Product'}</h2>
                <form onSubmit={handleProductSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-gray-50 border border-dashed border-black">
@@ -374,7 +449,6 @@ export default function AdminDashboard() {
                </form>
             </div>
 
-            {/* Danh sách Inventory giữ nguyên */}
             <div className="bg-white border-2 border-black p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
               <h2 className="text-xl font-black uppercase mb-4 italic">Inventory</h2>
               <div className="grid grid-cols-1 gap-6">

@@ -1,12 +1,23 @@
 "use client";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase"; 
+import Swal from 'sweetalert2'; // THÊM THƯ VIỆN THÔNG BÁO
 
 export default function AdminOrderApproval() {
   const [pendingOrders, setPendingOrders] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // CẬP NHẬT: Khớp chính xác tên cột trong database (created_at và amount)
+  // Cấu hình thông báo Toast nhỏ ở góc màn hình
+  const Toast = Swal.mixin({
+    toast: true,
+    position: 'top-end',
+    showConfirmButton: false,
+    timer: 2500,
+    timerProgressBar: true,
+    background: '#1e293b',
+    color: '#fff'
+  });
+
   const fetchPendingOrders = async () => {
     const { data, error } = await supabase
       .from("Order")
@@ -15,7 +26,7 @@ export default function AdminOrderApproval() {
         User:userId ( fullName, username )
       `)
       .or('status.eq.RECYCLE,status.eq.PENDING') 
-      .order("created_at", { ascending: false }); // Sắp xếp theo cột thời gian chuẩn
+      .order("created_at", { ascending: false });
 
     if (!error) {
       setPendingOrders(data || []);
@@ -45,40 +56,95 @@ export default function AdminOrderApproval() {
   }, []);
 
   const handleApprove = async (orderId: string) => {
-    if (!confirm("Xác nhận Duyệt đơn này? Bạn sẽ phải cộng tiền thủ công bên tab Khách hàng.")) return;
-    try {
-      const { error } = await supabase
-        .from("Order")
-        .update({ status: "SUCCESS" }) 
-        .eq("id", orderId);
+    // Thay thế confirm bằng Swal chuyên nghiệp
+    const result = await Swal.fire({
+      title: 'XÁC NHẬN DUYỆT ĐƠN?',
+      text: "Lưu ý: Hệ thống không tự cộng tiền. Bạn cần cộng thủ công cho khách sau khi duyệt thành công.",
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonText: 'ĐỒNG Ý DUYỆT',
+      cancelButtonText: 'QUAY LẠI',
+      confirmButtonColor: '#16a34a', // Màu xanh
+      cancelButtonColor: '#334155',
+      background: '#1e293b',
+      color: '#fff'
+    });
 
-      if (error) throw error;
+    if (result.isConfirmed) {
+      try {
+        const { error } = await supabase
+          .from("Order")
+          .update({ status: "SUCCESS" }) 
+          .eq("id", orderId);
 
-      alert(`Đã duyệt đơn hàng thành công! Hãy sang danh sách khách hàng để cộng tiền.`);
-      fetchPendingOrders();
-      
-    } catch (err: any) {
-      alert("Lỗi xử lý: " + err.message);
+        if (error) throw error;
+
+        // Thông báo thành công kiểu Toast
+        Toast.fire({
+          icon: 'success',
+          title: 'Đã duyệt thành công! Nhớ cộng tiền cho khách.'
+        });
+        fetchPendingOrders();
+        
+      } catch (err: any) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Lỗi xử lý',
+          text: err.message,
+          background: '#1e293b',
+          color: '#fff'
+        });
+      }
     }
   };
 
   const handleReject = async (orderId: string) => {
-    if (!confirm("Bạn có chắc chắn muốn TỪ CHỐI đơn này không?")) return;
-    try {
-      const { error } = await supabase
-        .from("Order")
-        .update({ status: "REJECTED" })
-        .eq("id", orderId);
+    // Thay thế confirm bằng Swal cảnh báo
+    const result = await Swal.fire({
+      title: 'TỪ CHỐI ĐƠN?',
+      text: "Bạn có chắc chắn muốn từ chối đơn hàng này không?",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'XÁC NHẬN TỪ CHỐI',
+      cancelButtonText: 'HỦY',
+      confirmButtonColor: '#dc2626', // Màu đỏ
+      cancelButtonColor: '#334155',
+      background: '#1e293b',
+      color: '#fff'
+    });
 
-      if (error) throw error;
-      alert("Đã từ chối đơn hàng.");
-      fetchPendingOrders();
-    } catch (err: any) {
-      alert("Lỗi khi từ chối: " + err.message);
+    if (result.isConfirmed) {
+      try {
+        const { error } = await supabase
+          .from("Order")
+          .update({ status: "REJECTED" })
+          .eq("id", orderId);
+
+        if (error) throw error;
+        Toast.fire({
+          icon: 'success',
+          title: 'Đã từ chối đơn hàng.'
+        });
+        fetchPendingOrders();
+      } catch (err: any) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Lỗi khi từ chối',
+          text: err.message,
+          background: '#1e293b',
+          color: '#fff'
+        });
+      }
     }
   };
 
-  if (loading) return <div className="p-10 text-white italic animate-pulse text-center">Đang tải dữ liệu admin...</div>;
+  if (loading) return (
+    <div className="min-h-screen bg-[#0f172a] flex items-center justify-center p-10">
+      <div className="text-white italic animate-pulse text-center uppercase font-black tracking-widest">
+        Đang tải dữ liệu admin...
+      </div>
+    </div>
+  );
 
   return (
     <div className="min-h-screen bg-[#0f172a] text-white p-8">
@@ -108,9 +174,7 @@ export default function AdminOrderApproval() {
                   )}
                 </td>
                 <td className="p-4">
-                  {/* CỘT CHÍNH XÁC: product_name */}
                   <div className="text-sm font-black uppercase text-yellow-500">{order.product_name || "Sản phẩm"}</div>
-                  {/* CỘT CHÍNH XÁC: User.fullName */}
                   <div className="text-[11px] text-blue-400 font-bold italic">Khách: {order.User?.fullName || "N/A"}</div>
                   <div className="text-[10px] text-zinc-500 font-mono italic">Ngày: {order.created_at}</div>
                 </td>
@@ -118,20 +182,19 @@ export default function AdminOrderApproval() {
                   {order.userId}
                 </td>
                 <td className="p-4 font-black text-red-400 text-right text-lg font-mono">
-                  {/* CỘT CHÍNH XÁC: amount */}
                   ${Number(order.amount || 0).toFixed(2)}
                 </td>
                 <td className="p-4">
                   <div className="flex flex-col gap-2 items-center">
                     <button 
                       onClick={() => handleApprove(order.id)}
-                      className="w-full bg-green-600 hover:bg-green-500 text-white px-4 py-2 rounded font-black text-[10px] uppercase transition-all shadow-md"
+                      className="w-full bg-green-600 hover:bg-green-500 text-white px-4 py-2 rounded font-black text-[10px] uppercase transition-all shadow-md active:scale-95"
                     >
                       Duyệt Thành Công
                     </button>
                     <button 
                       onClick={() => handleReject(order.id)}
-                      className="w-full bg-transparent border border-zinc-600 hover:bg-red-600 hover:border-red-600 text-zinc-400 hover:text-white px-4 py-1 rounded font-bold text-[10px] uppercase transition-all"
+                      className="w-full bg-transparent border border-zinc-600 hover:bg-red-600 hover:border-red-600 text-zinc-400 hover:text-white px-4 py-1 rounded font-bold text-[10px] uppercase transition-all active:scale-95"
                     >
                       Từ chối đơn
                     </button>
