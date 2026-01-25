@@ -35,7 +35,7 @@ export default function MyOrdersPage() {
       .on("postgres_changes", { event: "UPDATE", schema: "public", table: "Order" }, 
       (payload) => {
         setOrders(current => current.map(order => 
-          order.id === payload.new.id ? { ...order, status: payload.new.status } : order
+          order.id === payload.new.id ? { ...order, ...payload.new } : order
         ));
       })
       .subscribe();
@@ -53,7 +53,7 @@ export default function MyOrdersPage() {
   const confirmRecycle = async () => {
     if (!selectedOrderId) return;
 
-    // CẬP NHẬT: Đổi từ PENDING sang RECYCLE để Admin nhận diện được đơn tái chế
+    // Khi khách ấn "Vâng, chắc chắn", trạng thái chuyển sang RECYCLE (Chờ admin duyệt)
     const { error } = await supabase
       .from("Order")
       .update({ status: "RECYCLE" }) 
@@ -109,54 +109,68 @@ export default function MyOrdersPage() {
           {filteredOrders.length === 0 ? (
              <div className="text-center py-10 text-zinc-500 italic">Không tìm thấy đơn hàng nào.</div>
           ) : (
-            filteredOrders.map((order) => (
-              <div key={order.id} className="bg-[#1f2535] border-b border-zinc-800 pb-4 mb-4">
-                <div className="flex justify-between items-center mb-4">
-                  <div className="text-[13px]">
-                    <span className="text-zinc-400 font-medium">
-                      {order.createdAt ? new Date(order.createdAt).toLocaleDateString() : 'N/A'}
+            filteredOrders.map((order) => {
+              // Logic nhận diện đơn đã tái chế thành công:
+              // Nếu status là SUCCESS nhưng trước đó khách đã gửi yêu cầu (hoặc dựa trên logic nghiệp vụ của bạn)
+              // Ở đây ta giả định nếu đơn đã qua trạng thái RECYCLE và được Admin duyệt về SUCCESS
+              const isRecycledSuccess = order.status === 'SUCCESS' && order.is_recycled === true; 
+
+              return (
+                <div key={order.id} className="bg-[#1f2535] border-b border-zinc-800 pb-4 mb-4">
+                  <div className="flex justify-between items-center mb-4">
+                    <div className="text-[13px]">
+                      <span className="text-zinc-400 font-medium">
+                        {order.createdAt ? new Date(order.createdAt).toLocaleDateString() : 'N/A'}
+                      </span>
+                      <span className="ml-2 text-blue-400">ID: {order.id}</span>
+                    </div>
+                    
+                    {/* Hiển thị chữ SẢN PHẨM TÁI CHẾ THÀNH CÔNG màu xanh khi Admin duyệt */}
+                    <span className={`px-3 py-1 rounded text-[11px] uppercase font-bold border ${
+                      order.status === 'SUCCESS' ? 'text-green-400 border-green-900 bg-green-900/20' : 
+                      order.status === 'RECYCLE' ? 'text-orange-400 border-orange-900 bg-orange-900/20' :
+                      'text-yellow-500 border-yellow-900 bg-yellow-900/20'
+                    }`}>
+                      {order.status === 'SUCCESS' && order.is_recycled ? "SẢN PHẨM TÁI CHẾ THÀNH CÔNG" : order.status}
                     </span>
-                    <span className="ml-2 text-blue-400">ID: {order.id}</span>
                   </div>
-                  <span className={`px-3 py-1 rounded text-[11px] uppercase font-bold border ${
-                    order.status === 'SUCCESS' ? 'text-green-400 border-green-900 bg-green-900/20' : 
-                    order.status === 'RECYCLE' ? 'text-orange-400 border-orange-900 bg-orange-900/20' :
-                    'text-yellow-500 border-yellow-900 bg-yellow-900/20'
-                  }`}>
-                    {order.status}
-                  </span>
-                </div>
 
-                <div className="flex gap-4 mb-4">
-                  <div className="w-16 h-16 rounded-lg overflow-hidden bg-[#2a303f] flex-shrink-0">
-                    <img 
-                      src={order.image_url && order.image_url !== "NULL" ? order.image_url : "https://placehold.co/150x150/2a303f/white?text=No+Image"} 
-                      className="w-full h-full object-cover" 
-                      alt="Product" 
-                    />
+                  <div className="flex gap-4 mb-4">
+                    <div className="w-16 h-16 rounded-lg overflow-hidden bg-[#2a303f] flex-shrink-0">
+                      <img 
+                        src={order.image_url && order.image_url !== "NULL" ? order.image_url : "https://placehold.co/150x150/2a303f/white?text=No+Image"} 
+                        className="w-full h-full object-cover" 
+                        alt="Product" 
+                      />
+                    </div>
+                    <p className="text-[13px] leading-tight text-zinc-300">{order.product_name || "Sản phẩm không xác định"}</p>
                   </div>
-                  <p className="text-[13px] leading-tight text-zinc-300">{order.product_name || "Sản phẩm không xác định"}</p>
-                </div>
 
-                <div className="flex justify-between items-center border-t border-zinc-800/50 pt-4">
-                  <div className="text-[15px] font-bold italic text-white">Total: ${Number(order.amount).toFixed(2)}</div>
-                  <div className="flex gap-2">
-                    <button className="bg-[#d01345] text-white px-4 py-2 rounded-md text-[13px] font-bold flex items-center gap-1 opacity-50 cursor-not-allowed">
-                      Hủy
-                    </button>
-                    {order.status === 'SUCCESS' && (
-                      <button 
-                        onClick={() => openRecycleModal(order.id)}
-                        className="bg-[#f2a100] text-white px-4 py-2 rounded-md text-[13px] font-bold flex items-center gap-1"
-                      >
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
-                        Tái chế
-                      </button>
-                    )}
+                  <div className="flex justify-between items-center border-t border-zinc-800/50 pt-4">
+                    <div className="text-[15px] font-bold italic text-white">Total: ${Number(order.amount).toFixed(2)}</div>
+                    <div className="flex gap-2">
+                      {/* Nút bấm sẽ tự động biến mất 100% khi đã tái chế thành công (status SUCCESS + is_recycled true) */}
+                      {!(order.status === 'SUCCESS' && order.is_recycled) && (
+                        <>
+                          <button className="bg-[#d01345] text-white px-4 py-2 rounded-md text-[13px] font-bold flex items-center gap-1 opacity-50 cursor-not-allowed">
+                            Hủy
+                          </button>
+                          {order.status === 'SUCCESS' && (
+                            <button 
+                              onClick={() => openRecycleModal(order.id)}
+                              className="bg-[#f2a100] text-white px-4 py-2 rounded-md text-[13px] font-bold flex items-center gap-1"
+                            >
+                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
+                              Tái chế
+                            </button>
+                          )}
+                        </>
+                      )}
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))
+              );
+            })
           )}
         </div>
       </div>
